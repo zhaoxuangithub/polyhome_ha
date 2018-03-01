@@ -1,0 +1,4 @@
+- devices:
+    9#7f:
+      name: yodar97f
+  platform: polyyodar_i3

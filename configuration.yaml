@@ -1,0 +1,41 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: 39.9289
+  longitude: 116.3883
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 0
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Asia/Shanghai
+  # Customization file
+  customize: !include customize.yaml
+
+config:
+http:
+conversation:
+poly_config:
+poly_ota:
+frontend:
+automation: !include automations.yaml
+group: !include groups.yaml
+script: !include scripts.yaml
+cover: !include cover.yaml
+sensor: !include sensor.yaml
+light: !include light.yaml
+switch: !include switch.yaml
+binary_sensor: !include binary_sensor.yaml
+lock: !include lock.yaml
+media_player: !include media_player.yaml
+mqtt:
+  # broker server
+  broker: 123.57.139.200
+  # broker port
+  port: 1883
+  # username
+  username: polyhome
+  # password
+  password: 123
+  # client id
+  client_id: fe:00:b1:08:d3:01

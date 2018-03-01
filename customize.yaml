@@ -1,0 +1,94 @@
+binary_sensor.panel44a0:
+  friendly_name: 4键情景面板
+binary_sensor.door115:
+  friendly_name: 门磁
+light.lnlight4e411:
+  friendly_name: 二路零火灯1
+light.lnlight4e412:
+  friendly_name: 二路零火灯2
+light.light02:
+  friendly_name: 二路单火灯
+light.lnlight1a621:
+  friendly_name: 二路零火灯1
+light.lnlight1a622:
+  friendly_name: 二路零火灯2
+light.lnlight8c11:
+  friendly_name: 三路零火灯1
+light.lnlight8c12:
+  friendly_name: 三路零火灯2
+light.lnlight8c13:
+  friendly_name: 三路零火灯3
+light.lnlight19bf:
+  friendly_name: 一路零火灯
+light.lightd61:
+  friendly_name: 一路单火灯
+automation.1519631756:
+  friendly_name: qwe
+automation.1519631903:
+  friendly_name: qwe
+automation.1519632067:
+  friendly_name: ert
+automation.1519632524:
+  friendly_name: '123'
+automation.1519632567:
+  friendly_name: '1234'
+automation.1519634303:
+  friendly_name: 看记录
+light.lightd1:
+  friendly_name: 二路单火灯
+light.lightfec51:
+  friendly_name: 三路单火灯
+light.lightfec52:
+  friendly_name: 三路单火灯
+light.lightfec53:
+  friendly_name: 三路单火灯
+automation.1519694775:
+  friendly_name: '11'
+automation.1519694838:
+  friendly_name: 吧
+automation.1519697285:
+  friendly_name: yy
+automation.1519713458:
+  friendly_name: '33'
+automation.1519713945:
+  friendly_name: zz
+automation.1519714038:
+  friendly_name: z1
+automation.1519714070:
+  friendly_name: z
+automation.1519714120:
+  friendly_name: t1
+automation.1519714634:
+  friendly_name: t2
+automation.1519715017:
+  friendly_name: t3
+automation.1519715248:
+  friendly_name: t4
+automation.1519715455:
+  friendly_name: t5
+automation.1519715529:
+  friendly_name: t4
+automation.1519715805:
+  friendly_name: '999'
+automation.1519716269:
+  friendly_name: t5
+automation.1519716461:
+  friendly_name: t5
+automation.1519722694:
+  friendly_name: '222'
+automation.1519722740:
+  friendly_name: '22'
+automation.1519801544:
+  friendly_name: ''
+automation.1519801799:
+  friendly_name: '556666'
+automation.1519801861:
+  friendly_name: ''
+automation.1519802984:
+  friendly_name: ''
+automation.1519810564:
+  friendly_name: a1
+automation.1519811075:
+  friendly_name: a2
+automation.1519872185:
+  friendly_name: '22'
