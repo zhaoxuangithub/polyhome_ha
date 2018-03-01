@@ -48,40 +48,69 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     def handle_event(event):
         """Listener to handle fired events"""
-        bytearr = event.data.get('data')
-        if bytearr[0] == '0xa0' and bytearr[5] == '0xb0':
-            mac_l, mac_h = bytearr[6].replace('0x', ''), bytearr[7].replace('0x', '')
+        pack_list = event.data.get('data')
+        if pack_list[0] == '0xa0' and pack_list[5] == '0xb0':
+            mac_l, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in lights if dev.mac == mac_str), None)
             if dev is not None:
-                if bytearr[9] == '0x1':
+                if pack_list[9] == '0x1':
                     dev.set_state(True)
-                elif bytearr[9] == '0x0':
+                elif pack_list[9] == '0x0':
                     dev.set_state(False)
-                brightness = int(bytearr[10].replace('0x', ''), 16)
+                brightness = int(pack_list[10].replace('0x', ''), 16)
                 dev.set_brightness(brightness)
-        if bytearr[0] == '0xc0' and bytearr[6] == '0x41':
-            mac_l, mac_h = bytearr[2].replace('0x', ''), bytearr[3].replace('0x', '')
+        if pack_list[0] == '0xc0' and pack_list[6] == '0x41':
+            mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in lights if dev.mac == mac_str), None)
             if dev is not None:
                 dev.set_available(False)  
-        if bytearr[0] == '0xa0' and bytearr[5] == '0xb0' and bytearr[8] == '0xcc':
+        if pack_list[0] == '0xa0' and pack_list[5] == '0xb0' and pack_list[8] == '0xcc':
             """heart beat"""
-            mac_l, mac_h = bytearr[2].replace('0x', ''), bytearr[3].replace('0x', '')
+            mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in lights if dev.mac == mac_str), None)
             if dev is None:
                 return
             dev.set_available(True)
             if dev is not None:
-                if bytearr[9] == '0x1':
+                if pack_list[9] == '0x1':
                     dev.set_state(True)
-                elif bytearr[9] == '0x0':
+                elif pack_list[9] == '0x0':
                     dev.set_state(False)
-                brightness = int(bytearr[10].replace('0x', ''), 16)
+                brightness = int(pack_list[10].replace('0x', ''), 16)
                 dev.set_brightness(brightness)
             dev.heart_beat()
+        if pack_list[0] == '0xa0' and pack_list[5] == '0xb0' and pack_list[8] == '0x77':
+            # device status
+            mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
+            mac_str = mac_l + '#' + mac_h
+            dev = next((dev for dev in lights if dev.mac == mac_str), None)
+            if dev is None:
+                return
+            dev.set_available(True)
+            dev.heart_beat()
+            if pack_list[9] == '0x1':
+                dev.set_state(True)
+            elif pack_list[9] == '0x0':
+                dev.set_state(False)
+            brightness = int(pack_list[10].replace('0x', ''), 16)
+            dev.set_brightness(brightness)
+            if not pack_list[22] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[22:27]})
+            if not pack_list[27] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[27:32]})
+            if not pack_list[32] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[32:37]})
+            if not pack_list[37] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[37:42]})
+            if not pack_list[42] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[42:47]})
+            if not pack_list[47] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[47:52]})
+            if not pack_list[52] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[52:57]})
             
     # Listen for when zigbee_data_event is fired
     hass.bus.listen(EVENT_ZIGBEE_RECV, handle_event)
@@ -90,12 +119,8 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     def handle_time_changed_event(call):
         now = time.time()
         for device in lights:
-            # print(device.entity_id)
-            # print(round(now - device.heart_time_stamp))
             if round(now - device.heart_time_stamp) > 60 * 30:
-                _LOGGER.error('====dimlight device=====')
                 device.set_available(False)
-                _LOGGER.error('====dimlight device=====')
         hass.loop.call_later(60, handle_time_changed_event, '')
         
     hass.loop.call_later(60, handle_time_changed_event, '')

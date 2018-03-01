@@ -1,14 +1,1 @@
-2018-03-01 09:41:27 ERROR (MainThread) [homeassistant.core] Error doing job: Future exception was never retrieved
-Traceback (most recent call last):
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/concurrent/futures/thread.py", line 55, in run
-    result = self.fn(*self.args, **self.kwargs)
-  File "/Users/zhangxuesong/work/polyhome_ha_config/custom_components/light/polylight3.py", line 107, in event_zigbee_device_status_handler
-    s_bin = int(s_hex, 2)
-TypeError: int() can't convert non-string with explicit base
-2018-03-01 09:41:27 ERROR (MainThread) [homeassistant.core] Error doing job: Future exception was never retrieved
-Traceback (most recent call last):
-  File "/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/concurrent/futures/thread.py", line 55, in run
-    result = self.fn(*self.args, **self.kwargs)
-  File "/Users/zhangxuesong/work/polyhome_ha_config/custom_components/light/polylight3.py", line 107, in event_zigbee_device_status_handler
-    s_bin = int(s_hex, 2)
-TypeError: int() can't convert non-string with explicit base
+2018-03-01 14:23:38 ERROR (MainThread) [homeassistant.config] Invalid config for [automation]: [entity_id] is an invalid option for [automation]. Check: automation->trigger->0->entity_id. (See /Users/zhangxuesong/work/polyhome_ha_config_github/configuration.yaml, line 20). Please check the docs at https://home-assistant.io/components/automation/

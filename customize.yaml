@@ -85,10 +85,30 @@ automation.1519801799:
 automation.1519801861:
   friendly_name: ''
 automation.1519802984:
-  friendly_name: ''
+  friendly_name: '1234'
 automation.1519810564:
   friendly_name: a1
 automation.1519811075:
   friendly_name: a2
 automation.1519872185:
   friendly_name: '22'
+automation.1519874574:
+  friendly_name: a2
+automation.1519874597:
+  friendly_name: a2
+automation.1519874642:
+  friendly_name: a2
+automation.1519874664:
+  friendly_name: a2
+automation.1519885535:
+  friendly_name: '1'
+automation.1519886030:
+  friendly_name: '22'
+automation.1519886056:
+  friendly_name: '33'
+automation.1519886255:
+  friendly_name: t1
+automation.1519886861:
+  friendly_name: t2
+automation.1519887467:
+  friendly_name: '1'
