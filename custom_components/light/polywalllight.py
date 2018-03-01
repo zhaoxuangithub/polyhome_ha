@@ -1,10 +1,11 @@
 import logging
 import voluptuous as vol
+import time
 
 # Import the device class from the component that you want to support
-from homeassistant.components.light import ATTR_BRIGHTNESS, Light, PLATFORM_SCHEMA
+from homeassistant.components.light import Light, PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
-import util.algorithm as checkcrc
+import polyhome.util.algorithm as checkcrc
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -13,12 +14,12 @@ POLY_ZIGBEE_DOMAIN = 'poly_zb_uart'
 POLY_ZIGBEE_SERVICE = 'send_d'
 EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 
-BYTES_OPEN = [0x80, 0x00, 0xb4, 0x53, 0x5, 0x44, 0xb4, 0x53, 0x92, 0x1, 0xa2]
-BYTES_CLOSE = [0x80, 0x00, 0xb4, 0x53, 0x5, 0x44, 0xb4, 0x53, 0x92, 0x0, 0xa3]
+CMD_OPEN = [0x80, 0x00, 0xb4, 0x53, 0x5, 0x44, 0xb4, 0x53, 0x92, 0x1, 0xa2]
+CMD_CLOSE = [0x80, 0x00, 0xb4, 0x53, 0x5, 0x44, 0xb4, 0x53, 0x92, 0x0, 0xa3]
 
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Optional('name'): cv.string,
+    vol.Optional('name'): cv.string
 })
 
 
@@ -27,7 +28,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     lights = []
     if discovery_info is not None:
-        # Not using hostname, as it seems to vary.
         device = {'name': discovery_info['name'], 'mac': discovery_info['mac']}
         lights.append(PolyLight(hass, device, None))
     else:
@@ -39,40 +39,77 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     def handle_event(event):
         """Listener to handle fired events"""
-        bytearr = event.data.get('data')
-        if (bytearr[0] == '0xa0') and (bytearr[5] == '0xf1'):
-            mac_l, mac_h = bytearr[6].replace('0x', ''), bytearr[7].replace('0x', '')
+        pack_list = event.data.get('data')
+        if (pack_list[0] == '0xa0') and (pack_list[5] == '0xf1'):
+            mac_l, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in lights if dev.mac == mac_str), None)
             if dev is not None:
-                if bytearr[9] == '0x1':
-                    hass.states.set('light.' + dev.name, 'on')
-                    hass.services.call("poly_mqtt", "pub_data", {"data": "walllight close"})
-                elif bytearr[9] == '0x0':
-                    hass.states.set('light.' + dev.name, 'off')
-                    hass.services.call("poly_mqtt", "pub_data", {"data": "walllight open"})
-        if bytearr[0] == '0xc0' and bytearr[6] == '0x41':
-            mac_l, mac_h = bytearr[2].replace('0x', ''), bytearr[3].replace('0x', '')
+                if pack_list[9] == '0x1':
+                    dev.set_state(True)
+                elif pack_list[9] == '0x0':
+                    dev.set_state(False)
+        if pack_list[0] == '0xc0' and pack_list[6] == '0x41':
+            mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in lights if dev.mac == mac_str), None)
             if dev is not None:
-                hass.states.set('light.' + dev.name, 'unavailable')
-        
+                dev.set_availible(False)
+        if pack_list[0] == '0xa0' and pack_list[5] == '0xf1' and pack_list[8] == '0x77':
+            # device status
+            mac_l, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
+            mac_str = mac_l + '#' + mac_h
+            dev = next((dev for dev in lights if dev.mac == mac_str), None)
+            if dev is None:
+                return
+            dev.set_available(True)
+            dev.heart_beat()
+            if pack_list[9] == '0x1':
+                dev.set_state(True)
+            elif pack_list[9] == '0x0':
+                dev.set_state(False)
+            if not pack_list[22] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[22:27]})
+            if not pack_list[27] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[27:32]})
+            if not pack_list[32] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[32:37]})
+            if not pack_list[37] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[37:42]})
+            if not pack_list[42] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[42:47]})
+            if not pack_list[47] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[47:52]})
+            if not pack_list[52] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[52:57]})
+           
     # Listen for when zigbee_data_event is fired
     hass.bus.listen(EVENT_ZIGBEE_RECV, handle_event)
+
+    # device online check
+    def handle_time_changed_event(call):
+        now = time.time()
+        for device in lights:
+            if round(now - device.heart_time_stamp) > 60 * 30:
+                device.set_available(False)
+        hass.loop.call_later(60, handle_time_changed_event, '')
+        
+    hass.loop.call_later(60, handle_time_changed_event, '')
 
 
 class PolyLight(Light):
     """Representation of an Polyhome Light."""
 
     def __init__(self, hass, device, dev_conf):
-        """Initialize an AwesomeLight."""
+        """Initialize an Light."""
         self._hass = hass
         self._device = device
         self._name = device['name']
         self._mac = device['mac']
         self._config = dev_conf
-        self._state = None
+        self._state = True
+        self._available = True
+        self._heart_timestamp = time.time()
 
     @property
     def name(self):
@@ -89,25 +126,47 @@ class PolyLight(Light):
         """Return true if light is on."""
         return self._state
 
+    @property
+    def available(self):
+        """Return if bulb is available."""
+        return self._available
+
+    @property
+    def heart_time_stamp(self):
+        """heart timestamp"""
+        return self._heart_timestamp
+
+    def set_availible(self, availible):
+        self._availible = availible
+
+    def set_state(self, state):
+        self._state = state
+        self.schedule_update_ha_state()
+
     def turn_on(self, **kwargs):
         """turn on"""
         mac = self._mac.split('#')
-        BYTES_OPEN[2], BYTES_OPEN[3] = int(mac[0], 16), int(mac[1], 16)
-        BYTES_OPEN[6], BYTES_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
-        resu_crc = checkcrc.xorcrc_hex(BYTES_OPEN)
-        BYTES_OPEN[-1] = resu_crc
-        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_OPEN})
+        CMD_OPEN[2], CMD_OPEN[3] = int(mac[0], 16), int(mac[1], 16)
+        CMD_OPEN[6], CMD_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
+        resu_crc = checkcrc.xorcrc_hex(CMD_OPEN)
+        CMD_OPEN[-1] = resu_crc
+        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_OPEN})
         self._state = True
 
     def turn_off(self, **kwargs):
         """Instruct the light to turn off."""
         mac = self._mac.split('#')
-        BYTES_CLOSE[2], BYTES_CLOSE[3] = int(mac[0], 16), int(mac[1], 16)
-        BYTES_CLOSE[6], BYTES_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
-        resu_crc = checkcrc.xorcrc_hex(BYTES_CLOSE)
-        BYTES_CLOSE[-1] = resu_crc
-        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_CLOSE})
+        CMD_CLOSE[2], CMD_CLOSE[3] = int(mac[0], 16), int(mac[1], 16)
+        CMD_CLOSE[6], CMD_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
+        resu_crc = checkcrc.xorcrc_hex(CMD_CLOSE)
+        CMD_CLOSE[-1] = resu_crc
+        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_CLOSE})
         self._state = False
 
     def update(self):
         self._state = self.is_on
+
+    def heart_beat(self):
+        self._heart_timestamp = time.time()
+        entity_id = 'light.' + self.name
+        self._hass.services.call('gateway', 'publish_heart_beat', {'entity_id': entity_id})

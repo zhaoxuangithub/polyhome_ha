@@ -10,18 +10,6 @@
     to: open
 - action:
   - data:
-      entity_id: light.lightd12
-    service: light.turn_on
-  alias: '1519886861'
-  condition:
-    condition: and
-    conditions: []
-  id: '1519886861'
-  trigger:
-  - event_type: binary_sensor.panel44a0_1_pressed
-    platform: event
-- action:
-  - data:
       entity_id: media_player.yodar97f
     service: media_player.turn_on
   alias: '1519887467'
@@ -32,3 +20,59 @@
   trigger:
   - event_type: binary_sensor.panel44a0_1_pressed
     platform: event
+- action:
+  - data:
+      entity_id: light.lnlight1a621
+    service: light.turn_on
+  - data:
+      entity_id: light.dimlight53a
+    service: light.turn_off
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.media_previous_track
+  - data:
+      entity_id: switch.socket2b17
+    service: switch.turn_off
+  - data:
+      entity_id: light.lightfec53
+    service: light.turn_on
+  alias: '1519890785'
+  condition:
+    condition: and
+    conditions: []
+  id: '1519890785'
+  trigger:
+  - event_type: binary_sensor.panel44a0_2_pressed
+    platform: event
+- action:
+  - data:
+      entity_id: light.lightfec53
+    service: light.turn_on
+  - data:
+      entity_id: light.lightd12
+    service: light.turn_on
+  alias: '1519891265'
+  condition:
+    condition: or
+    conditions:
+    - after: '16:59'
+      before: '16:59'
+      condition: time
+    - after: sunrise
+      condition: sun
+    - after: sunset
+      condition: sun
+    - condition: state
+      entity_id: media_player.yodar97f
+      state: turn_off
+  id: '1519891265'
+  trigger:
+  - at: '16:59'
+    platform: time
+  - event: sunrise
+    platform: sun
+  - event: sunset
+    platform: sun
+  - entity_id: media_player.yodar97f
+    platform: state
+    to: turn_off
