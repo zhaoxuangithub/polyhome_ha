@@ -13,8 +13,8 @@ POLY_ZIGBEE_DOMAIN = 'poly_zb_uart'
 POLY_ZIGBEE_SERVICE = 'send_d'
 EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 
-CMD_OPEN = [0x80, 0x00, 0xb4, 0x53, 0x5, 0x44, 0xb4, 0x53, 0x92, 0x1, 0xa2]
-CMD_CLOSE = [0x80, 0x00, 0xb4, 0x53, 0x5, 0x44, 0xb4, 0x53, 0x92, 0x0, 0xa3]
+CMD_OPEN = [0x80, 0x00, 0xb4, 0x53, 0x5, 0x44, 0xb4, 0x53, 0x92, 0x1, 0xff]
+CMD_CLOSE = [0x80, 0x00, 0xb4, 0x53, 0x5, 0x44, 0xb4, 0x53, 0x92, 0x0, 0xff]
 
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
@@ -36,7 +36,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     add_devices(lights, True)
 
-    def handle_event(event):
+    def event_zigbee_recv_handler(event):
         """Listener to handle fired events"""
         pack_list = event.data.get('data')
         if (pack_list[0] == '0xa0') and (pack_list[5] == '0xf1'):
@@ -69,7 +69,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                 dev.set_state(False)
             
     # Listen for when zigbee_data_event is fired
-    hass.bus.listen(EVENT_ZIGBEE_RECV, handle_event)
+    hass.bus.listen(EVENT_ZIGBEE_RECV, event_zigbee_recv_handler)
 
     # device online check
     def handle_time_changed_event(call):
