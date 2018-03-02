@@ -37,11 +37,11 @@ automation.1519634303:
 light.lightd1:
   friendly_name: 二路单火灯
 light.lightfec51:
-  friendly_name: 三路单火灯
+  friendly_name: 三路单火灯1
 light.lightfec52:
-  friendly_name: 三路单火灯
+  friendly_name: 三路单火灯2
 light.lightfec53:
-  friendly_name: 三路单火灯
+  friendly_name: 三路单火灯3
 automation.1519694775:
   friendly_name: '11'
 automation.1519694838:
@@ -142,3 +142,11 @@ automation.1519897891:
   friendly_name: '11'
 automation.1519898109:
   friendly_name: '2222'
+light.lightd11:
+  friendly_name: 二路单火灯1
+light.lightd12:
+  friendly_name: 二路单火灯2
+light.polylnlight8c1:
+  friendly_name: 三路零火灯
+light.dimlight53a:
+  friendly_name: 调光开关

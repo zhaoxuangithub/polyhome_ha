@@ -37,7 +37,7 @@ POLY_ZIGBEE_DOMAIN = 'poly_zb_uart'
 POLY_ZIGBEE_SERVICE = 'send_d'
 EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 VERSION = '1.0.1_1.0.0_beta'
-
+UART_PATH = '/dev/tty.usbserial'
 CMD_EDIT_DONGLE = [0x80, 0x0, 0x0, 0x0, 0x19, 0x44, 0x0, 0x0, 0xf, 0x0, 0x0, \
                     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, \
                     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xe3]
@@ -381,7 +381,8 @@ def setup(hass, config):
                 name_mgr = FriendlyNameManager(hass, config)
                 if mgr.add_plugin(pack):
                     discovery.load_platform(hass, 'light', data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
-                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                name_mgr.edit_friendly_name(pack['entity_id'] + '1', friendly_name + '1')
+                name_mgr.edit_friendly_name(pack['entity_id'] + '2', friendly_name + '2')
                 data = {'entity_id': pack['entity_id'] + '1', 'friendly_name': friendly_name}
                 data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
                 notity_client_device_into_net(data_obj)
@@ -398,9 +399,9 @@ def setup(hass, config):
                 name_mgr = FriendlyNameManager(hass, config)
                 if mgr.add_plugin(pack):
                     discovery.load_platform(hass, 'light', data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
-                name_mgr.edit_friendly_name(pack['entity_id'] + '1', friendly_name)
-                name_mgr.edit_friendly_name(pack['entity_id'] + '2', friendly_name)
-                name_mgr.edit_friendly_name(pack['entity_id'] + '3', friendly_name)
+                name_mgr.edit_friendly_name(pack['entity_id'] + '1', friendly_name + '1')
+                name_mgr.edit_friendly_name(pack['entity_id'] + '2', friendly_name + '2')
+                name_mgr.edit_friendly_name(pack['entity_id'] + '3', friendly_name + '3')
                 data = {'entity_id': pack['entity_id'] + '1', 'friendly_name': friendly_name}
                 data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
                 notity_client_device_into_net(data_obj)
@@ -740,7 +741,7 @@ def setup(hass, config):
     
 
     # setup zigbee dongle component /dev/tty.usbserial
-    zigbee_conf = {'poly_zigbee': {'baudbrate': 57600, 'uartpath': '/dev/tty.usbserial'}}
+    zigbee_conf = {'poly_zigbee': {'baudbrate': 57600, 'uartpath': UART_PATH}}
     Setup.setup_component(hass, 'poly_zigbee', zigbee_conf)
     Setup.setup_component(hass, 'poly_mqtt', config)
     
