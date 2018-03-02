@@ -39,148 +39,121 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Setup the Polyhome CoverDevice platform."""
 
-    curtains2 = []
+     = []
     if discovery_info is not None:
         # Not using hostname, as it seems to vary.
         device = {'name': discovery_info['name'] + '1', 'mac': discovery_info['mac'], 'way': '1'}
         device1 = {'name': discovery_info['name'] + '2', 'mac': discovery_info['mac'], 'way': '2'}
-        curtains2.append(RMCover(hass, device, None))
-        curtains2.append(RMCover(hass, device1, None))
+        .append(RMCover(hass, device, None))
+        .append(RMCover(hass, device1, None))
     else:
         for mac, device_config in config['devices'].items():
             device = {'name': device_config['name'] + '1', 'mac': mac, 'way': '1'}
             device1 = {'name': device_config['name'] + '2', 'mac': mac, 'way': '2'}
-            curtains2.append(RMCover(hass, device, device_config))
-            curtains2.append(RMCover(hass, device1, device_config))
+            .append(RMCover(hass, device, device_config))
+            .append(RMCover(hass, device1, device_config))
 
-    add_devices(curtains2, True)
+    add_devices(, True)
 
     def handle_event(event):
         """Listener to handle fired events."""
         pack_list = event.data.get('data')
         if pack_list[0] == '0xa0' and pack_list[5] == '0x1':
-            mac_1 = pack_list[6].replace('0x', '')
-            mac_h = pack_list[7].replace('0x', '')
+            mac_1, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_1 + "#" + mac_h
-            for dev in curtains2:
-                if dev.mac == mac_str:
-                    # 1关
+            for dev in :
+                if mac_str in dev.mac:
                     if pack_list[9] == '0x0':
                         if dev.way == '1':
                             dev.set_closed(True)
-                            hass.services.call("poly_mqtt", "pub_data", {
-                                "data": "curtain2_1 close"
-                            })
-                    # 1开
                     elif pack_list[9] == '0x1':
                         if dev.way == '1':
                             dev.set_closed(False)
-                            hass.services.call("poly_mqtt", "pub_data", {
-                                "data": "curtain2_1 open"
-                            })
                     else:
                         if dev.way == '1':
                             dev.set_closed(True)
-                            hass.services.call("poly_mqtt", "pub_data", {
-                                "data": "curtain2_1 stop"
-                            })
-                    # 2关
                     if pack_list[10] == '0x0':
                         if dev.way == '2':
                             dev.set_closed(True)
-                            hass.services.call("poly_mqtt", "pub_data", {
-                                "data": "curtain2_2 close"
-                            })
-                    # 2开
                     elif pack_list[10] == '0x1':
                         if dev.way == '2':
                             dev.set_closed(False)
-                            hass.services.call("poly_mqtt", "pub_data", {
-                                "data": "curtain2_2 open"
-                            })
                     else:
                         if dev.way == '2':
                             dev.set_closed(True)
-                            hass.services.call("poly_mqtt", "pub_data", {
-                                "data": "curtain2_2 stop"
-                            })
 
         if pack_list[0] == '0xc0':
-            mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace(
-                '0x', '')
+            mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
-            dev = next((dev for dev in curtains2 if dev.mac == mac_str), None)
-            if dev is None:
-                return
-            if pack_list[6] == '0x41':
-                dev.set_available(False)
-            if pack_list[6] == '0x40':
-                dev.set_available(True)
-        if pack_list[0] == '0xa0' and pack_list[5] == '0x1' and pack_list[8] == '0x77':
-            # device status
-            mac_1 = pack_list[6].replace('0x', '')
-            mac_h = pack_list[7].replace('0x', '')
+            for dev in :
+                if mac_str in dev.mac:
+                    if pack_list[6] == '0x41':
+                        dev.set_available(False)
+                    if pack_list[6] == '0x40':
+                        dev.set_available(True)
+        if pack_list[0] == '0xa0' and pack_list[5] == '0x1' and pack_list[8] == '0xcc':
+            # device heart_beat
+            mac_1, mac_h= pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_1 + "#" + mac_h
-            for dev in curtains2:
-                if dev.mac == mac_str:
-                    # 1关
+            for dev in :
+                if mac_str in dev.mac:
+                    dev.set_available(True)
+                    dev.heart_beat()
                     if pack_list[9] == '0x0':
                         if dev.way == '1':
                             dev.set_closed(True)
-                            hass.services.call("poly_mqtt", "pub_data", {
-                                "data": "curtain2_1 close"
-                            })
-                    # 1开
                     elif pack_list[9] == '0x1':
                         if dev.way == '1':
                             dev.set_closed(False)
-                            hass.services.call("poly_mqtt", "pub_data", {
-                                "data": "curtain2_1 open"
-                            })
                     else:
                         if dev.way == '1':
                             dev.set_closed(True)
-                            hass.services.call("poly_mqtt", "pub_data", {
-                                "data": "curtain2_1 stop"
-                            })
-                    # 2关
                     if pack_list[10] == '0x0':
                         if dev.way == '2':
                             dev.set_closed(True)
-                            hass.services.call("poly_mqtt", "pub_data", {
-                                "data": "curtain2_2 close"
-                            })
-                    # 2开
                     elif pack_list[10] == '0x1':
                         if dev.way == '2':
                             dev.set_closed(False)
-                            hass.services.call("poly_mqtt", "pub_data", {
-                                "data": "curtain2_2 open"
-                            })
                     else:
                         if dev.way == '2':
                             dev.set_closed(True)
-                            hass.services.call("poly_mqtt", "pub_data", {
-                                "data": "curtain2_2 stop"
-                            })
-
-            if not pack_list[22] == '0xff':
-                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[22:27]})
-            if not pack_list[27] == '0xff':
-                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[27:32]})
-            if not pack_list[32] == '0xff':
-                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[32:37]})
-            if not pack_list[37] == '0xff':
-                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[37:42]})
-            if not pack_list[42] == '0xff':
-                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[42:47]})
-            if not pack_list[47] == '0xff':
-                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[47:52]})
-            if not pack_list[52] == '0xff':
-                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[52:57]})
-               
+        if pack_list[0] == '0xa0' and pack_list[5] == '0x1' and pack_list[8] == '0x77':
+            # device status
+            mac_1, mac_h= pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
+            mac_str = mac_1 + "#" + mac_h
+            for dev in :
+                if mac_str in dev.mac:
+                    if pack_list[9] == '0x0':
+                        if dev.way == '1':
+                            dev.set_closed(True)
+                    elif pack_list[9] == '0x1':
+                        if dev.way == '1':
+                            dev.set_closed(False)
+                    else:
+                        if dev.way == '1':
+                            dev.set_closed(True)
+                    if pack_list[10] == '0x0':
+                        if dev.way == '2':
+                            dev.set_closed(True)
+                    elif pack_list[10] == '0x1':
+                        if dev.way == '2':
+                            dev.set_closed(False)
+                    else:
+                        if dev.way == '2':
+                            dev.set_closed(True)
+                            
     # Listen for when zigbee_data_event is fired
     hass.bus.listen(EVENT_ZIGBEE_RECV, handle_event)
+
+    # device online check
+    def handle_time_changed_event(call):
+        now = time.time()
+        for device in curtains:
+            if round(now - device.heart_time_stamp) > 60 * 30:
+                device.set_available(False)
+        hass.loop.call_later(60, handle_time_changed_event, '')
+        
+    hass.loop.call_later(60, handle_time_changed_event, '')
 
     return True
 
@@ -196,9 +169,10 @@ class RMCover(CoverDevice):
         self._mac = device['mac']
         self._way = device['way']
         self._config = dev_conf
-        self._state = None
+        self._state = True
         self._closed = True
         self._available = True
+        self._heart_timestamp = time.time()
 
     @property
     def name(self):
@@ -223,6 +197,10 @@ class RMCover(CoverDevice):
     def available(self):
         """Return if bulb is available."""
         return self._available
+
+    @property
+    def heart_time_stamp(self):
+        return self._heart_timestamp
 
     def set_available(self, available):
         self._available = available
@@ -292,18 +270,14 @@ class RMCover(CoverDevice):
             BYTES_OPEN[-6] = 0x1
             resu_crc = checkcrc.xorcrc_hex(BYTES_OPEN)
             BYTES_OPEN[-1] = resu_crc
-            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {
-                "data": BYTES_OPEN
-            })
+            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_OPEN})
             time.sleep(0.4)
             BYTES_OPEN[2], BYTES_OPEN[3] = int(mac[0], 16), int(mac[1], 16)
             BYTES_OPEN[6], BYTES_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
             BYTES_OPEN[-6] = 0x0
             resu_crc = checkcrc.xorcrc_hex(BYTES_OPEN)
             BYTES_OPEN[-1] = resu_crc
-            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {
-                "data": BYTES_OPEN
-            })
+            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_OPEN})
         elif self._way == '2':
             # 0x80, 0x00, 0x1f, 0xa4, 0x10, 0x44, 0x1f, 0xa4, 0x60, 0x3, 0x0, 0x2, 0x0,
             # 0x7, 0x0, 0x6, 0x1, 0x5, 0x0, 0x4, 0x0, 0xb4
@@ -315,9 +289,7 @@ class RMCover(CoverDevice):
             BYTES_OPEN[-6] = 0x0
             resu_crc = checkcrc.xorcrc_hex(BYTES_OPEN)
             BYTES_OPEN[-1] = resu_crc
-            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {
-                "data": BYTES_OPEN
-            })
+            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_OPEN})
             time.sleep(0.4)
             BYTES_OPEN[2], BYTES_OPEN[3] = int(mac[0], 16), int(mac[1], 16)
             BYTES_OPEN[6], BYTES_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
@@ -325,9 +297,7 @@ class RMCover(CoverDevice):
             BYTES_OPEN[-6] = 0x0
             resu_crc = checkcrc.xorcrc_hex(BYTES_OPEN)
             BYTES_OPEN[-1] = resu_crc
-            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {
-                "data": BYTES_OPEN
-            })
+            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_OPEN})
 
     def stop_cover(self, **kwargs):
         """Stop the cover."""
@@ -341,18 +311,14 @@ class RMCover(CoverDevice):
             BYTES_STOP[-2] = 0x1
             resu_crc = checkcrc.xorcrc_hex(BYTES_STOP)
             BYTES_STOP[-1] = resu_crc
-            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {
-                "data": BYTES_STOP
-            })
+            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_STOP})
             time.sleep(0.4)
             BYTES_STOP[2], BYTES_STOP[3] = int(mac[0], 16), int(mac[1], 16)
             BYTES_STOP[6], BYTES_STOP[7] = int(mac[0], 16), int(mac[1], 16)
             BYTES_STOP[-2] = 0x0
             resu_crc = checkcrc.xorcrc_hex(BYTES_STOP)
             BYTES_STOP[-1] = resu_crc
-            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {
-                "data": BYTES_STOP
-            })
+            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_STOP})
         elif self._way == '2':
             self._closed = True
             mac = self._mac.split('#')
@@ -361,18 +327,14 @@ class RMCover(CoverDevice):
             BYTES_STOP[-8] = 0x1
             resu_crc = checkcrc.xorcrc_hex(BYTES_STOP)
             BYTES_STOP[-1] = resu_crc
-            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {
-                "data": BYTES_STOP
-            })
+            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_STOP})
             time.sleep(0.4)
             BYTES_STOP[2], BYTES_STOP[3] = int(mac[0], 16), int(mac[1], 16)
             BYTES_STOP[6], BYTES_STOP[7] = int(mac[0], 16), int(mac[1], 16)
             BYTES_STOP[-8] = 0x0
             resu_crc = checkcrc.xorcrc_hex(BYTES_STOP)
             BYTES_STOP[-1] = resu_crc
-            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {
-                "data": BYTES_STOP
-            })
+            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_STOP})
 
     def heart_beat(self):
         entity_id = 'cover.' + self.name
