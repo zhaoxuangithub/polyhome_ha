@@ -4,7 +4,6 @@ import voluptuous as vol
 
 from homeassistant.components.lock import LockDevice
 from homeassistant.const import (STATE_LOCKED, STATE_UNLOCKED)
-import polyhome.util.algorithm as checkcrc
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -111,8 +110,6 @@ class YaleLock(LockDevice):
         mac = self._mac.split('#')
         CMD_LOCK_CLOSE[2], CMD_LOCK_CLOSE[3] = int(mac[0], 16), int(mac[1], 16)
         CMD_LOCK_CLOSE[6], CMD_LOCK_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
-        resu_crc = checkcrc.xorcrc_hex(CMD_LOCK_CLOSE)
-        CMD_LOCK_CLOSE[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {'data': CMD_LOCK_CLOSE})
 
     def unlock(self, **kwargs):
@@ -122,6 +119,4 @@ class YaleLock(LockDevice):
         mac = self._mac.split('#')
         CMD_LOCK_OPEN[2], CMD_LOCK_OPEN[3] = int(mac[0], 16), int(mac[1], 16)
         CMD_LOCK_OPEN[6], CMD_LOCK_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
-        resu_crc = checkcrc.xorcrc_hex(CMD_LOCK_OPEN)
-        CMD_LOCK_OPEN[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {'data': CMD_LOCK_OPEN})

@@ -4,7 +4,6 @@ import voluptuous as vol
 # Import the device class from the component that you want to support
 from homeassistant.components.light import Light, PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
-import polyhome.util.algorithm as checkcrc
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -167,8 +166,6 @@ class PolyLight(Light):
         mac = self._mac.split('#')
         CMD_OPEN[6], CMD_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
         CMD_OPEN[-3] = self._way
-        resu_crc = checkcrc.xorcrc_hex(CMD_OPEN)
-        CMD_OPEN[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_OPEN})
         self._state = True
 
@@ -179,8 +176,6 @@ class PolyLight(Light):
         mac = self._mac.split('#')
         CMD_CLOSE[6], CMD_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
         CMD_CLOSE[-3] = self._way
-        resu_crc = checkcrc.xorcrc_hex(CMD_CLOSE)
-        CMD_CLOSE[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_CLOSE})
         self._state = False
 

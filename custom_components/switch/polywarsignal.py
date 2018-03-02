@@ -5,7 +5,6 @@ import time
 
 from homeassistant.components.switch import SwitchDevice, PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
-import polyhome.util.algorithm as checkcrc
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -17,9 +16,9 @@ EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 
 
 #open 0x80,0x0,0x9c,0xa5,0x6,0x44,0x9c,0xa5,0x60,0x2,0x1,0xa1 mac 9c a5
-OPEN = [0x80, 0x0, 0x9c, 0xa5, 0x6, 0x44, 0x9c, 0xa5, 0x60, 0x2, 0x1, 0xa1]
+CMD_OPEN = [0x80, 0x0, 0x9c, 0xa5, 0x6, 0x44, 0x9c, 0xa5, 0x60, 0x2, 0x1, 0xa1]
 #close 0x80,0x0,0x9c,0xa5,0x6,0x44,0x9c,0xa5,0x60,0x2,0x0,0xa0 mac 9c a5
-CLOSE = [0x80, 0x0, 0x9c, 0xa5, 0x6, 0x44, 0x9c, 0xa5, 0x60, 0x2, 0x0, 0xa0]
+CMD_CLOSE = [0x80, 0x0, 0x9c, 0xa5, 0x6, 0x44, 0x9c, 0xa5, 0x60, 0x2, 0x0, 0xa0]
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional('name'): cv.string
@@ -154,19 +153,17 @@ class PolyWarsignal(SwitchDevice):
     def turn_on(self):
         """turn on"""
         mac = self._mac.split('#')
-        OPEN[2] = OPEN[6] = int(mac[0], 16)
-        OPEN[3] = OPEN[7] = int(mac[1], 16)
-        OPEN[-1] = checkcrc.xorcrc_hex(OPEN)
-        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {'data': OPEN})
+        CMD_OPEN[2] = CMD_OPEN[6] = int(mac[0], 16)
+        CMD_OPEN[3] = CMD_OPEN[7] = int(mac[1], 16)
+        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {'data': CMD_OPEN})
         self._state = True
 
     def turn_off(self):
         """turn off"""
         mac = self._mac.split('#')
-        CLOSE[2] = CLOSE[6] = int(mac[0], 16)
-        CLOSE[3] = CLOSE[7] = int(mac[1], 16)
-        CLOSE[-1] = checkcrc.xorcrc_hex(CLOSE)
-        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {'data': CLOSE})
+        CMD_CLOSE[2] = CMD_CLOSE[6] = int(mac[0], 16)
+        CMD_CLOSE[3] = CMD_CLOSE[7] = int(mac[1], 16)
+        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {'data': CMD_CLOSE})
         self._state = False
 
     def update(self):

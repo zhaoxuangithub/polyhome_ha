@@ -4,7 +4,6 @@ import voluptuous as vol
 
 from homeassistant.components.switch import SwitchDevice, PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
-import polyhome.util.algorithm as checkcrc
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -15,7 +14,7 @@ POLY_ZIGBEE_SERVICE = 'send_d'
 EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 
 #open 0x80,0x0,0x9c,0xa5,0x6,0x44,0x9c,0xa5,0x60,0x3,0x1,0xff mac 9c a5
-OPEN = [0x80, 0x0, 0x9c, 0xa5, 0x6, 0x44, 0x9c, 0xa5, 0x60, 0x3, 0x1, 0xff]
+CMD_OPEN = [0x80, 0x0, 0x9c, 0xa5, 0x6, 0x44, 0x9c, 0xa5, 0x60, 0x3, 0x1, 0xff]
 
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
@@ -135,11 +134,9 @@ class PolyPhone(SwitchDevice):
     def turn_on(self):
         """turn on"""
         mac = self._mac.split('#')
-        OPEN[2] = OPEN[6] = int(mac[0], 16)
-        OPEN[3] = OPEN[7] = int(mac[1], 16)
-        com_crc = checkcrc.xorcrc_hex(OPEN)
-        OPEN[-1] = com_crc
-        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {'data': OPEN})
+        CMD_OPEN[2] = CMD_OPEN[6] = int(mac[0], 16)
+        CMD_OPEN[3] = CMD_OPEN[7] = int(mac[1], 16)
+        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {'data': CMD_OPEN})
         self._state = True
 
     def turn_off(self):

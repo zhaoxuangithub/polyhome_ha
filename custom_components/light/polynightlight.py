@@ -4,7 +4,6 @@ import time
 
 from homeassistant.components.light import Light, PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
-import polyhome.util.algorithm as checkcrc
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -150,8 +149,6 @@ class PolyLight(Light):
         CMD_SET_TIME[2], CMD_SET_TIME[3] = int(mac[0], 16), int(mac[1], 16)
         CMD_SET_TIME[6], CMD_SET_TIME[7] = int(mac[0], 16), int(mac[1], 16)
         CMD_SET_TIME[9] = time
-        resu_crc = checkcrc.xorcrc_hex(CMD_SET_TIME)
-        CMD_SET_TIME[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_SET_TIME})
 
     def heart_beat(self):

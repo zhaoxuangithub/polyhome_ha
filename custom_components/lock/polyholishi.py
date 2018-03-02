@@ -1,7 +1,6 @@
 import logging
 import json
 import voluptuous as vol
-import json
 import os
 
 from homeassistant.util.yaml import load_yaml, dump
@@ -80,7 +79,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 
 class HoLiShiLock(LockDevice):
-    """Representation of a Demo lock."""
+    """HoLiShi lock Class."""
 
     def __init__(self, hass, config, device, dev_conf):
         """Initialize an PolyLock."""
@@ -123,11 +122,9 @@ class HoLiShiLock(LockDevice):
         CMD_LOCK_CLOSE[6], CMD_LOCK_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
         key_mgr = LockKeyManager(self._hass, self._config)
         lock_key = key_mgr.get_friendly_name(self._mac)
-        print(lock_key)
         CMD_LOCK_CLOSE[10] = int(lock_key[0].replace('0x', ''), 16)
         CMD_LOCK_CLOSE[11] = int(lock_key[1].replace('0x', ''), 16)
         CMD_LOCK_CLOSE[12] = int(lock_key[2].replace('0x', ''), 16)
-        print(checkcrc.crc8(CMD_LOCK_CLOSE[10:14]))
         CMD_LOCK_CLOSE[14] = checkcrc.sumup(CMD_LOCK_CLOSE[10:14])
         resu_crc = checkcrc.xorcrc_hex(CMD_LOCK_CLOSE)
         CMD_LOCK_CLOSE[-1] = resu_crc
@@ -145,7 +142,6 @@ class HoLiShiLock(LockDevice):
         CMD_LOCK_OPEN[10] = int(lock_key[0].replace('0x', ''), 16)
         CMD_LOCK_OPEN[11] = int(lock_key[1].replace('0x', ''), 16)
         CMD_LOCK_OPEN[12] = int(lock_key[2].replace('0x', ''), 16)
-        print(checkcrc.crc8(CMD_LOCK_OPEN[10:14]))
         CMD_LOCK_OPEN[14] = checkcrc.sumup(CMD_LOCK_OPEN[10:14])
         resu_crc = checkcrc.xorcrc_hex(CMD_LOCK_OPEN)
         CMD_LOCK_OPEN[-1] = resu_crc

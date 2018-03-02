@@ -4,13 +4,9 @@ import time
 
 import voluptuous as vol
 
-from homeassistant.const import CONF_DEVICES, CONF_NAME
-from homeassistant.components.light import (
-    ATTR_BRIGHTNESS, ATTR_RGB_COLOR, ATTR_TRANSITION, ATTR_COLOR_TEMP,
-    ATTR_FLASH, ATTR_XY_COLOR, FLASH_SHORT, FLASH_LONG, ATTR_EFFECT,
-    SUPPORT_BRIGHTNESS, Light, PLATFORM_SCHEMA)
+from homeassistant.const import (CONF_DEVICES, CONF_NAME)
+from homeassistant.components.light import (SUPPORT_BRIGHTNESS, Light, PLATFORM_SCHEMA)
 import homeassistant.helpers.config_validation as cv
-import polyhome.util.algorithm as checkcrc
 
 _LOGGER = logging.getLogger(__name__)
 
