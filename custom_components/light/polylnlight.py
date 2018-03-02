@@ -88,22 +88,8 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
             if pack_list[9] == '0x1':
                 dev.set_state(True)
             elif pack_list[9] == '0x0':
-                dev.set_state(False)
-            if not pack_list[22] == '0xff':
-                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[22:27]})
-            if not pack_list[27] == '0xff':
-                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[27:32]})
-            if not pack_list[32] == '0xff':
-                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[32:37]})
-            if not pack_list[37] == '0xff':
-                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[37:42]})
-            if not pack_list[42] == '0xff':
-                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[42:47]})
-            if not pack_list[47] == '0xff':
-                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[47:52]})
-            if not pack_list[52] == '0xff':
-                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[52:57]})
-                
+                dev.set_state(False)  
+
     # Listen for when zigbee_data_event is fired
     hass.bus.listen(EVENT_ZIGBEE_RECV, event_zigbee_recv_handler)
 

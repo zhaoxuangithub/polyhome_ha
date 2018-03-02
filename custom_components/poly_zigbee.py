@@ -29,12 +29,31 @@ def async_setup(hass, config):
 
     def callback_data_recv(frame):
         hass.bus.fire('zigbee_data_event', {'data': frame })
+        # Test for dispatcher lib
         # dispatcher_send(hass, SIGNAL_ZIGBEE_FRAME_RECEIVED, frame)
-
+        if frame[0] == '0xa0' and frame[8] == '0x77':
+            # device status package router and non-router binding
+            if not frame[22] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': frame[2:4], 'device': frame[22:27]})
+            if not frame[27] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': frame[2:4], 'device': frame[27:32]})
+            if not frame[32] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': frame[2:4], 'device': frame[32:37]})
+            if not frame[37] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': frame[2:4], 'device': frame[37:42]})
+            if not frame[42] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': frame[2:4], 'device': frame[42:47]})
+            if not frame[47] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': frame[2:4], 'device': frame[47:52]})
+            if not frame[52] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': frame[2:4], 'device': frame[52:57]})
+            
     phezsp_.add_callback(callback_data_recv)
     
     def send_data_service(call):
-        phezsp_.send(call.data.get('data'))
+        bytes = call.data.get('data')
+        bytes[-1] = checkcrc.xorcrc_hex(bytes)
+        phezsp_.send(bytes)
     
     hass.services.async_register(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, send_data_service)
 
