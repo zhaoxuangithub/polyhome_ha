@@ -180,19 +180,14 @@ class PolyDimLight(Light):
         BYTES_OPEN[2], BYTES_OPEN[3] = int(mac[0],16), int(mac[1],16)
         BYTES_OPEN[6], BYTES_OPEN[7] = int(mac[0],16), int(mac[1],16)
         BYTES_OPEN[11] = int(120 - brightness)
-        resu_crc = checkcrc.xorcrc_hex(BYTES_OPEN)
-        BYTES_OPEN[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_OPEN})
         self._state = True
 
     def turn_off(self, **kwargs):
-        """Instruct the light to turn off."""
-        print('close')
+        """turn off."""
         mac = self._mac.split('#')
         BYTES_CLOSE[2], BYTES_CLOSE[3] = int(mac[0],16), int(mac[1],16)
         BYTES_CLOSE[6], BYTES_CLOSE[7] = int(mac[0],16), int(mac[1],16)
-        resu_crc = checkcrc.xorcrc_hex(BYTES_CLOSE)
-        BYTES_CLOSE[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_CLOSE})
         self._state = False
 

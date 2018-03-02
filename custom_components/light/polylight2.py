@@ -95,13 +95,15 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                     mac_str = mac_l + '#' + mac_h
                     dev.set_router(mac_str)
                     s_int = int(device[3], 16)
-                    if dev.way == 1 and bin(s_int)[-1] == '1':
+                    s_str = bin(s_int).replace('0b', '')
+                    s_str = "{:0>2}".format(s_str)
+                    if dev.way == 1 and s_str[-1] == '1':
                         dev.set_state(True)
-                    if dev.way == 1 and bin(s_int)[-1] == '0':
+                    if dev.way == 1 and s_str[-1] == '0':
                         dev.set_state(False)
-                    if dev.way == 2 and bin(s_int)[-2] == '1':
+                    if dev.way == 2 and s_str[-2] == '1':
                         dev.set_state(True)
-                    if dev.way == 2 and bin(s_int)[-2] == '0':
+                    if dev.way == 2 and s_str[-2] == '0':
                         dev.set_state(False)
                     
     # Listen Device Status Event
