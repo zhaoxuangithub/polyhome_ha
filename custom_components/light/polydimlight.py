@@ -46,7 +46,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     add_devices(lights, True)
 
-    def handle_event(event):
+    def event_zigbee_recv_handler(event):
         """Listener to handle fired events"""
         pack_list = event.data.get('data')
         if pack_list[0] == '0xa0' and pack_list[5] == '0xb0':
@@ -74,6 +74,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
             if dev is None:
                 return
             dev.set_available(True)
+            dev.heart_beat()
             if dev is not None:
                 if pack_list[9] == '0x1':
                     dev.set_state(True)
@@ -81,7 +82,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                     dev.set_state(False)
                 brightness = int(pack_list[10].replace('0x', ''), 16)
                 dev.set_brightness(brightness)
-            dev.heart_beat()
         if pack_list[0] == '0xa0' and pack_list[5] == '0xb0' and pack_list[8] == '0x77':
             # device status
             mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
@@ -99,7 +99,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
             dev.set_brightness(brightness)
         
     # Listen for when zigbee_data_event is fired
-    hass.bus.listen(EVENT_ZIGBEE_RECV, handle_event)
+    hass.bus.listen(EVENT_ZIGBEE_RECV, event_zigbee_recv_handler)
 
     # device online check
     def handle_time_changed_event(call):

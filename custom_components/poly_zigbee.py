@@ -29,8 +29,7 @@ def async_setup(hass, config):
 
     def callback_data_recv(frame):
         hass.bus.fire('zigbee_data_event', {'data': frame })
-        # Test for dispatcher lib
-        # dispatcher_send(hass, SIGNAL_ZIGBEE_FRAME_RECEIVED, frame)
+
         if frame[0] == '0xa0' and frame[8] == '0x77':
             # device status package router and non-router binding
             if not frame[22] == '0xff':
@@ -47,7 +46,10 @@ def async_setup(hass, config):
                 hass.bus.fire('event_zigbee_device_status', {'router': frame[2:4], 'device': frame[47:52]})
             if not frame[52] == '0xff':
                 hass.bus.fire('event_zigbee_device_status', {'router': frame[2:4], 'device': frame[52:57]})
-            
+        
+        # Test for dispatcher lib
+        # dispatcher_send(hass, SIGNAL_ZIGBEE_FRAME_RECEIVED, frame)
+        
     phezsp_.add_callback(callback_data_recv)
     
     def send_data_service(call):
@@ -62,10 +64,13 @@ def async_setup(hass, config):
 
     hass.bus.async_listen_once('homeassistant_stop', close_serial_port)
 
-    # Routing and Non-routing binding
-    # 3 times to ensure reliable communication
-    for i in range(0,3):
-        phezsp_.send(CMD_DEVICES_STATUS)
-    
+    def broadcast_device_status(call):
+        # Routing and Non-routing binding
+        # 3 times to ensure reliable communication
+        for i in range(0,3):
+            phezsp_.send(CMD_DEVICES_STATUS)
+
+    hass.bus.async_listen_once('homeassistant_start', broadcast_device_status)
+
     return True
     

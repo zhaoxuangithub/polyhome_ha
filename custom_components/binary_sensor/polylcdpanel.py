@@ -23,7 +23,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Optional('name'): cv.string
 })
 
-SENCE_NAME_BYTES = [0x80, 0x00, 0x00, 0x2F, 0x0D, 0x44, 0x00, 0x2F, 0x69, 0x00, \
+SENCE_NAME_CMD = [0x80, 0x00, 0x00, 0x2F, 0x0D, 0x44, 0x00, 0x2F, 0x69, 0x00, \
                     0xA1, 0xA1, 0xA1, 0xA1, 0xA1, 0xA1, 0xA1, 0xA1, 0xFF]
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
@@ -139,17 +139,17 @@ class PolyLcdPanel(Entity):
         try:
             encode_name = name.encode('gbk')
             mac = self._mac.split('#')
-            SENCE_NAME_BYTES[2], SENCE_NAME_BYTES[3] = int(mac[0], 16), int(mac[1], 16)
-            SENCE_NAME_BYTES[6], SENCE_NAME_BYTES[7] = int(mac[0], 16), int(mac[1], 16)
-            SENCE_NAME_BYTES[9] = int(sence_id)
+            SENCE_NAME_CMD[2], SENCE_NAME_CMD[3] = int(mac[0], 16), int(mac[1], 16)
+            SENCE_NAME_CMD[6], SENCE_NAME_CMD[7] = int(mac[0], 16), int(mac[1], 16)
+            SENCE_NAME_CMD[9] = int(sence_id)
             for list_no in range(8):
                 if list_no < len(encode_name):
-                    SENCE_NAME_BYTES[10 + list_no] = encode_name[list_no]
+                    SENCE_NAME_CMD[10 + list_no] = encode_name[list_no]
                 else:
-                    SENCE_NAME_BYTES[10 + list_no] = 0xA1
-            resu_crc = checkcrc.xorcrc_hex(SENCE_NAME_BYTES)
-            SENCE_NAME_BYTES[-1] = resu_crc
-            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": SENCE_NAME_BYTES})
+                    SENCE_NAME_CMD[10 + list_no] = 0xA1
+            resu_crc = checkcrc.xorcrc_hex(SENCE_NAME_CMD)
+            SENCE_NAME_CMD[-1] = resu_crc
+            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": SENCE_NAME_CMD})
         except UnicodeError as e:
             pass
 
