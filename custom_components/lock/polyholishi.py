@@ -27,7 +27,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the Yale lock platform."""
     locks = []
     if discovery_info is not None:
-        # Not using hostname, as it seems to vary.
         device = {'name': discovery_info['name'], 'mac': discovery_info['mac']}
         locks.append(HoLiShiLock(hass, config, device, None))
     else:
@@ -58,7 +57,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
             if pack_list[9] == '0x2' and pack_list[-2] == '0xff':
                 key_mgr = LockKeyManager(hass, config)
                 key_mgr.edit_friendly_name(dev.mac, pack_list[10:13])     
-        elif pack_list[0] == '0xa0' and pack_list[5] == '0x0' and pack_list[8] == '0xcc':
+        if pack_list[0] == '0xa0' and pack_list[5] == '0x0' and pack_list[8] == '0xcc':
             """心跳"""
             mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
@@ -66,7 +65,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
             if dev is None:
                 return
             dev.set_available(True)
-        elif pack_list[0] == '0xc0':
+        if pack_list[0] == '0xc0':
             mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in locks if dev.mac == mac_str), None)

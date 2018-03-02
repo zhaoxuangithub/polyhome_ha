@@ -125,8 +125,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     def handle_time_changed_event(call):
         now = time.time()
         for device in sockets:
-            # print(device.entity_id)
-            # print(round(now - device.heart_time_stamp))
             if round(now - device.heart_time_stamp) > 60 * 30:
                 device.set_available(False)
         hass.loop.call_later(60, handle_time_changed_event, '')

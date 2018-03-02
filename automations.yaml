@@ -76,3 +76,97 @@
   - entity_id: media_player.yodar97f
     platform: state
     to: turn_off
+- action:
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.turn_off
+  alias: '1519892714'
+  condition:
+    condition: and
+    conditions: []
+  id: '1519892714'
+  trigger:
+  - event_type: binary_sensor.door115_on_pressed
+    platform: event
+- action:
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.playing
+  alias: '1519893067'
+  condition:
+    condition: and
+    conditions: []
+  id: '1519893067'
+  trigger: []
+- action:
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.media_next_track
+  alias: '1519896646'
+  condition:
+    condition: and
+    conditions: []
+  id: '1519896646'
+  trigger:
+  - event_type: binary_sensor.door115_off_pressed
+    platform: event
+- action:
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.off
+  alias: '1519897016'
+  condition:
+    condition: or
+    conditions:
+    - after: '19:36'
+      before: '19:36'
+      condition: time
+    - condition: state
+      entity_id: switch.socket2b17
+      state: 'on'
+  id: '1519897016'
+  trigger:
+  - at: '19:36'
+    platform: time
+  - entity_id: switch.socket2b17
+    platform: state
+    to: 'on'
+- action:
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.media_previous_track
+  alias: '1519897051'
+  condition:
+    condition: and
+    conditions: []
+  id: '1519897051'
+  trigger:
+  - event_type: binary_sensor.door115_on_pressed
+    platform: event
+- action:
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.media_previous_track
+  - data:
+      entity_id: switch.socket2b17
+    service: switch.turn_on
+  alias: '1519897210'
+  condition:
+    condition: and
+    conditions: []
+  id: '1519897210'
+  trigger:
+  - event_type: binary_sensor.door115_on_pressed
+    platform: event
+- action:
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.on
+  alias: '1519897348'
+  condition:
+    condition: and
+    conditions: []
+  id: '1519897348'
+  trigger:
+  - event_type: binary_sensor.door115_on_pressed
+    platform: event

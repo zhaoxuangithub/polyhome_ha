@@ -81,7 +81,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                 hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[47:52]})
             if not pack_list[52] == '0xff':
                 hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[52:57]})
-           
+            
     # Listen for when zigbee_data_event is fired
     hass.bus.listen(EVENT_ZIGBEE_RECV, event_zigbee_recv_handler)
 

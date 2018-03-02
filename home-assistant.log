@@ -1,1 +1,0 @@
-2018-03-01 15:49:42 ERROR (MainThread) [homeassistant.config] Invalid config for [automation]: [conditions] is an invalid option for [automation]. Check: automation->condition->0->conditions. (See /Users/zhangxuesong/work/polyhome_ha_config_github/configuration.yaml, line 20). Please check the docs at https://home-assistant.io/components/automation/
