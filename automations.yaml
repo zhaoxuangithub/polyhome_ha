@@ -170,3 +170,38 @@
   trigger:
   - event_type: binary_sensor.door115_on_pressed
     platform: event
+- action:
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.turn_on
+  alias: '1519897531'
+  condition:
+    condition: and
+    conditions: []
+  id: '1519897531'
+  trigger:
+  - event_type: binary_sensor.door115_on_pressed
+    platform: event
+- action:
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.media_previous_track
+  alias: '1519897891'
+  condition:
+    condition: and
+    conditions: []
+  id: '1519897891'
+  trigger:
+  - entity_id: binary_sensor.door115
+    platform: state
+    to: 'on'
+- action:
+  - data:
+      entity_id: light.lightd12
+    service: light.turn_off
+  alias: '1519898109'
+  condition:
+    condition: and
+    conditions: []
+  id: '1519898109'
+  trigger: []

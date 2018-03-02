@@ -76,7 +76,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                 dev.set_state(True)
             if pack_list[9] == '0x0':
                 dev.set_state(False)
-        if pack_list[0] == '0xa0' and pack_list[5] == '0x3' and pack_list[8] == '0x77':
+        if pack_list[0] == '0xa0' and pack_list[5] == '0x30' and pack_list[8] == '0x77':
             # device status
             mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
@@ -89,8 +89,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                 dev.set_state(True)
             elif pack_list[9] == '0x0':
                 dev.set_state(False)
-            brightness = int(pack_list[10].replace('0x', ''), 16)
-            dev.set_brightness(brightness)
             if not pack_list[22] == '0xff':
                 hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[22:27]})
             if not pack_list[27] == '0xff':
@@ -121,7 +119,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 
 class PolyLnLight(Light):
-    """Representation of an Polyhome Light."""
+    """Polyhome LnLight Class."""
 
     def __init__(self, hass, device, dev_conf):
         """Initialize an AwesomeLight."""
@@ -130,7 +128,7 @@ class PolyLnLight(Light):
         self._name = device['name']
         self._mac = device['mac']
         self._config = dev_conf
-        self._state = 'unkown'
+        self._state = False
         self._available = True
         self._heart_timestamp = time.time()
 
