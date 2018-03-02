@@ -150,3 +150,5 @@ light.polylnlight8c1:
   friendly_name: 三路零火灯
 light.dimlight53a:
   friendly_name: 调光开关
+switch.socket2b17:
+  friendly_name: 插座

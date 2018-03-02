@@ -1,19 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import logging
-import json
 import asyncio
 import time
 import voluptuous as vol
-from datetime import datetime
 
-from homeassistant.components.switch import (
-    SwitchDevice, PLATFORM_SCHEMA)
-from homeassistant.helpers.dispatcher import (
-    async_dispatcher_connect, dispatcher_send)
+from homeassistant.components.switch import (SwitchDevice, PLATFORM_SCHEMA)
+from homeassistant.helpers.dispatcher import (async_dispatcher_connect, dispatcher_send)
+
 import homeassistant.helpers.config_validation as cv
-import polyhome.util.algorithm as checkcrc
-import polyhome.util.json_encoder as JSONEncoder
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -23,12 +18,12 @@ POLY_ZIGBEE_SERVICE = 'send_d'
 ENENT_ZIGBEE_RECV = 'zigbee_data_event'
 
 # 0x80,0x0,0xb4,0x53,0x6,0x44,0xb4,0x53,0x60,0x1,0x1,0xa2
-CMD_OPEN = [0x80, 0x00, 0x2b, 0x2f, 0x6, 0x44, 0x2b, 0x2f, 0x60, 0x1, 0x1, 0xa2]
-CMD_CLOSE = [0x80, 0x00, 0x2b, 0x2f, 0x6, 0x44, 0x2b, 0x2f, 0x60, 0x1, 0x0, 0xa3]
+CMD_OPEN = [0x80, 0x00, 0x2b, 0x2f, 0x6, 0x44, 0x2b, 0x2f, 0x60, 0x1, 0x1, 0xff]
+CMD_CLOSE = [0x80, 0x00, 0x2b, 0x2f, 0x6, 0x44, 0x2b, 0x2f, 0x60, 0x1, 0x0, 0xff]
 
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Optional('name'): cv.string,
+    vol.Optional('name'): cv.string
 })
 
 
@@ -98,7 +93,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                 return
             if pack_list[6] == '0x41':
                 dev.set_available(False)
-            if pack_list[6] == '0x40':
+            elif pack_list[6] == '0x40':
                 dev.set_available(True)
 
     hass.bus.listen(ENENT_ZIGBEE_RECV, event_zigbee_msg_handle)
@@ -119,7 +114,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 
 class PolySocket(SwitchDevice):
-    """Representation of an Polyhome Socket."""
+    """Polyhome Socket Class."""
 
     def __init__(self, hass, device):
         """Initialize an PolySocket."""
@@ -172,8 +167,6 @@ class PolySocket(SwitchDevice):
         mac = self._mac.split('#')
         CMD_OPEN[2], CMD_OPEN[3] = int(mac[0], 16), int(mac[1], 16)
         CMD_OPEN[6], CMD_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
-        resu_crc = checkcrc.xorcrc_hex(CMD_OPEN)
-        CMD_OPEN[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_OPEN})
         self._state = True
         
@@ -182,8 +175,6 @@ class PolySocket(SwitchDevice):
         mac = self._mac.split('#')
         CMD_CLOSE[2], CMD_CLOSE[3] = int(mac[0], 16), int(mac[1], 16)
         CMD_CLOSE[6], CMD_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
-        resu_crc = checkcrc.xorcrc_hex(CMD_CLOSE)
-        CMD_CLOSE[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_CLOSE})
         self._state = False
 

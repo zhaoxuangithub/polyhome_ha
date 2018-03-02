@@ -46,7 +46,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x7"""
     def event_zigbee_msg_handle(event):
         pack_list = event.data.get('data')
-        if len(pack_list) >= 10 and pack_list[0] == '0xa0' and pack_list[5] == '0x60' and pack_list[8] != '0x7a':
+        if pack_list[0] == '0xa0' and pack_list[5] == '0x60':
             mac_l, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in warsignals if dev.mac == mac_str), None)
@@ -55,13 +55,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
             dev.set_available(True)
             if pack_list[8] == '0x70':
                 """locat test"""
-                if pack_list[9] == '0x1':
-                    dev.set_state(True)
-                elif pack_list[9] == '0x0':
-                    dev.set_state(False)
-            elif pack_list[8] == '0xcc':
-                """heart beat"""
-                dev.heart_beat()
                 if pack_list[9] == '0x1':
                     dev.set_state(True)
                 elif pack_list[9] == '0x0':
