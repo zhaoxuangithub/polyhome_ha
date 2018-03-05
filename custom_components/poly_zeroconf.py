@@ -35,7 +35,7 @@ def setup(hass, config):
 
     zeroconf = Zeroconf()
 
-    zeroconf_name = '{}.{}'.format(hass.config.location_name, ZEROCONF_TYPE)
+    zeroconf_name = '{}.{}'.format(uuid_util.get_mac_address(), ZEROCONF_TYPE)
 
     dev_uuid = uuid_util.get_uuid(hass.config.config_dir)
     params = {
