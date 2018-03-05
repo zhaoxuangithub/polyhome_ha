@@ -152,3 +152,21 @@ light.dimlight53a:
   friendly_name: 调光开关
 switch.socket2b17:
   friendly_name: 插座
+automation.1520213778:
+  friendly_name: 点击执行
+automation.1520213890:
+  friendly_name: 定时执行
+automation.1520213991:
+  friendly_name: 日出
+automation.1520214024:
+  friendly_name: 打开门磁
+automation.1520214170:
+  friendly_name: 按键1触发
+automation.1520214416:
+  friendly_name: 打开插座
+automation.1520214469:
+  friendly_name: 定时+关机
+automation.1520214544:
+  friendly_name: 三路单火灯1+bgm play
+automation.1520215466:
+  friendly_name: 手机测试

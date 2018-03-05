@@ -85,9 +85,7 @@
     condition: and
     conditions: []
   id: '1519892714'
-  trigger:
-  - event_type: binary_sensor.door115_on_pressed
-    platform: event
+  trigger: []
 - action:
   - data:
       entity_id: media_player.yodar97f
@@ -205,3 +203,115 @@
     conditions: []
   id: '1519898109'
   trigger: []
+- action:
+  - data:
+      entity_id: switch.socket2b17
+    service: switch.turn_on
+  - data:
+      entity_id: light.lnlight8c13
+    service: light.turn_on
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.turn_on
+  alias: '1520213890'
+  condition:
+    condition: and
+    conditions: []
+  id: '1520213890'
+  trigger:
+  - entity_id: common
+    platform: state
+    to: time
+- action:
+  - data:
+      entity_id: cover.dooya1442
+    service: cover.open_cover
+  - data:
+      entity_id: light.lnlight8c12
+    service: light.turn_on
+  - data:
+      entity_id: light.lnlight8c11
+    service: light.turn_on
+  alias: '1520213991'
+  condition:
+    condition: and
+    conditions: []
+  id: '1520213991'
+  trigger:
+  - event: sunrise
+    platform: sun
+- action:
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.turn_on
+  - data:
+      entity_id: light.lnlight8c12
+    service: light.turn_on
+  alias: '1520214024'
+  condition:
+    condition: and
+    conditions: []
+  id: '1520214024'
+  trigger:
+  - entity_id: binary_sensor.door115
+    platform: state
+    to: 'on'
+- action:
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.turn_off
+  - data:
+      entity_id: switch.socket2b17
+    service: switch.turn_on
+  - data:
+      entity_id: light.lnlight8c13
+    service: light.turn_on
+  alias: '1520214170'
+  condition:
+    condition: and
+    conditions: []
+  id: '1520214170'
+  trigger:
+  - event_type: binary_sensor.panel44a0_1_pressed
+    platform: event
+- action:
+  - data:
+      entity_id: light.lnlight8c13
+    service: light.turn_on
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.media_play_pause
+  alias: '1520214416'
+  condition:
+    condition: and
+    conditions: []
+  id: '1520214416'
+  trigger:
+  - entity_id: switch.socket2b17
+    platform: state
+    to: 'on'
+- action:
+  - data:
+      entity_id: light.lnlight8c13
+    service: light.turn_on
+  - data:
+      entity_id: light.lightd12
+    service: light.turn_off
+  - data:
+      entity_id: light.lnlight19bf
+    service: light.turn_on
+  alias: '1520214469'
+  condition:
+    condition: or
+    conditions:
+    - after: '10:47'
+      before: '10:47'
+      condition: time
+    - condition: state
+      entity_id: media_player.yodar97f
+      state: 'off'
+  id: '1520214469'
+  trigger:
+  - entity_id: media_player.yodar97f
+    platform: state
+    to: 'off'

@@ -11,14 +11,6 @@
       name: lightd1
   platform: polylight2
 - devices:
-    fe#c5:
-      name: lightfec5
-  platform: polylight3
-- devices:
     8#c1:
       name: lnlight8c1
   platform: polylnlight3
-- devices:
-    d#61:
-      name: lightd61
-  platform: polylight
