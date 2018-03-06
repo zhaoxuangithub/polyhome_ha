@@ -157,7 +157,7 @@ automation.1520213778:
 automation.1520213890:
   friendly_name: 定时执行
 automation.1520213991:
-  friendly_name: 日出
+  friendly_name: 哈哈
 automation.1520214024:
   friendly_name: 打开门磁
 automation.1520214170:
@@ -192,3 +192,21 @@ automation.1520239287:
   friendly_name: Ios
 automation.1520239373:
   friendly_name: Iphone5
+automation.1520240892:
+  friendly_name: '111'
+automation.1520242202:
+  friendly_name: 门磁
+automation.1520302329:
+  friendly_name: 定时情景
+automation.1520302795:
+  friendly_name: 定时
+automation.1520302849:
+  friendly_name: 定时+开灯
+automation.1520314192:
+  friendly_name: z1
+automation.1520315371:
+  friendly_name: 张辉
+automation.1520315473:
+  friendly_name: ios测试
+automation.1520324215:
+  friendly_name: 手机测试

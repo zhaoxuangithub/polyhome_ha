@@ -372,6 +372,12 @@ class AutomationsManager(object):
     def get_automation_by_id(self, id):
         current = self._read_config()
         auto_detail = self._get_value(self._hass, current, id)
+        name_mgr = FriendlyNameManager(self._hass, self._config)
+        auto_id = 'automation.' + auto_detail['id']
+        auto_alias = name_mgr.get_friendly_name(auto_id)
+        if auto_alias is not None:
+            auto_detail['alias'] = auto_alias['friendly_name']
+
         return auto_detail
 
     def trigger_automation(self, auto_id):

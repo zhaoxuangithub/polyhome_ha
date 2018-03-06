@@ -205,43 +205,6 @@
   trigger: []
 - action:
   - data:
-      entity_id: switch.socket2b17
-    service: switch.turn_on
-  - data:
-      entity_id: light.lnlight8c13
-    service: light.turn_on
-  - data:
-      entity_id: media_player.yodar97f
-    service: media_player.turn_on
-  alias: '1520213890'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520213890'
-  trigger:
-  - entity_id: common
-    platform: state
-    to: time
-- action:
-  - data:
-      entity_id: cover.dooya1442
-    service: cover.open_cover
-  - data:
-      entity_id: light.lnlight8c12
-    service: light.turn_on
-  - data:
-      entity_id: light.lnlight8c11
-    service: light.turn_on
-  alias: '1520213991'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520213991'
-  trigger:
-  - event: sunrise
-    platform: sun
-- action:
-  - data:
       entity_id: media_player.yodar97f
     service: media_player.turn_on
   - data:
@@ -339,48 +302,12 @@
   - data:
       entity_id: media_player.yodar97f
     service: media_player.turn_on
-  alias: '1520238669'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520238669'
-  trigger: []
-- action:
-  - data:
-      entity_id: media_player.yodar97f
-    service: media_player.turn_on
   alias: '1520238786'
   condition:
     condition: and
     conditions: []
   id: '1520238786'
   trigger: []
-- action:
-  - data:
-      entity_id: light.lightd12
-    service: light.turn_on
-  alias: '1520239025'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520239025'
-  trigger:
-  - entity_id: common
-    platform: state
-    to: time
-- action:
-  - data:
-      entity_id: light.lightd12
-    service: light.turn_on
-  alias: '1520239036'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520239036'
-  trigger:
-  - entity_id: common
-    platform: state
-    to: time
 - action:
   - data:
       entity_id: switch.socket2b17
@@ -401,52 +328,6 @@
     platform: sun
 - action:
   - data:
-      entity_id: cover.dooya1442
-    service: cover.closed_cover
-  - data:
-      entity_id: switch.socket2b17
-    service: switch.turn_on
-  alias: '1520239156'
-  condition:
-    condition: or
-    conditions:
-    - after: '16:38'
-      before: '16:38'
-      condition: time
-    - after: sunrise
-      condition: sun
-  id: '1520239156'
-  trigger:
-  - entity_id: common
-    platform: state
-    to: time
-  - event: sunrise
-    platform: sun
-- action:
-  - data:
-      entity_id: cover.dooya1442
-    service: cover.closed_cover
-  - data:
-      entity_id: switch.socket2b17
-    service: switch.turn_on
-  alias: '1520239188'
-  condition:
-    condition: or
-    conditions:
-    - after: '16:38'
-      before: '16:38'
-      condition: time
-    - after: sunrise
-      condition: sun
-  id: '1520239188'
-  trigger:
-  - entity_id: common
-    platform: state
-    to: time
-  - event: sunrise
-    platform: sun
-- action:
-  - data:
       entity_id: media_player.yodar97f
     service: media_player.turn_on
   alias: '1520239287'
@@ -458,16 +339,124 @@
 - action:
   - data:
       entity_id: media_player.yodar97f
-    service: media_player.turn_on
-  - data:
-      entity_id: light.dimlight53a
-    service: light.turn_off
-  alias: '1520239373'
+    service: media_player.turn_off
+  alias: '1520240892'
   condition:
     condition: and
     conditions: []
-  id: '1520239373'
+  id: '1520240892'
   trigger:
-  - entity_id: common
+  - at: '18:08'
+    platform: time
+- action:
+  - data:
+      entity_id: switch.socket2b17
+    service: switch.turn_off
+  alias: '1520242202'
+  condition:
+    condition: or
+    conditions:
+    - condition: state
+      entity_id: binary_sensor.door115
+      state: 'on'
+    - after: sunrise
+      condition: sun
+  id: '1520242202'
+  trigger:
+  - entity_id: binary_sensor.door115
     platform: state
-    to: time
+    to: 'on'
+  - event: sunrise
+    platform: sun
+- action:
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.turn_on
+  alias: '1520302795'
+  condition:
+    condition: and
+    conditions: []
+  id: '1520302795'
+  trigger:
+  - at: '10:21'
+    platform: time
+- action:
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.media_previous_track
+  alias: '1520302849'
+  condition:
+    condition: or
+    conditions:
+    - after: '11:20'
+      before: '11:20'
+      condition: time
+    - condition: state
+      entity_id: light.lnlight8c12
+      state: 'on'
+  id: '1520302849'
+  trigger:
+  - at: '11:20'
+    platform: time
+  - entity_id: light.lnlight8c12
+    platform: state
+    to: 'on'
+- action:
+  - data:
+      entity_id: cover.dooya1442
+    service: cover.open_cover
+  alias: '1520314192'
+  condition:
+    condition: and
+    conditions: []
+  id: '1520314192'
+  trigger: []
+- action:
+  - data:
+      entity_id: switch.socket2b17
+    service: switch.turn_on
+  alias: '1520315371'
+  condition:
+    condition: and
+    conditions: []
+  id: '1520315371'
+  trigger: []
+- action:
+  - data:
+      entity_id: cover.dooya1442
+    service: cover.closed_cover
+  - data:
+      entity_id: light.lightd11
+    service: light.turn_off
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.media_previous_track
+  alias: '1520315473'
+  condition:
+    condition: or
+    conditions:
+    - after: '15:50'
+      before: '15:50'
+      condition: time
+    - condition: state
+      entity_id: media_player.yodar97f
+      state: playing
+  id: '1520315473'
+  trigger:
+  - at: '15:50'
+    platform: time
+  - entity_id: media_player.yodar97f
+    platform: state
+    to: playing
+- action:
+  - data:
+      entity_id: media_player.yodar97f
+    service: media_player.turn_on
+  alias: '1520324215'
+  condition:
+    condition: and
+    conditions: []
+  id: '1520324215'
+  trigger:
+  - at: '16:16'
+    platform: time
