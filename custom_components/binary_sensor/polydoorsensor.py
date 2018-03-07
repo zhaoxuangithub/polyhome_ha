@@ -2,8 +2,7 @@ import logging
 import voluptuous as vol
 import time
 
-from homeassistant.components.binary_sensor import (
-    BinarySensorDevice)
+from homeassistant.components.binary_sensor import (BinarySensorDevice)
 import homeassistant.helpers.config_validation as cv
 
 DOMAIN = 'door'
@@ -60,8 +59,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     def handle_time_changed_event(call):
         now = time.time()
         for device in doors:
-            # print(device.entity_id)
-            # print(round(now - device.heart_time_stamp))
             if round(now - device.heart_time_stamp) > 60 * 40:
                 device.set_available(False)
         hass.loop.call_later(60, handle_time_changed_event, '')
@@ -70,7 +67,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 
 class PolySensorBinarySensor(BinarySensorDevice):
-    """Representation of an Polyhome Door Sensor."""
+    """an Polyhome Door Sensor Class."""
 
     def __init__(self, hass, device):
         """Initialize an PolyDoor."""

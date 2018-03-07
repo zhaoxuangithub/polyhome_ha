@@ -57,36 +57,36 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     0x8
     """
     def event_zigbee_msg_handle(event):
-        hexlist = event.data.get('data')
-        if len(hexlist) >= 10 and hexlist[0] == '0xa0' and hexlist[5] == '0x53' and hexlist[8] == '0x7b':
-            mac_l, mac_h = hexlist[6].replace('0x', ''), hexlist[7].replace('0x', '')
+        pack_list = event.data.get('data')
+        if len(pack_list) >= 10 and pack_list[0] == '0xa0' and pack_list[5] == '0x53' and pack_list[8] == '0x7b':
+            mac_l, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             for dev in sensors:
                 if dev.mac == mac_str:
                     dev.set_available(True)
                     if dev.sensor_type == 'temperature':
                         temp = ''
-                        for data in hexlist[9:13]:
+                        for data in pack_list[9:13]:
                             temp += data.replace('0x', '')
                         temp = "{:0>8}".format(temp)
                         temp_f = struct.unpack('f', bytes.fromhex(temp))[0]
                         dev.set_value(round(temp_f, 1))
                     if dev.sensor_type == 'humidity':
                         temp = ''
-                        for data in hexlist[13:17]:
+                        for data in pack_list[13:17]:
                             temp += data.replace('0x', '')
                         temp = "{:0>8}".format(temp)
                         temp_f = struct.unpack('f', bytes.fromhex(temp))[0]
                         dev.set_value(round(temp_f))
                     if dev.sensor_type == 'light':
                         temp = ''
-                        for data in hexlist[17:19]:
+                        for data in pack_list[17:19]:
                             temp += data.replace('0x', '')
                         temp_f = int(temp, 16)
                         dev.set_value(round(temp_f))
-        if hexlist[0] == '0xa0' and hexlist[5] == '0x53' and hexlist[8] == '0xcc':
+        if pack_list[0] == '0xa0' and pack_list[5] == '0x53' and pack_list[8] == '0xcc':
             """heart beat"""
-            mac_l, mac_h = hexlist[6].replace('0x', ''), hexlist[7].replace('0x', '')
+            mac_l, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             for dev in sensors:
                 if dev.mac == mac_str:
@@ -94,33 +94,61 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                     dev.heart_beat()
                     if dev.sensor_type == 'temperature':
                         temp = ''
-                        for data in hexlist[9:13]:
+                        for data in pack_list[9:13]:
                             temp += data.replace('0x', '')
                         temp = "{:0>8}".format(temp)
                         temp_f = struct.unpack('f', bytes.fromhex(temp))[0]
                         dev.set_value(round(temp_f, 1))
                     if dev.sensor_type == 'humidity':
                         temp = ''
-                        for data in hexlist[13:17]:
+                        for data in pack_list[13:17]:
                             temp += data.replace('0x', '')
                         temp = "{:0>8}".format(temp)
                         temp_f = struct.unpack('f', bytes.fromhex(temp))[0]
                         dev.set_value(round(temp_f))
                     if dev.sensor_type == 'light':
                         temp = ''
-                        for data in hexlist[17:19]:
+                        for data in pack_list[17:19]:
                             temp += data.replace('0x', '')
                         temp_f = int(temp, 16)
                         dev.set_value(round(temp_f))
-        if len(hexlist) > 7 and hexlist[0] == '0xc0' and hexlist[5] != '0xab' and hexlist[4] != '0x4c':
-            mac_l, mac_h = hexlist[2].replace('0x', ''), hexlist[3].replace('0x', '')
+        if pack_list[0] == '0xa0' and pack_list[5] == '0x53' and pack_list[8] == '0x77':
+            # device status
+            mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in sensors if dev.mac == mac_str), None)
             if dev is None:
                 return
-            if hexlist[6] == '0x40':
+            dev.set_available(True)
+            dev.heart_beat()
+            if pack_list[9] == '0x1':
+                dev.set_state(True)
+            elif pack_list[9] == '0x0':
+                dev.set_state(False)
+
+            if not pack_list[22] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[22:27]})
+            if not pack_list[27] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[27:32]})
+            if not pack_list[32] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[32:37]})
+            if not pack_list[37] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[37:42]})
+            if not pack_list[42] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[42:47]})
+            if not pack_list[47] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[47:52]})
+            if not pack_list[52] == '0xff':
+                hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[52:57]})
+        if len(pack_list) > 7 and pack_list[0] == '0xc0' and pack_list[5] != '0xab' and pack_list[4] != '0x4c':
+            mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
+            mac_str = mac_l + '#' + mac_h
+            dev = next((dev for dev in sensors if dev.mac == mac_str), None)
+            if dev is None:
+                return
+            if pack_list[6] == '0x40':
                 dev.set_available(True)
-            elif hexlist[6] == '0x41':
+            elif pack_list[6] == '0x41':
                 dev.set_available(False)
 
     hass.bus.listen(EVENT_ZIGBEE_RECV, event_zigbee_msg_handle)
@@ -129,12 +157,8 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     def handle_time_changed_event(call):
         now = time.time()
         for device in sensors:
-            # print(device.entity_id)
-            # print(round(now - device.heart_time_stamp))
             if round(now - device.heart_time_stamp) > 60 * 30:
-                _LOGGER.error('====thl device=====')
                 device.set_available(False)
-                _LOGGER.error('====thl device=====')
         hass.loop.call_later(60, handle_time_changed_event, '')
         
     hass.loop.call_later(60, handle_time_changed_event, '')

@@ -1,10 +1,10 @@
 import logging
 import json
 import voluptuous as vol
+import time
 
 from homeassistant.components.lock import LockDevice
 from homeassistant.const import (STATE_LOCKED, STATE_UNLOCKED)
-import polyhome.util.algorithm as checkcrc
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -69,9 +69,19 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     
     hass.bus.listen(ENENT_ZIGBEE_RECV, event_zigbee_msg_handle)
 
+    # device online check
+    def handle_time_changed_event(call):
+        now = time.time()
+        for device in locks:
+            if round(now - device.heart_time_stamp) > 60 * 30:
+                device.set_available(False)
+        hass.loop.call_later(60, handle_time_changed_event, '')
+        
+    hass.loop.call_later(60, handle_time_changed_event, '')
+
 
 class YaleLock(LockDevice):
-    """Representation of a Demo lock."""
+    """Yale Lock Class."""
 
     def __init__(self, hass, device, dev_conf):
         """Initialize an PolyLock."""
@@ -81,6 +91,7 @@ class YaleLock(LockDevice):
         self._config = dev_conf
         self._state = None
         self._available = True
+        self._heart_timestamp = time.time()
 
     @property
     def should_poll(self):
@@ -101,6 +112,11 @@ class YaleLock(LockDevice):
         """Return true if lock is locked."""
         return self._state == STATE_LOCKED
 
+    @property
+    def heart_time_stamp(self):
+        """heart timestamp"""
+        return self._heart_timestamp
+
     def set_available(self, state):
         self._available = state
 
@@ -111,8 +127,6 @@ class YaleLock(LockDevice):
         mac = self._mac.split('#')
         CMD_LOCK_CLOSE[2], CMD_LOCK_CLOSE[3] = int(mac[0], 16), int(mac[1], 16)
         CMD_LOCK_CLOSE[6], CMD_LOCK_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
-        resu_crc = checkcrc.xorcrc_hex(CMD_LOCK_CLOSE)
-        CMD_LOCK_CLOSE[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {'data': CMD_LOCK_CLOSE})
 
     def unlock(self, **kwargs):
@@ -122,6 +136,9 @@ class YaleLock(LockDevice):
         mac = self._mac.split('#')
         CMD_LOCK_OPEN[2], CMD_LOCK_OPEN[3] = int(mac[0], 16), int(mac[1], 16)
         CMD_LOCK_OPEN[6], CMD_LOCK_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
-        resu_crc = checkcrc.xorcrc_hex(CMD_LOCK_OPEN)
-        CMD_LOCK_OPEN[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {'data': CMD_LOCK_OPEN})
+
+    def heart_beat(self):
+        self._heart_timestamp = time.time()
+        entity_id = 'lock.' + self.name
+        self._hass.services.call('gateway', 'publish_heart_beat', {'entity_id': entity_id})

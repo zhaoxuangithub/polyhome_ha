@@ -4,13 +4,9 @@ import time
 
 import voluptuous as vol
 
-from homeassistant.const import CONF_DEVICES, CONF_NAME
-from homeassistant.components.light import (
-    ATTR_BRIGHTNESS, ATTR_RGB_COLOR, ATTR_TRANSITION, ATTR_COLOR_TEMP,
-    ATTR_FLASH, ATTR_XY_COLOR, FLASH_SHORT, FLASH_LONG, ATTR_EFFECT,
-    SUPPORT_BRIGHTNESS, Light, PLATFORM_SCHEMA)
+from homeassistant.const import (CONF_DEVICES, CONF_NAME)
+from homeassistant.components.light import (SUPPORT_BRIGHTNESS, Light, PLATFORM_SCHEMA)
 import homeassistant.helpers.config_validation as cv
-import polyhome.util.algorithm as checkcrc
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -46,56 +42,67 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     add_devices(lights, True)
 
-    def handle_event(event):
+    def event_zigbee_recv_handler(event):
         """Listener to handle fired events"""
-        bytearr = event.data.get('data')
-        if bytearr[0] == '0xa0' and bytearr[5] == '0xb0':
-            mac_l, mac_h = bytearr[6].replace('0x', ''), bytearr[7].replace('0x', '')
+        pack_list = event.data.get('data')
+        if pack_list[0] == '0xa0' and pack_list[5] == '0xb0':
+            mac_l, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in lights if dev.mac == mac_str), None)
             if dev is not None:
-                if bytearr[9] == '0x1':
+                if pack_list[9] == '0x1':
                     dev.set_state(True)
-                elif bytearr[9] == '0x0':
+                elif pack_list[9] == '0x0':
                     dev.set_state(False)
-                brightness = int(bytearr[10].replace('0x', ''), 16)
+                brightness = int(pack_list[10].replace('0x', ''), 16)
                 dev.set_brightness(brightness)
-        if bytearr[0] == '0xc0' and bytearr[6] == '0x41':
-            mac_l, mac_h = bytearr[2].replace('0x', ''), bytearr[3].replace('0x', '')
+        if pack_list[0] == '0xc0' and pack_list[6] == '0x41':
+            mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in lights if dev.mac == mac_str), None)
             if dev is not None:
                 dev.set_available(False)  
-        if bytearr[0] == '0xa0' and bytearr[5] == '0xb0' and bytearr[8] == '0xcc':
+        if pack_list[0] == '0xa0' and pack_list[5] == '0xb0' and pack_list[8] == '0xcc':
             """heart beat"""
-            mac_l, mac_h = bytearr[2].replace('0x', ''), bytearr[3].replace('0x', '')
+            mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in lights if dev.mac == mac_str), None)
             if dev is None:
                 return
             dev.set_available(True)
-            if dev is not None:
-                if bytearr[9] == '0x1':
-                    dev.set_state(True)
-                elif bytearr[9] == '0x0':
-                    dev.set_state(False)
-                brightness = int(bytearr[10].replace('0x', ''), 16)
-                dev.set_brightness(brightness)
             dev.heart_beat()
-            
+            if dev is not None:
+                if pack_list[9] == '0x1':
+                    dev.set_state(True)
+                elif pack_list[9] == '0x0':
+                    dev.set_state(False)
+                brightness = int(pack_list[10].replace('0x', ''), 16)
+                dev.set_brightness(brightness)
+        if pack_list[0] == '0xa0' and pack_list[5] == '0xb0' and pack_list[8] == '0x77':
+            # device status
+            mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
+            mac_str = mac_l + '#' + mac_h
+            dev = next((dev for dev in lights if dev.mac == mac_str), None)
+            if dev is None:
+                return
+            dev.set_available(True)
+            dev.heart_beat()
+            if pack_list[9] == '0x1':
+                dev.set_state(True)
+            elif pack_list[9] == '0x0':
+                dev.set_state(False)
+            brightness = int(pack_list[10].replace('0x', ''), 16)
+            dev.set_brightness(brightness)
+        
     # Listen for when zigbee_data_event is fired
-    hass.bus.listen(EVENT_ZIGBEE_RECV, handle_event)
+    hass.bus.listen(EVENT_ZIGBEE_RECV, event_zigbee_recv_handler)
 
     # device online check
     def handle_time_changed_event(call):
         now = time.time()
         for device in lights:
-            # print(device.entity_id)
-            # print(round(now - device.heart_time_stamp))
             if round(now - device.heart_time_stamp) > 60 * 30:
-                _LOGGER.error('====dimlight device=====')
                 device.set_available(False)
-                _LOGGER.error('====dimlight device=====')
         hass.loop.call_later(60, handle_time_changed_event, '')
         
     hass.loop.call_later(60, handle_time_changed_event, '')
@@ -173,19 +180,14 @@ class PolyDimLight(Light):
         BYTES_OPEN[2], BYTES_OPEN[3] = int(mac[0],16), int(mac[1],16)
         BYTES_OPEN[6], BYTES_OPEN[7] = int(mac[0],16), int(mac[1],16)
         BYTES_OPEN[11] = int(120 - brightness)
-        resu_crc = checkcrc.xorcrc_hex(BYTES_OPEN)
-        BYTES_OPEN[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_OPEN})
         self._state = True
 
     def turn_off(self, **kwargs):
-        """Instruct the light to turn off."""
-        print('close')
+        """turn off."""
         mac = self._mac.split('#')
         BYTES_CLOSE[2], BYTES_CLOSE[3] = int(mac[0],16), int(mac[1],16)
         BYTES_CLOSE[6], BYTES_CLOSE[7] = int(mac[0],16), int(mac[1],16)
-        resu_crc = checkcrc.xorcrc_hex(BYTES_CLOSE)
-        BYTES_CLOSE[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_CLOSE})
         self._state = False
 

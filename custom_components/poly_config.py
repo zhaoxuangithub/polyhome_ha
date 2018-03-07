@@ -8,9 +8,9 @@ import yaml
 import logging
 import enum
 import uuid
-from datetime import datetime
 import asyncio
 import async_timeout
+from datetime import datetime
 from urllib import request
 
 from homeassistant import setup as Setup
@@ -20,8 +20,8 @@ from homeassistant.util import dt as date_util, location as loc_util
 from homeassistant.const import (
     CONF_LATITUDE, CONF_LONGITUDE, CONF_NAME, CONF_PACKAGES, CONF_UNIT_SYSTEM,
     CONF_TIME_ZONE, CONF_ELEVATION, CONF_UNIT_SYSTEM_METRIC,
-    CONF_UNIT_SYSTEM_IMPERIAL, CONF_TEMPERATURE_UNIT, TEMP_CELSIUS, CONF_CUSTOMIZE, CONF_CUSTOMIZE_DOMAIN, CONF_CUSTOMIZE_GLOB,
-    CONF_WHITELIST_EXTERNAL_DIRS)
+    CONF_UNIT_SYSTEM_IMPERIAL, CONF_TEMPERATURE_UNIT, TEMP_CELSIUS, 
+    CONF_CUSTOMIZE, CONF_CUSTOMIZE_DOMAIN, CONF_CUSTOMIZE_GLOB, CONF_WHITELIST_EXTERNAL_DIRS)
 
 import polyhome.util.algorithm as checkcrc
 import polyhome.util.macaddr as mac_util
@@ -30,18 +30,21 @@ from polyhome import GroupsManager, DeviceManager, FriendlyNameManager, Automati
 from polyhome.helper.contant import DEFAULT_CONF_CONTENT, DEFAULT_EXISTS_FILE, POLY_MQTT_CONFIG, POLY_HOMEASSISTANT_CONFIG
 from polyhome.misc import DongleAttr
 from polyhome.util.zipfile import ZFile
+from polyhome.helper.const import CUR_VERSION
+
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'poly_config'
 POLY_ZIGBEE_DOMAIN = 'poly_zb_uart'
 POLY_ZIGBEE_SERVICE = 'send_d'
 EVENT_ZIGBEE_RECV = 'zigbee_data_event'
-VERSION = '1.0.1_1.0.0_beta'
+
+# /dev/tty.usbserial
+UART_PATH = '/dev/tty.usbserial'
 
 CMD_EDIT_DONGLE = [0x80, 0x0, 0x0, 0x0, 0x19, 0x44, 0x0, 0x0, 0xf, 0x0, 0x0, \
                     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, \
                     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0xe3]
-
 CMD_INTO_NET = [0x80, 0x00, 0xFF, 0xFE, 0x02, 0xAD, 0x01, 0x2F]   
 CMD_OUT_NET = [0x80, 0x00, 0xFF, 0xFE, 0x02, 0xAD, 0x00, 0x2E]
 CMD_GET_DONGLE_NET_HIGH = [0x80, 0x00, 0xFF, 0xFE, 0x02, 0xa3, 0x6d, 0x4d]
@@ -381,7 +384,8 @@ def setup(hass, config):
                 name_mgr = FriendlyNameManager(hass, config)
                 if mgr.add_plugin(pack):
                     discovery.load_platform(hass, 'light', data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
-                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                name_mgr.edit_friendly_name(pack['entity_id'] + '1', friendly_name + '1')
+                name_mgr.edit_friendly_name(pack['entity_id'] + '2', friendly_name + '2')
                 data = {'entity_id': pack['entity_id'] + '1', 'friendly_name': friendly_name}
                 data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
                 notity_client_device_into_net(data_obj)
@@ -398,9 +402,9 @@ def setup(hass, config):
                 name_mgr = FriendlyNameManager(hass, config)
                 if mgr.add_plugin(pack):
                     discovery.load_platform(hass, 'light', data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
-                name_mgr.edit_friendly_name(pack['entity_id'] + '1', friendly_name)
-                name_mgr.edit_friendly_name(pack['entity_id'] + '2', friendly_name)
-                name_mgr.edit_friendly_name(pack['entity_id'] + '3', friendly_name)
+                name_mgr.edit_friendly_name(pack['entity_id'] + '1', friendly_name + '1')
+                name_mgr.edit_friendly_name(pack['entity_id'] + '2', friendly_name + '2')
+                name_mgr.edit_friendly_name(pack['entity_id'] + '3', friendly_name + '3')
                 data = {'entity_id': pack['entity_id'] + '1', 'friendly_name': friendly_name}
                 data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
                 notity_client_device_into_net(data_obj)
@@ -559,7 +563,7 @@ def setup(hass, config):
     """
     def cur_host_version_service(call):
         # debug | beta | release
-        data_obj = {'status':'OK', 'data': {'version': VERSION}, 'type': 'cur_host_version'}
+        data_obj = {'status':'OK', 'data': {'version': CUR_VERSION}, 'type': 'cur_host_version'}
         notity_client_data(data_obj)
 
     def add_plugin_service(call):
@@ -740,10 +744,11 @@ def setup(hass, config):
     
 
     # setup zigbee dongle component /dev/tty.usbserial
-    zigbee_conf = {'poly_zigbee': {'baudbrate': 57600, 'uartpath': '/dev/tty.usbserial'}}
+    zigbee_conf = {'poly_zigbee': {'baudbrate': 57600, 'uartpath': UART_PATH}}
     Setup.setup_component(hass, 'poly_zigbee', zigbee_conf)
     Setup.setup_component(hass, 'poly_mqtt', config)
-    
+    Setup.setup_component(hass, 'poly_zeroconf')
+
     return True
 
 @asyncio.coroutine

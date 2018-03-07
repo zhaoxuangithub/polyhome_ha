@@ -4,7 +4,6 @@ import voluptuous as vol
 # Import the device class from the component that you want to support
 from homeassistant.components.light import Light, PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
-import polyhome.util.algorithm as checkcrc
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -14,8 +13,8 @@ POLY_ZIGBEE_SERVICE = 'send_d'
 EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 
 # 80 00 00 2F 07 44 00 2D 61 00 03 00 A3
-BYTES_OPEN = [0x80, 0x00, 0xFF, 0xFE, 0x7, 0x44, 0xd, 0x7, 0x61, 0x0, 0x1, 0x1, 0xa2]
-BYTES_CLOSE = [0x80, 0x00, 0xFF, 0xFE, 0x7, 0x44, 0xd, 0x7, 0x61, 0x0, 0x1, 0x0, 0xa3]
+CMD_OPEN = [0x80, 0x00, 0xFF, 0xFE, 0x7, 0x44, 0xd, 0x7, 0x61, 0x0, 0x1, 0x1, 0xa2]
+CMD_CLOSE = [0x80, 0x00, 0xFF, 0xFE, 0x7, 0x44, 0xd, 0x7, 0x61, 0x0, 0x1, 0x0, 0xa3]
 
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
@@ -134,7 +133,6 @@ class PolyLight(Light):
         self.schedule_update_ha_state()
 
     def set_router(self, router):
-        # print(router)
         self._router = router
 
     def set_available(self, available):
@@ -144,23 +142,19 @@ class PolyLight(Light):
     def turn_on(self, **kwargs):
         """turn on"""
         router_mac = self._router.split('#')
-        BYTES_OPEN[2], BYTES_OPEN[3] = int(router_mac[0], 16), int(router_mac[1], 16)
+        CMD_OPEN[2], CMD_OPEN[3] = int(router_mac[0], 16), int(router_mac[1], 16)
         mac = self._mac.split('#')
-        BYTES_OPEN[6], BYTES_OPEN[7] = int(mac[0],16), int(mac[1],16)
-        resu_crc = checkcrc.xorcrc_hex(BYTES_OPEN)
-        BYTES_OPEN[-1] = resu_crc
-        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_OPEN})
+        CMD_OPEN[6], CMD_OPEN[7] = int(mac[0],16), int(mac[1],16)
+        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_OPEN})
         self._state = True
 
     def turn_off(self, **kwargs):
-        """Instruct the light to turn off."""
+        """turn off."""
         router_mac = self._router.split('#')
-        BYTES_CLOSE[2], BYTES_CLOSE[3] = int(router_mac[0], 16), int(router_mac[1], 16)
+        CMD_CLOSE[2], CMD_CLOSE[3] = int(router_mac[0], 16), int(router_mac[1], 16)
         mac = self._mac.split('#')
-        BYTES_CLOSE[6], BYTES_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
-        resu_crc = checkcrc.xorcrc_hex(BYTES_CLOSE)
-        BYTES_CLOSE[-1] = resu_crc
-        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_CLOSE})
+        CMD_CLOSE[6], CMD_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
+        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_CLOSE})
         self._state = False
 
     def update(self):

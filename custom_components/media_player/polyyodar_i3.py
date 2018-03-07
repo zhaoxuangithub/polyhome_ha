@@ -15,7 +15,6 @@ from homeassistant.const import (
     EVENT_HOMEASSISTANT_STOP)
 from homeassistant.const import STATE_OFF, STATE_PAUSED, STATE_PLAYING
 import homeassistant.helpers.config_validation as cv
-import polyhome.util.algorithm as checkcrc
 
 MUSIC_PLAYER_SUPPORT = \
     SUPPORT_PAUSE | SUPPORT_VOLUME_SET | SUPPORT_VOLUME_MUTE | \
@@ -125,8 +124,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     def handle_time_changed_event(call):
         now = time.time()
         for device in sockets:
-            # print(device.entity_id)
-            # print(round(now - device.heart_time_stamp))
             if round(now - device.heart_time_stamp) > 60 * 30:
                 device.set_available(False)
         hass.loop.call_later(60, handle_time_changed_event, '')
@@ -235,8 +232,6 @@ class Yodar(MediaPlayerDevice):
         mac = self._mac.split('#')
         CMD_OPEN[2], CMD_OPEN[3] = int(mac[0], 16), int(mac[1], 16)
         CMD_OPEN[6], CMD_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
-        resu_crc = checkcrc.xorcrc_hex(CMD_OPEN)
-        CMD_OPEN[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_OPEN})
         self._player_state = STATE_ON
         self.schedule_update_ha_state()
@@ -248,8 +243,6 @@ class Yodar(MediaPlayerDevice):
         mac = self._mac.split('#')
         CMD_CLOSE[2], CMD_CLOSE[3] = int(mac[0], 16), int(mac[1], 16)
         CMD_CLOSE[6], CMD_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
-        resu_crc = checkcrc.xorcrc_hex(CMD_CLOSE)
-        CMD_CLOSE[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_CLOSE})
         self._player_state = STATE_OFF
         self.schedule_update_ha_state()
@@ -259,8 +252,6 @@ class Yodar(MediaPlayerDevice):
         mac = self._mac.split('#')
         CMD_MUTE[2], CMD_MUTE[3] = int(mac[0], 16), int(mac[1], 16)
         CMD_MUTE[6], CMD_MUTE[7] = int(mac[0], 16), int(mac[1], 16)
-        resu_crc = checkcrc.xorcrc_hex(CMD_MUTE)
-        CMD_MUTE[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_MUTE})
         self._volume_muted = mute
         self.schedule_update_ha_state()
@@ -275,8 +266,6 @@ class Yodar(MediaPlayerDevice):
         CMD_VOL_SET[6], CMD_VOL_SET[7] = int(mac[0], 16), int(mac[1], 16)
         CMD_VOL_SET[-3] = vol_real
         CMD_VOL_SET[-2] = self.check_sum(CMD_VOL_SET[10:13])
-        resu_crc = checkcrc.xorcrc_hex(CMD_VOL_SET)
-        CMD_VOL_SET[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_VOL_SET})
         self._volume_level = volume
         self.schedule_update_ha_state()
@@ -286,8 +275,6 @@ class Yodar(MediaPlayerDevice):
         mac = self._mac.split('#')
         CMD_PLAY[2], CMD_PLAY[3] = int(mac[0], 16), int(mac[1], 16)
         CMD_PLAY[6], CMD_PLAY[7] = int(mac[0], 16), int(mac[1], 16)
-        resu_crc = checkcrc.xorcrc_hex(CMD_PLAY)
-        CMD_PLAY[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_PLAY})
         self._player_state = STATE_PLAYING
         self.schedule_update_ha_state()
@@ -297,8 +284,6 @@ class Yodar(MediaPlayerDevice):
         mac = self._mac.split('#')
         CMD_STOP[2], CMD_STOP[3] = int(mac[0], 16), int(mac[1], 16)
         CMD_STOP[6], CMD_STOP[7] = int(mac[0], 16), int(mac[1], 16)
-        resu_crc = checkcrc.xorcrc_hex(CMD_STOP)
-        CMD_STOP[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_STOP})
         self._player_state = STATE_PAUSED
         self.schedule_update_ha_state()
@@ -308,8 +293,6 @@ class Yodar(MediaPlayerDevice):
         mac = self._mac.split('#')
         CMD_UP[2], CMD_UP[3] = int(mac[0], 16), int(mac[1], 16)
         CMD_UP[6], CMD_UP[7] = int(mac[0], 16), int(mac[1], 16)
-        resu_crc = checkcrc.xorcrc_hex(CMD_UP)
-        CMD_UP[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_UP})
 
     def media_next_track(self):
@@ -317,8 +300,6 @@ class Yodar(MediaPlayerDevice):
         mac = self._mac.split('#')
         CMD_NEXT[2], CMD_NEXT[3] = int(mac[0], 16), int(mac[1], 16)
         CMD_NEXT[6], CMD_NEXT[7] = int(mac[0], 16), int(mac[1], 16)
-        resu_crc = checkcrc.xorcrc_hex(CMD_NEXT)
-        CMD_NEXT[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_NEXT})
 
     def select_source(self, source):
@@ -331,26 +312,18 @@ class Yodar(MediaPlayerDevice):
                 if key == 0: # AUX1
                     CMD_SOURCE[-3] = 0x0
                     CMD_SOURCE[-2] = 0x5
-                    resu_crc = checkcrc.xorcrc_hex(CMD_SOURCE)
-                    CMD_SOURCE[-1] = resu_crc
                     self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_SOURCE})
                 if key == 1: # SD
                     CMD_SOURCE[-3] = 0x1
                     CMD_SOURCE[-2] = 0x4
-                    resu_crc = checkcrc.xorcrc_hex(CMD_SOURCE)
-                    CMD_SOURCE[-1] = resu_crc
                     self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_SOURCE})
                 if key == 2: # FM
                     CMD_SOURCE[-3] = 0x2
                     CMD_SOURCE[-2] = 0x7
-                    resu_crc = checkcrc.xorcrc_hex(CMD_SOURCE)
-                    CMD_SOURCE[-1] = resu_crc
                     self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_SOURCE})
                 if key == 4: # BLE
                     CMD_SOURCE[-3] = 0x4
                     CMD_SOURCE[-2] = 0x1
-                    resu_crc = checkcrc.xorcrc_hex(CMD_SOURCE)
-                    CMD_SOURCE[-1] = resu_crc
                     self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_SOURCE})
                 
     def check_sum(self, data):

@@ -1,8 +1,8 @@
 import logging
 import json
 import voluptuous as vol
-import json
 import os
+import time
 
 from homeassistant.util.yaml import load_yaml, dump
 from homeassistant.components.lock import LockDevice
@@ -27,7 +27,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     """Set up the Yale lock platform."""
     locks = []
     if discovery_info is not None:
-        # Not using hostname, as it seems to vary.
         device = {'name': discovery_info['name'], 'mac': discovery_info['mac']}
         locks.append(HoLiShiLock(hass, config, device, None))
     else:
@@ -48,7 +47,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         # '0xa0', '0xc6', '0x51', '0x7b', '0xd', '0x55', '0x51', '0x7b', '0x74', '0x2', '0x13', '0x7', 
         # '0x17', '0x5', '0x99', '0x89', '0x58', '0xff', '0xf9'
         if pack_list[0] == '0xa0' and pack_list[8] == '0x74':
-            """这一层级判断A0和设备类型"""
             mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in locks if dev.mac == mac_str), None)
@@ -58,15 +56,16 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
             if pack_list[9] == '0x2' and pack_list[-2] == '0xff':
                 key_mgr = LockKeyManager(hass, config)
                 key_mgr.edit_friendly_name(dev.mac, pack_list[10:13])     
-        elif pack_list[0] == '0xa0' and pack_list[5] == '0x0' and pack_list[8] == '0xcc':
-            """心跳"""
+        if pack_list[0] == '0xa0' and pack_list[5] == '0x0' and pack_list[8] == '0xcc':
+            """heart_beat"""
             mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in locks if dev.mac == mac_str), None)
             if dev is None:
                 return
             dev.set_available(True)
-        elif pack_list[0] == '0xc0':
+            dev.heart_beat()
+        if pack_list[0] == '0xc0':
             mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in locks if dev.mac == mac_str), None)
@@ -79,9 +78,19 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     
     hass.bus.listen(ENENT_ZIGBEE_RECV, event_zigbee_msg_handle)
 
+    # device online check
+    def handle_time_changed_event(call):
+        now = time.time()
+        for device in locks:
+            if round(now - device.heart_time_stamp) > 60 * 30:
+                device.set_available(False)
+        hass.loop.call_later(60, handle_time_changed_event, '')
+        
+    hass.loop.call_later(60, handle_time_changed_event, '')
+
 
 class HoLiShiLock(LockDevice):
-    """Representation of a Demo lock."""
+    """HoLiShi lock Class."""
 
     def __init__(self, hass, config, device, dev_conf):
         """Initialize an PolyLock."""
@@ -90,8 +99,9 @@ class HoLiShiLock(LockDevice):
         self._name = device['name']
         self._mac = device['mac']
         self._config = dev_conf
-        self._state = None
+        self._state = False
         self._available = True
+        self._heart_timestamp = time.time()
 
     @property
     def should_poll(self):
@@ -111,6 +121,11 @@ class HoLiShiLock(LockDevice):
     def is_locked(self):
         """Return true if lock is locked."""
         return self._state == STATE_LOCKED
+    
+    @property
+    def heart_time_stamp(self):
+        """heart timestamp"""
+        return self._heart_timestamp
 
     def set_available(self, state):
         self._available = state
@@ -124,14 +139,10 @@ class HoLiShiLock(LockDevice):
         CMD_LOCK_CLOSE[6], CMD_LOCK_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
         key_mgr = LockKeyManager(self._hass, self._config)
         lock_key = key_mgr.get_friendly_name(self._mac)
-        print(lock_key)
         CMD_LOCK_CLOSE[10] = int(lock_key[0].replace('0x', ''), 16)
         CMD_LOCK_CLOSE[11] = int(lock_key[1].replace('0x', ''), 16)
         CMD_LOCK_CLOSE[12] = int(lock_key[2].replace('0x', ''), 16)
-        print(checkcrc.crc8(CMD_LOCK_CLOSE[10:14]))
         CMD_LOCK_CLOSE[14] = checkcrc.sumup(CMD_LOCK_CLOSE[10:14])
-        resu_crc = checkcrc.xorcrc_hex(CMD_LOCK_CLOSE)
-        CMD_LOCK_CLOSE[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {'data': CMD_LOCK_CLOSE})
 
     def unlock(self, **kwargs):
@@ -146,11 +157,13 @@ class HoLiShiLock(LockDevice):
         CMD_LOCK_OPEN[10] = int(lock_key[0].replace('0x', ''), 16)
         CMD_LOCK_OPEN[11] = int(lock_key[1].replace('0x', ''), 16)
         CMD_LOCK_OPEN[12] = int(lock_key[2].replace('0x', ''), 16)
-        print(checkcrc.crc8(CMD_LOCK_OPEN[10:14]))
         CMD_LOCK_OPEN[14] = checkcrc.sumup(CMD_LOCK_OPEN[10:14])
-        resu_crc = checkcrc.xorcrc_hex(CMD_LOCK_OPEN)
-        CMD_LOCK_OPEN[-1] = resu_crc
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {'data': CMD_LOCK_OPEN})
+
+    def heart_beat(self):
+        self._heart_timestamp = time.time()
+        entity_id = 'lock.' + self.name
+        self._hass.services.call('gateway', 'publish_heart_beat', {'entity_id': entity_id})
 
 
 class LockKeyManager(object):

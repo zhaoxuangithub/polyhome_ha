@@ -8,7 +8,7 @@ import polyhome.util.macaddr as mac_util
 from polyhome.helper.contant import (
     MQTT_TOPIC_BIND_CLIENT, MQTT_TOPIC_BIND_HOST,
     MQTT_TOPIC_UNBIND_CLIENT, MQTT_TOPIC_UNBIND_HOST,
-    MQTT_TOPIC_UPDATE, MQTT_TOPIC_CALL_SERVICE,MQTT_TOPIC_PUB_ACK) 
+    MQTT_TOPIC_UPDATE, MQTT_TOPIC_CALL_SERVICE, MQTT_TOPIC_PUB_ACK) 
 
 import homeassistant.loader as loader
 

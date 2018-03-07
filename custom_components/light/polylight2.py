@@ -2,9 +2,8 @@ import logging
 import voluptuous as vol
 
 # Import the device class from the component that you want to support
-from homeassistant.components.light import ATTR_BRIGHTNESS, Light, PLATFORM_SCHEMA
+from homeassistant.components.light import Light, PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
-import polyhome.util.algorithm as checkcrc
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -15,12 +14,12 @@ POLY_ZIGBEE_SERVICE = 'send_d'
 EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 
 # 0x80,0x0,0xb4,0x53,0x6,0x44,0xb4,0x53,0x60,0x1,0x1,0xa2
-BYTES_OPEN = [0x80, 0x00, 0x46, 0xb1, 0x7, 0x44, 0xd, 0x7, 0x61, 0x0, 0x1, 0x1, 0xa2]
-BYTES_CLOSE = [0x80, 0x00, 0x46, 0xb1, 0x7, 0x44, 0xd, 0x7, 0x61, 0x0, 0x1, 0x0, 0xa3]
+CMD_OPEN = [0x80, 0x00, 0x46, 0xb1, 0x7, 0x44, 0xd, 0x7, 0x61, 0x0, 0x1, 0x1, 0xa2]
+CMD_CLOSE = [0x80, 0x00, 0x46, 0xb1, 0x7, 0x44, 0xd, 0x7, 0x61, 0x0, 0x1, 0x0, 0xa3]
 
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Optional('name'): cv.string,
+    vol.Optional('name'): cv.string
 })
 
 
@@ -96,13 +95,15 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                     mac_str = mac_l + '#' + mac_h
                     dev.set_router(mac_str)
                     s_int = int(device[3], 16)
-                    if dev.way == 1 and bin(s_int)[-1] == '1':
+                    s_str = bin(s_int).replace('0b', '')
+                    s_str = "{:0>2}".format(s_str)
+                    if dev.way == 1 and s_str[-1] == '1':
                         dev.set_state(True)
-                    if dev.way == 1 and bin(s_int)[-1] == '0':
+                    if dev.way == 1 and s_str[-1] == '0':
                         dev.set_state(False)
-                    if dev.way == 2 and bin(s_int)[-2] == '1':
+                    if dev.way == 2 and s_str[-2] == '1':
                         dev.set_state(True)
-                    if dev.way == 2 and bin(s_int)[-2] == '0':
+                    if dev.way == 2 and s_str[-2] == '0':
                         dev.set_state(False)
                     
     # Listen Device Status Event
@@ -110,10 +111,10 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 
 class PolyLight(Light):
-    """Representation of an Polyhome Light."""
+    """Polyhome Light Class."""
 
     def __init__(self, hass, device, dev_conf):
-        """Initialize an AwesomeLight."""
+        """Initialize an Light."""
         self._hass = hass
         self._device = device
         self._name = device['name']
@@ -122,7 +123,7 @@ class PolyLight(Light):
         self._config = dev_conf
         self._state = True
         self._available = True
-        self._router = '46#b1'
+        self._router = 'ff#fe'
 
     @property
     def name(self):
@@ -163,25 +164,21 @@ class PolyLight(Light):
     def turn_on(self, **kwargs):
         """turn on"""
         router_mac = self._router.split('#')
-        BYTES_OPEN[2], BYTES_OPEN[3] = int(router_mac[0], 16), int(router_mac[1], 16)
+        CMD_OPEN[2], CMD_OPEN[3] = int(router_mac[0], 16), int(router_mac[1], 16)
         mac = self._mac.split('#')
-        BYTES_OPEN[6], BYTES_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
-        BYTES_OPEN[-3] = self._way
-        resu_crc = checkcrc.xorcrc_hex(BYTES_OPEN)
-        BYTES_OPEN[-1] = resu_crc
-        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_OPEN})
+        CMD_OPEN[6], CMD_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
+        CMD_OPEN[-3] = self._way
+        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_OPEN})
         self._state = True
 
     def turn_off(self, **kwargs):
-        """Instruct the light to turn off."""
+        """turn off."""
         router_mac = self._router.split('#')
-        BYTES_CLOSE[2], BYTES_CLOSE[3] = int(router_mac[0], 16), int(router_mac[1], 16)
+        CMD_CLOSE[2], CMD_CLOSE[3] = int(router_mac[0], 16), int(router_mac[1], 16)
         mac = self._mac.split('#')
-        BYTES_CLOSE[6], BYTES_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
-        BYTES_CLOSE[-3] = self._way
-        resu_crc = checkcrc.xorcrc_hex(BYTES_CLOSE)
-        BYTES_CLOSE[-1] = resu_crc
-        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_CLOSE})
+        CMD_CLOSE[6], CMD_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
+        CMD_CLOSE[-3] = self._way
+        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_CLOSE})
         self._state = False
 
     def update(self):

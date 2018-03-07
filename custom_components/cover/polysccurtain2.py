@@ -45,116 +45,116 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     def event_zigbee_msg_handle(event):
         """Listener to handle fired events."""
-        bytearr = event.data.get('data')
-        if bytearr[0] == '0xa0' and bytearr[5] == '0x63':
-            mac_1 = bytearr[6].replace('0x', '')
-            mac_h = bytearr[7].replace('0x', '')
+        pack_list = event.data.get('data')
+        if pack_list[0] == '0xa0' and pack_list[5] == '0x63':
+            mac_1 = pack_list[6].replace('0x', '')
+            mac_h = pack_list[7].replace('0x', '')
             mac_str = mac_1 + "#" + mac_h
             for dev in sccurtains:
                 if dev.mac == mac_str:
                     dev.set_available(True)
-                    if bytearr[8] == '0x70':
+                    if pack_list[8] == '0x70':
                         # 一路开
-                        if bytearr[9] == '0x1' and bytearr[10] == '0x0':
+                        if pack_list[9] == '0x1' and pack_list[10] == '0x0':
                             if dev.way == '1':
                                 dev.set_state(True)
                         # 一路关
-                        elif bytearr[9] == '0x0' and bytearr[10] == '0x1':
+                        elif pack_list[9] == '0x0' and pack_list[10] == '0x1':
                             if dev.way == '1':
                                 dev.set_state(False)
                         # 一路停
-                        elif bytearr[9] == '0x0' and bytearr[10] == '0x0':
+                        elif pack_list[9] == '0x0' and pack_list[10] == '0x0':
                             if dev.way == '1':
                                 dev.set_state(False)
                         # 二路开
-                        if bytearr[11] == '0x1' and bytearr[12] == '0x0':
+                        if pack_list[11] == '0x1' and pack_list[12] == '0x0':
                             if dev.way == '2':
                                 dev.set_state(False)
                         # 二路关
-                        elif bytearr[11] == '0x0' and bytearr[12] == '0x1':
+                        elif pack_list[11] == '0x0' and pack_list[12] == '0x1':
                             if dev.way == '2':
                                 dev.set_state(False)
                         # 二路停
-                        elif bytearr[11] == '0x0' and bytearr[12] == '0x0':
+                        elif pack_list[11] == '0x0' and pack_list[12] == '0x0':
                             if dev.way == '2':
                                 dev.set_state(True)
-                    if bytearr[8] == '0xcc':
+                    if pack_list[8] == '0xcc':
                         """heart beat"""
                         # 一路开
-                        if bytearr[9] == '0x1' and bytearr[10] == '0x0':
+                        if pack_list[9] == '0x1' and pack_list[10] == '0x0':
                             if dev.way == '1':
                                 dev.set_state(True)
                         # 一路关
-                        elif bytearr[9] == '0x0' and bytearr[10] == '0x1':
+                        elif pack_list[9] == '0x0' and pack_list[10] == '0x1':
                             if dev.way == '1':
                                 dev.set_state(False)
                         # 一路停
-                        elif bytearr[9] == '0x0' and bytearr[10] == '0x0':
+                        elif pack_list[9] == '0x0' and pack_list[10] == '0x0':
                             if dev.way == '1':
                                 dev.set_state(False)
                         # 二路开
-                        if bytearr[11] == '0x1' and bytearr[12] == '0x0':
+                        if pack_list[11] == '0x1' and pack_list[12] == '0x0':
                             if dev.way == '2':
                                 dev.set_state(True)
                         # 二路关
-                        elif bytearr[11] == '0x0' and bytearr[12] == '0x1':
+                        elif pack_list[11] == '0x0' and pack_list[12] == '0x1':
                             if dev.way == '2':
                                 dev.set_state(False)
                         # 二路停
-                        elif bytearr[11] == '0x0' and bytearr[12] == '0x0':
+                        elif pack_list[11] == '0x0' and pack_list[12] == '0x0':
                             if dev.way == '2':
                                 dev.set_state(False)
                         dev.heart_beat()
-                    if bytearr[8] == '0x77':
+                    if pack_list[8] == '0x77':
                         """device status"""
                         # 一路开
-                        if bytearr[9] == '0x1' and bytearr[10] == '0x0':
+                        if pack_list[9] == '0x1' and pack_list[10] == '0x0':
                             if dev.way == '1':
                                 dev.set_state(True)
                         # 一路关
-                        elif bytearr[9] == '0x0' and bytearr[10] == '0x1':
+                        elif pack_list[9] == '0x0' and pack_list[10] == '0x1':
                             if dev.way == '1':
                                 dev.set_state(False)
                         # 一路停
-                        elif bytearr[9] == '0x0' and bytearr[10] == '0x0':
+                        elif pack_list[9] == '0x0' and pack_list[10] == '0x0':
                             if dev.way == '1':
                                 dev.set_state(False)
                         # 二路开
-                        if bytearr[11] == '0x1' and bytearr[12] == '0x0':
+                        if pack_list[11] == '0x1' and pack_list[12] == '0x0':
                             if dev.way == '2':
                                 dev.set_state(True)
                         # 二路关
-                        elif bytearr[11] == '0x0' and bytearr[12] == '0x1':
+                        elif pack_list[11] == '0x0' and pack_list[12] == '0x1':
                             if dev.way == '2':
                                 dev.set_state(False)
                         # 二路停
-                        elif bytearr[11] == '0x0' and bytearr[12] == '0x0':
+                        elif pack_list[11] == '0x0' and pack_list[12] == '0x0':
                             if dev.way == '2':
                                 dev.set_state(False)
 
-                        if not bytearr[22] == '0xff':
-                            hass.bus.fire('event_zigbee_device_status', {'router': bytearr[2:4], 'device': bytearr[22:27]})
-                        if not bytearr[27] == '0xff':
-                            hass.bus.fire('event_zigbee_device_status', {'router': bytearr[2:4], 'device': bytearr[27:32]})
-                        if not bytearr[32] == '0xff':
-                            hass.bus.fire('event_zigbee_device_status', {'router': bytearr[2:4], 'device': bytearr[32:37]})
-                        if not bytearr[37] == '0xff':
-                            hass.bus.fire('event_zigbee_device_status', {'router': bytearr[2:4], 'device': bytearr[37:42]})
-                        if not bytearr[42] == '0xff':
-                            hass.bus.fire('event_zigbee_device_status', {'router': bytearr[2:4], 'device': bytearr[42:47]})
-                        if not bytearr[47] == '0xff':
-                            hass.bus.fire('event_zigbee_device_status', {'router': bytearr[2:4], 'device': bytearr[47:52]})
-                        if not bytearr[52] == '0xff':
-                            hass.bus.fire('event_zigbee_device_status', {'router': bytearr[2:4], 'device': bytearr[52:57]})
-        if bytearr[0] == '0xc0':
-            mac_l, mac_h = bytearr[2].replace('0x', ''), bytearr[3].replace('0x', '')
+                        if not pack_list[22] == '0xff':
+                            hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[22:27]})
+                        if not pack_list[27] == '0xff':
+                            hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[27:32]})
+                        if not pack_list[32] == '0xff':
+                            hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[32:37]})
+                        if not pack_list[37] == '0xff':
+                            hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[37:42]})
+                        if not pack_list[42] == '0xff':
+                            hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[42:47]})
+                        if not pack_list[47] == '0xff':
+                            hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[47:52]})
+                        if not pack_list[52] == '0xff':
+                            hass.bus.fire('event_zigbee_device_status', {'router': pack_list[2:4], 'device': pack_list[52:57]})
+        if pack_list[0] == '0xc0':
+            mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in sccurtains if dev.mac == mac_str), None)
             for dev in sccurtains:
                 if dev.mac == mac_str:
-                    if bytearr[6] == '0x41':
+                    if pack_list[6] == '0x41':
                         dev.set_available(False)
-                    if bytearr[6] == '0x40':
+                    if pack_list[6] == '0x40':
                         dev.set_available(True)
             
     # Listen for when zigbee_data_event is fired

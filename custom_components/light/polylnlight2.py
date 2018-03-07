@@ -5,7 +5,6 @@ import time
 # Import the device class from the component that you want to support
 from homeassistant.components.light import ATTR_BRIGHTNESS, Light, PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
-import polyhome.util.algorithm as checkcrc
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -15,8 +14,8 @@ POLY_ZIGBEE_SERVICE = 'send_d'
 EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 
 # 0x80,0x0,0xb4,0x53,0x6,0x44,0xb4,0x53,0x60,0x1,0x1,0xa2
-BYTES_OPEN = [0x80, 0x00, 0x46, 0xb1, 0x7, 0x44, 0xd, 0x7, 0x60, 0x0, 0x1, 0xa2]
-BYTES_CLOSE = [0x80, 0x00, 0x46, 0xb1, 0x7, 0x44, 0xd, 0x7, 0x60, 0x0, 0x1, 0xa3]
+CMD_OPEN = [0x80, 0x00, 0x46, 0xb1, 0x7, 0x44, 0xd, 0x7, 0x60, 0x0, 0x1, 0xa2]
+CMD_CLOSE = [0x80, 0x00, 0x46, 0xb1, 0x7, 0x44, 0xd, 0x7, 0x60, 0x0, 0x1, 0xa3]
 
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
@@ -45,47 +44,65 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     def event_zigbee_recv_handler(event):
         """Listener to handle fired events"""
-        bytearr = event.data.get('data')
+        pack_list = event.data.get('data')
 
-        if  bytearr[0] == '0xa0' and bytearr[5] == '0x31' and bytearr[8] == '0x70':
+        if  pack_list[0] == '0xa0' and pack_list[5] == '0x31' and pack_list[8] == '0x70':
             """'0xa0', '0xd7', '0x4e', '0x41', '0x11', '0x31', '0x4e', '0x41', '0x70', '0x1', '0x1', '0x0', 
             '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x27'
             """
-            mac_l, mac_h = bytearr[6].replace('0x', ''), bytearr[7].replace('0x', '')
+            mac_l, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             for dev in lights:
                 if mac_str in dev.mac:
-                    mac_l, mac_h = bytearr[2].replace('0x', ''), bytearr[3].replace('0x', '')
+                    mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
                     mac_str = mac_l + '#' + mac_h
                     dev.set_available(True)
-                    if dev.way == 1 and bytearr[9] == '0x1':
+                    if dev.way == 1 and pack_list[9] == '0x1':
                         dev.set_state(True)
-                    if dev.way == 1 and bytearr[9] == '0x0':
+                    if dev.way == 1 and pack_list[9] == '0x0':
                         dev.set_state(False)
-                    if dev.way == 2 and bytearr[10] == '0x1':
+                    if dev.way == 2 and pack_list[10] == '0x1':
                         dev.set_state(True)
-                    if dev.way == 2 and bytearr[10] == '0x0':
+                    if dev.way == 2 and pack_list[10] == '0x0':
                         dev.set_state(False)
-        if  bytearr[0] == '0xa0' and bytearr[5] == '0x31' and bytearr[8] == '0xcc':
+        if  pack_list[0] == '0xa0' and pack_list[5] == '0x31' and pack_list[8] == '0xcc':
             # '0xa0', '0xd6', '0x4e', '0x41', '0x34', '0x31', '0x4e', '0x41', '0xcc', '0x0', '0x1', '0x0', \
             # '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0xff', '0x41'
-            mac_l, mac_h = bytearr[6].replace('0x', ''), bytearr[7].replace('0x', '')
+            mac_l, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             for dev in lights:
                 if mac_str in dev.mac:
-                    mac_l, mac_h = bytearr[6].replace('0x', ''), bytearr[7].replace('0x', '')
+                    mac_l, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
                     mac_str = mac_l + '#' + mac_h
                     dev.set_available(True)
                     dev.heart_beat()
-                    if dev.way == 1 and bytearr[9] == '0x1':
+                    if dev.way == 1 and pack_list[9] == '0x1':
                         dev.set_state(True)
-                    if dev.way == 1 and bytearr[9] == '0x0':
+                    if dev.way == 1 and pack_list[9] == '0x0':
                         dev.set_state(False)
-                    if dev.way == 2 and bytearr[10] == '0x1':
+                    if dev.way == 2 and pack_list[10] == '0x1':
                         dev.set_state(True)
-                    if dev.way == 2 and bytearr[10] == '0x0':
+                    if dev.way == 2 and pack_list[10] == '0x0':
                         dev.set_state(False)
-
+        if pack_list[0] == '0xa0' and pack_list[5] == '0x31' and pack_list[8] == '0x77':
+            # device status
+            mac_l, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
+            mac_str = mac_l + '#' + mac_h
+            for dev in lights:
+                if mac_str in dev.mac:
+                    mac_l, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
+                    mac_str = mac_l + '#' + mac_h
+                    dev.set_available(True)
+                    dev.heart_beat()
+                    if dev.way == 1 and pack_list[9] == '0x1':
+                        dev.set_state(True)
+                    if dev.way == 1 and pack_list[9] == '0x0':
+                        dev.set_state(False)
+                    if dev.way == 2 and pack_list[10] == '0x1':
+                        dev.set_state(True)
+                    if dev.way == 2 and pack_list[10] == '0x0':
+                        dev.set_state(False)
+                        
     # Listen for when zigbee_data_event is fired
     hass.bus.listen(EVENT_ZIGBEE_RECV, event_zigbee_recv_handler)
 
@@ -155,25 +172,21 @@ class PolyLight(Light):
     def turn_on(self, **kwargs):
         """turn on"""
         mac = self._mac.split('#')
-        BYTES_OPEN[2], BYTES_OPEN[3] = int(mac[0], 16), int(mac[1], 16)
-        BYTES_OPEN[6], BYTES_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
-        BYTES_OPEN[-3] = self._way
-        BYTES_CLOSE[-2] = 0x1
-        resu_crc = checkcrc.xorcrc_hex(BYTES_OPEN)
-        BYTES_OPEN[-1] = resu_crc
-        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_OPEN})
+        CMD_OPEN[2], CMD_OPEN[3] = int(mac[0], 16), int(mac[1], 16)
+        CMD_OPEN[6], CMD_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
+        CMD_OPEN[-3] = self._way
+        CMD_OPEN[-2] = 0x1
+        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_OPEN})
         self._state = True
 
     def turn_off(self, **kwargs):
         """turn off"""
         mac = self._mac.split('#')
-        BYTES_CLOSE[2], BYTES_CLOSE[3] = int(mac[0], 16), int(mac[1], 16)
-        BYTES_CLOSE[6], BYTES_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
-        BYTES_CLOSE[-3] = self._way
-        BYTES_CLOSE[-2] = 0x0
-        resu_crc = checkcrc.xorcrc_hex(BYTES_CLOSE)
-        BYTES_CLOSE[-1] = resu_crc
-        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_CLOSE})
+        CMD_CLOSE[2], CMD_CLOSE[3] = int(mac[0], 16), int(mac[1], 16)
+        CMD_CLOSE[6], CMD_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
+        CMD_CLOSE[-3] = self._way
+        CMD_CLOSE[-2] = 0x0
+        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": CMD_CLOSE})
         self._state = False
 
     def update(self):

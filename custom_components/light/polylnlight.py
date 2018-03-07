@@ -40,43 +40,56 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     def event_zigbee_recv_handler(event):
         """Listener to handle fired events"""
-        bytearr = event.data.get('data')
+        pack_list = event.data.get('data')
         
-        if bytearr[0] == '0xa0' and bytearr[5] == '0x30' and bytearr[8] == '0x70':
-            mac_l, mac_h = bytearr[6].replace('0x', ''), bytearr[7].replace('0x', '')
+        if pack_list[0] == '0xa0' and pack_list[5] == '0x30' and pack_list[8] == '0x70':
+            mac_l, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in lights if dev.mac == mac_str), None)
             if dev is not None:
-                if bytearr[9] == '0x1':
+                if pack_list[9] == '0x1':
                     dev.set_state(True)
-                elif bytearr[9] == '0x0':
+                elif pack_list[9] == '0x0':
                     dev.set_state(False)
-        if bytearr[0] == '0xc0' and bytearr[6] == '0x41':
-            mac_l, mac_h = bytearr[2].replace('0x', ''), bytearr[3].replace('0x', '')
+        if pack_list[0] == '0xc0' and pack_list[6] == '0x41':
+            mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in lights if dev.mac == mac_str), None)
             if dev is not None:
                 dev.set_available(False)
-        if bytearr[0] == '0xc0' and bytearr[6] == '0x40':
-            mac_l, mac_h = bytearr[2].replace('0x', ''), bytearr[3].replace('0x', '')
+        if pack_list[0] == '0xc0' and pack_list[6] == '0x40':
+            mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in lights if dev.mac == mac_str), None)
             if dev is not None:
                 dev.set_available(True)
-        if bytearr[0] == '0xa0' and bytearr[5] == '0x30' and bytearr[8] == '0xcc':
+        if pack_list[0] == '0xa0' and pack_list[5] == '0x30' and pack_list[8] == '0xcc':
             """heart beat"""
-            mac_l, mac_h = bytearr[2].replace('0x', ''), bytearr[3].replace('0x', '')
+            mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in lights if dev.mac == mac_str), None)
             if dev is None:
                 return
             dev.heart_beat()
             dev.set_available(True)
-            if bytearr[9] == '0x1':
+            if pack_list[9] == '0x1':
                 dev.set_state(True)
-            if bytearr[9] == '0x0':
+            if pack_list[9] == '0x0':
                 dev.set_state(False)
-            
+        if pack_list[0] == '0xa0' and pack_list[5] == '0x30' and pack_list[8] == '0x77':
+            # device status
+            mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
+            mac_str = mac_l + '#' + mac_h
+            dev = next((dev for dev in lights if dev.mac == mac_str), None)
+            if dev is None:
+                return
+            dev.set_available(True)
+            dev.heart_beat()
+            if pack_list[9] == '0x1':
+                dev.set_state(True)
+            elif pack_list[9] == '0x0':
+                dev.set_state(False)  
+
     # Listen for when zigbee_data_event is fired
     hass.bus.listen(EVENT_ZIGBEE_RECV, event_zigbee_recv_handler)
 
@@ -92,7 +105,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 
 class PolyLnLight(Light):
-    """Representation of an Polyhome Light."""
+    """Polyhome LnLight Class."""
 
     def __init__(self, hass, device, dev_conf):
         """Initialize an AwesomeLight."""
@@ -101,7 +114,7 @@ class PolyLnLight(Light):
         self._name = device['name']
         self._mac = device['mac']
         self._config = dev_conf
-        self._state = 'unkown'
+        self._state = False
         self._available = True
         self._heart_timestamp = time.time()
 
