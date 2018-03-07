@@ -4,7 +4,7 @@ import logging
 import serial
 import serial_asyncio
 
-import polyhome.util.algorithm as checkcrc
+import pyzigbee.algorithm as checkcrc
 
 _LOGGER = logging.getLogger(__name__)
 

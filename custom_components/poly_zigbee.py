@@ -3,9 +3,9 @@
 import logging
 import asyncio
 
-import polyhome.util.algorithm as checkcrc
+import pyzigbee.algorithm as checkcrc
 
-from polyhome.helper.const import (
+from pyzigbee.const import (
     POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE,
     DEFAULT_UARTPATH, DEFAULT_BAUDRATE)
 
@@ -19,12 +19,12 @@ CMD_DEVICES_STATUS = [0x80, 0x00, 0xFF, 0xFF, 0x04, 0x44, 0xFF, 0xFF, 0x67, 0xA7
 @asyncio.coroutine
 def async_setup(hass, config):
     """Set up Zigbee component."""
-    import polyhome.phezsp
+    import pyzigbee.phezsp
     
     uartpath = config[DOMAIN].get('uartpath', DEFAULT_UARTPATH)
     baudbrate = config[DOMAIN].get('baudbrate', DEFAULT_BAUDRATE)
     
-    phezsp_ = polyhome.phezsp.PHEZSP()
+    phezsp_ = pyzigbee.phezsp.PHEZSP()
     yield from phezsp_.connect(uartpath, baudbrate)
 
     def callback_data_recv(frame):
