@@ -2,8 +2,7 @@ import logging
 import voluptuous as vol
 import time
 
-from homeassistant.components.binary_sensor import (
-    BinarySensorDevice)
+from homeassistant.components.binary_sensor import (BinarySensorDevice)
 import homeassistant.helpers.config_validation as cv
 
 DOMAIN = 'door'
