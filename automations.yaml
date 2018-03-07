@@ -1,0 +1,16 @@
+- action:
+  - data:
+      entity_id: switch.socket2b17
+    service: switch.turn_on
+  - data:
+      entity_id: light.lnlight8c11
+    service: light.turn_on
+  - data:
+      entity_id: light.lnlight8c12
+    service: light.turn_on
+  alias: '1520399374'
+  condition:
+    condition: and
+    conditions: []
+  id: '1520399374'
+  trigger: []

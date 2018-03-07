@@ -710,7 +710,7 @@ def setup(hass, config):
 
     hass.bus.listen('event_mqtt_publish', event_publish_message_handler)
 
-    # API
+    # Services
     hass.services.register('gateway', 'get_all_automation', get_all_automation_service)
     hass.services.register('gateway', 'edit_automation', edit_automation_service)
     hass.services.register('gateway', 'delete_automation', delete_automation_service)
@@ -751,27 +751,6 @@ def setup(hass, config):
 
     return True
 
-@asyncio.coroutine
-def async_auto_reload(hass, data):
-    """Reload the automation from config.
-    Returns a coroutine object.
-    """
-    yield from hass.services.async_call('homeassistant', 'reload_core_config')
-    yield from hass.services.async_call('automation', 'reload')
-    hass.bus.fire('event_mqtt_publish', data)
-
-@asyncio.coroutine
-def async_reload(hass):
-    return hass.services.async_call('group', 'reload')
-
-@asyncio.coroutine
-def async_restart(hass):
-    return hass.services.async_call('homeassistant', 'restart')
-
-@asyncio.coroutine
-def async_reload_core_conf(hass):
-    return hass.services.async_call('homeassistant', 'reload_core_config')
-
 
 class JSONEncoder(json.JSONEncoder):
     """JSONEncoder that supports Home Assistant objects."""
@@ -797,3 +776,24 @@ class JSONEncoder(json.JSONEncoder):
             except TypeError:
                 # Ok, we're lost, cause the original error
                 return json.JSONEncoder.default(self, o)
+
+@asyncio.coroutine
+def async_auto_reload(hass, data):
+    """Reload the automation from config.
+    Returns a coroutine object.
+    """
+    yield from hass.services.async_call('homeassistant', 'reload_core_config')
+    yield from hass.services.async_call('automation', 'reload')
+    hass.bus.fire('event_mqtt_publish', data)
+
+@asyncio.coroutine
+def async_reload(hass):
+    return hass.services.async_call('group', 'reload')
+
+@asyncio.coroutine
+def async_restart(hass):
+    return hass.services.async_call('homeassistant', 'restart')
+
+@asyncio.coroutine
+def async_reload_core_conf(hass):
+    return hass.services.async_call('homeassistant', 'reload_core_config')

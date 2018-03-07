@@ -40,3 +40,5 @@ light.dimlight53a:
   friendly_name: 调光开关
 switch.socket2b17:
   friendly_name: 插座
+automation.1520399374:
+  friendly_name: 测试
