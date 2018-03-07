@@ -79,26 +79,6 @@
 - action:
   - data:
       entity_id: media_player.yodar97f
-    service: media_player.turn_off
-  alias: '1519892714'
-  condition:
-    condition: and
-    conditions: []
-  id: '1519892714'
-  trigger: []
-- action:
-  - data:
-      entity_id: media_player.yodar97f
-    service: media_player.playing
-  alias: '1519893067'
-  condition:
-    condition: and
-    conditions: []
-  id: '1519893067'
-  trigger: []
-- action:
-  - data:
-      entity_id: media_player.yodar97f
     service: media_player.media_next_track
   alias: '1519896646'
   condition:
@@ -195,16 +175,6 @@
     to: 'on'
 - action:
   - data:
-      entity_id: light.lightd12
-    service: light.turn_off
-  alias: '1519898109'
-  condition:
-    condition: and
-    conditions: []
-  id: '1519898109'
-  trigger: []
-- action:
-  - data:
       entity_id: media_player.yodar97f
     service: media_player.turn_on
   - data:
@@ -287,16 +257,6 @@
     condition: and
     conditions: []
   id: '1520238581'
-  trigger: []
-- action:
-  - data:
-      entity_id: media_player.yodar97f
-    service: media_player.turn_on
-  alias: '1520238651'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520238651'
   trigger: []
 - action:
   - data:

@@ -10,12 +10,16 @@ custom_components/media_player/__pycache__/*
 custom_components/sensor/__pycache__/*
 custom_components/switch/__pycache__/*
 polyhome/__pycache__/*
+pyzigbee/__pycache__/*
 
+automations.yaml
+customize.yaml
 home-assistant.log
 home-assistant_v2.db
 panels.yaml
 frontend.yaml
 known_devices.yaml
+
 
 .HA_VERSION
 .reset
