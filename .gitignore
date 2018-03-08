@@ -1,5 +1,6 @@
 .vscode/
 .DS_Store
+deps/*
 
 custom_components/__pycache__/*
 custom_components/binary_sensor/__pycache__/*
@@ -14,6 +15,15 @@ pyzigbee/__pycache__/*
 
 automations.yaml
 customize.yaml
+binary_sensor.yaml
+cover.yaml
+customize.yaml
+groups.yaml
+lock_key.yaml
+lock.yaml
+media_player.yaml
+switch.yaml
+sensor.yaml
 home-assistant.log
 home-assistant_v2.db
 panels.yaml
