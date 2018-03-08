@@ -40,5 +40,51 @@ light.dimlight53a:
   friendly_name: 调光开关
 switch.socket2b17:
   friendly_name: 插座
+cover.cover32401:
+  friendly_name: 强电窗帘1
+cover.cover32402:
+  friendly_name: 强电窗帘2
 automation.1520399374:
   friendly_name: 测试
+automation.1520402220:
+  friendly_name: 小艾手机1
+automation.1520402261:
+  friendly_name: 小艾手机2
+automation.1520402306:
+  friendly_name: 小爱情景3
+automation.1520402334:
+  friendly_name: 小爱情景4
+automation.1520402374:
+  friendly_name: 小爱情景55
+automation.1520402863:
+  friendly_name: '111'
+automation.1520403011:
+  friendly_name: '22'
+automation.1520404842:
+  friendly_name: 小爱66
+automation.1520406491:
+  friendly_name: "还好还好哈\U0001F604"
+automation.1520407032:
+  friendly_name: 我们都一样
+automation.1520407665:
+  friendly_name: 。你今年
+automation.1520407777:
+  friendly_name: "。你今等下次\U0001F601"
+automation.1520409749:
+  friendly_name: 雪松1
+automation.1520409782:
+  friendly_name: 雪松2
+automation.1520409832:
+  friendly_name: 雪松3
+automation.1520409856:
+  friendly_name: 雪松4.1
+automation.1520409895:
+  friendly_name: 雪松5
+automation.1520490697:
+  friendly_name: z1
+automation.1520491372:
+  friendly_name: 杜亚电机
+automation.1520491554:
+  friendly_name: 杜亚电机1
+cover.dooya1442:
+  friendly_name: 杜亚窗帘

@@ -26,6 +26,7 @@ def setup(hass, config):
     
     def mqtt_call_services_handler(topic, payload, qos):
         try:
+            print(topic)
             data_json = json.loads(payload)
             domain = data_json.get('plugin')
             service = data_json.get('service')
