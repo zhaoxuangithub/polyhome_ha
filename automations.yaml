@@ -324,3 +324,14 @@
     conditions: []
   id: '1520491554'
   trigger: []
+- action:
+  - data:
+      brightness: 163
+      entity_id: light.dimlight53a
+    service: light.turn_on
+  alias: '1520496526'
+  condition:
+    condition: and
+    conditions: []
+  id: '1520496526'
+  trigger: []
