@@ -270,40 +270,6 @@
   trigger: []
 - action:
   - data:
-      entity_id: media_player.yodar97f
-    service: media_player.media_play_pause
-  - data:
-      entity_id: light.lightd12
-    service: light.turn_on
-  - data:
-      entity_id: switch.socket2b17
-    service: switch.turn_on
-  - data:
-      entity_id: light.lightfec51
-    service: light.turn_off
-  - data:
-      entity_id: light.lnlight8c12
-    service: light.turn_on
-  alias: '1520409895'
-  condition:
-    condition: or
-    conditions:
-    - condition: state
-      entity_id: binary_sensor.door115
-      state: 'on'
-    - condition: state
-      entity_id: cover.cover32402
-      state: 'on'
-  id: '1520409895'
-  trigger:
-  - entity_id: binary_sensor.door115
-    platform: state
-    to: 'on'
-  - entity_id: cover.cover32402
-    platform: state
-    to: 'on'
-- action:
-  - data:
       entity_id: cover.dooya1442
       position: 79
     service: cover.set_cover_position
@@ -335,3 +301,60 @@
     conditions: []
   id: '1520496526'
   trigger: []
+- action:
+  - data:
+      entity_id: cover.dooya1442
+      position: 0
+    service: cover.set_cover_position
+  - data:
+      brightness: 255
+      entity_id: light.dimlight53a
+    service: light.turn_on
+  alias: '1520498668'
+  condition:
+    condition: and
+    conditions: []
+  id: '1520498668'
+  trigger: []
+- action:
+  - data:
+      entity_id: cover.dooya1442
+      position: 64
+    service: cover.set_cover_position
+  alias: '1520499863'
+  condition:
+    condition: and
+    conditions: []
+  id: '1520499863'
+  trigger: []
+- action:
+  - data:
+      brightness: 100
+      entity_id: light.dimlight53a
+    service: light.turn_on
+  - data:
+      entity_id: cover.dooya1442
+      position: 56
+    service: cover.set_cover_position
+  - data:
+      entity_id: light.lnlight1a622
+    service: light.turn_on
+  alias: '1520835212'
+  condition:
+    condition: and
+    conditions: []
+  id: '1520835212'
+  trigger: []
+- action:
+  - data:
+      entity_id: cover.dooya1442
+      position: 56
+    service: cover.set_cover_position
+  alias: '1520847676'
+  condition:
+    condition: and
+    conditions: []
+  id: '1520847676'
+  trigger:
+  - at: '17:40'
+    platform: time

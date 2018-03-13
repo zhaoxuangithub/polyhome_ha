@@ -24,7 +24,7 @@ https://home-assistant.io/ 查看最新的版本
 
 # 开发环境
 
-* VSCode ／ Atom / pycharm
+* vscode
 * python检测工具 pylint
 * 代码风格 PEP8 style 和 PEP 257
 

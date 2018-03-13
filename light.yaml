@@ -1,0 +1,28 @@
+- devices:
+    5#3a:
+      name: dimlight53a
+  platform: polydimlight
+- devices:
+    1a#62:
+      name: lnlight1a62
+  platform: polylnlight2
+- devices:
+    8#c1:
+      name: lnlight8c1
+  platform: polylnlight3
+- devices:
+    19#bf:
+      name: lnlight19bf
+  platform: polylnlight
+- devices:
+    d#61:
+      name: lightd61
+  platform: polylight
+- devices:
+    d#1:
+      name: lightd1
+  platform: polylight2
+- devices:
+    fe#c5:
+      name: lightfec5
+  platform: polylight3

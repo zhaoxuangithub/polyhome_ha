@@ -1,0 +1,13 @@
+'1519632235522':
+  entities:
+  - binary_sensor.panel44a0
+  name: 主卧
+  view: true
+'1519632243838':
+  entities: []
+  name: 次卧
+  view: true
+'1519632253394':
+  entities: []
+  name: 儿童房
+  view: true
