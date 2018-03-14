@@ -1,6 +1,6 @@
 """defined some const var"""
 
-CUR_VERSION = '0.0.6_beta'
+CUR_VERSION = '0.0.7_beta'
 
 DEFAULT_TOPIC_SUB = '/v1/polyhome-ha/host/house/1/family/unkown'
 DEFAULT_TOPIC_PUB = '/v1/polyhome-ha/client/house/1/family/unkown'

@@ -126,3 +126,7 @@ light.lightc72:
   friendly_name: 一路单火灯
 media_player.yodar97f:
   friendly_name: Yodar背景音乐
+automation.1521008414:
+  friendly_name: 单火灯开
+binary_sensor.door11a9:
+  friendly_name: 门磁

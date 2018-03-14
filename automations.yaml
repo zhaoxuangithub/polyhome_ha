@@ -35,3 +35,13 @@
     conditions: []
   id: '1520499863'
   trigger: []
+- action:
+  - data:
+      entity_id: light.lightfec51
+    service: light.turn_on
+  alias: '1521008414'
+  condition:
+    condition: and
+    conditions: []
+  id: '1521008414'
+  trigger: []

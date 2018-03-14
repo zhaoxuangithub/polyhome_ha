@@ -143,9 +143,11 @@ class DeviceManager(object):
             del dev_obj['last_updated']
             if dev_obj['attributes'].get('icon', None) is not None:
                 del dev_obj['attributes']['icon']
-            dev_obj['platform'] = self._has_device(json_data, id_name)
+            dev_obj['platform'] = dev_obj['attributes']['platform']
+            if dev_obj['attributes'].get('platform', None) is not None:
+                del dev_obj['attributes']['platform']
             dev_obj['group'] = self.get_group(entity_id)
-            print(dev_obj)
+            # print(dev_obj)
             all_states.append(dev_obj)
             
         return all_states
