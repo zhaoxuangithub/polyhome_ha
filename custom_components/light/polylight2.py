@@ -28,17 +28,16 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     lights = []
     if discovery_info is not None:
-        # Not using hostname, as it seems to vary.
         device = {'name': discovery_info['name'] + '1', 'mac': discovery_info['mac'], 'way': 1}
         lights.append(PolyLight(hass, device, None))
         device = {'name': discovery_info['name'] + '2', 'mac': discovery_info['mac'], 'way': 2}
         lights.append(PolyLight(hass, device, None))
     else:
         for mac, device_config in config['devices'].items():
-            device = {'name': device_config['name'] + '1', 'mac': mac, 'way': 1}
-            lights.append(PolyLight(hass, device, device_config))
-            device = {'name': device_config['name'] + '2', 'mac': mac, 'way': 2}
-            lights.append(PolyLight(hass, device, device_config))
+            device1 = {'name': device_config['name'] + '1', 'mac': mac, 'way': 1}
+            lights.append(PolyLight(hass, device1, device_config))
+            device2 = {'name': device_config['name'] + '2', 'mac': mac, 'way': 2}
+            lights.append(PolyLight(hass, device2, device_config))
 
     add_devices(lights, True)
 
@@ -145,6 +144,11 @@ class PolyLight(Light):
         """Return true if light is on."""
         return self._state
     
+    @property
+    def supported_features(self):
+        """Flag Light features that are supported."""
+        return 0
+        
     @property
     def available(self):
         """Return if bulb is available."""

@@ -2,3 +2,11 @@
     2b#17:
       name: socket2b17
   platform: polysocket
+- devices:
+    45#f5:
+      name: socket45f5
+  platform: polysocket
+- devices:
+    17#58:
+      name: socket1758
+  platform: polysocket

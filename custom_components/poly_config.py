@@ -40,7 +40,7 @@ POLY_ZIGBEE_SERVICE = 'send_d'
 EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 
 # /dev/tty.usbserial
-UART_PATH = '/dev/tty.usbserial'
+UART_PATH = '/dev/ttyS0'
 
 CMD_EDIT_DONGLE = [0x80, 0x0, 0x0, 0x0, 0x19, 0x44, 0x0, 0x0, 0xf, 0x0, 0x0, \
                     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, \
@@ -100,12 +100,10 @@ def setup(hass, config):
         """return All entitys states"""
         try:
             json_data = device_mgr.get_devices()
-            # print(json.dumps(json_data))
             data_obj = {'status':'OK', 'data': json_data, 'type': 'all_states'}
             data_str = {'data': json.dumps(data_obj)}
             hass.services.call('poly_mqtt', 'pub_data', data_str)
         except Exception as e:
-            # print("Exception: " + e)
             data_obj = {'status':'OK', 'data': {'msg': 'Exception'}, 'type': 'all_states'}
             data_str = {'data': json.dumps(data_obj)}
             hass.services.call('poly_mqtt', 'pub_data', data_str)
@@ -345,12 +343,14 @@ def setup(hass, config):
                 friendly_name = '三路零火灯'
                 mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
                 data = {'devices': {mac: {'name': 'lnlight' + mac.replace('#', '')}}, 'platform': 'polylnlight3'}
-                pack = {'plugin_type': 'light', 'entity_id': 'light.polylnlight' + mac.replace('#', ''), 'plugin_info': data}
+                pack = {'plugin_type': 'light', 'entity_id': 'light.lnlight' + mac.replace('#', ''), 'plugin_info': data}
                 mgr = DevicePluginManager(hass, config)
                 name_mgr = FriendlyNameManager(hass, config)
                 if mgr.add_plugin(pack):
                     discovery.load_platform(hass, 'light', data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
-                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                name_mgr.edit_friendly_name(pack['entity_id'] + '1', friendly_name + '1')
+                name_mgr.edit_friendly_name(pack['entity_id'] + '2', friendly_name + '2')
+                name_mgr.edit_friendly_name(pack['entity_id'] + '3', friendly_name + '3')
                 data = {'entity_id': pack['entity_id'] + '1', 'friendly_name': friendly_name}
                 data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
                 notity_client_device_into_net(data_obj)

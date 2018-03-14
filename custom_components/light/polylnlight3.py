@@ -173,6 +173,11 @@ class PolyLight(Light):
     def available(self):
         """Return if bulb is available."""
         return self._available
+    
+    @property
+    def supported_features(self):
+        """Flag Light features that are supported."""
+        return 0
 
     @property
     def heart_time_stamp(self):

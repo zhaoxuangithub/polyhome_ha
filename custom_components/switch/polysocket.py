@@ -151,6 +151,11 @@ class PolySocket(SwitchDevice):
         return 'switch.' + self._name
 
     @property
+    def supported_features(self):
+        """Flag Switch features that are supported."""
+        return 0
+
+    @property
     def heart_time_stamp(self):
         return self._heart_timestamp
     

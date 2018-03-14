@@ -158,6 +158,11 @@ class PolyLight(Light):
         return self._available
 
     @property
+    def supported_features(self):
+        """Flag Light features that are supported."""
+        return 0
+
+    @property
     def heart_time_stamp(self):
         return self._heart_time_stamp
 
