@@ -131,23 +131,13 @@ class DeviceManager(object):
             if id_domain not in CONTANT_SUPPORT:
                 continue
             
-            json_data = []
-            for item in self._config[id_domain]:
-                json_data.append({
-                    'devices': item['devices'],
-                    'platform': item['platform']
-                })
             dev_str = json.dumps(state, sort_keys=True, cls=JSONEncoder)
             dev_obj = json.loads(dev_str)
             del dev_obj['last_changed']
             del dev_obj['last_updated']
-            if dev_obj['attributes'].get('icon', None) is not None:
-                del dev_obj['attributes']['icon']
-            dev_obj['platform'] = dev_obj['attributes']['platform']
-            if dev_obj['attributes'].get('platform', None) is not None:
-                del dev_obj['attributes']['platform']
+            # if dev_obj['attributes'].get('icon', None) is not None:
+            #     del dev_obj['attributes']['icon']
             dev_obj['group'] = self.get_group(entity_id)
-            # print(dev_obj)
             all_states.append(dev_obj)
             
         return all_states
