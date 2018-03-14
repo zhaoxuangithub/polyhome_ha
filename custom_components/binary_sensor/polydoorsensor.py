@@ -111,6 +111,14 @@ class PolySensorBinarySensor(BinarySensorDevice):
         """heart beat time stamp"""
         return self._heart_timestamp
 
+    @property
+    def device_state_attributes(self):
+        """Return device specific state attributes.
+
+        Implemented by platform classes.
+        """
+        return {'platform': 'polydoorsensor'}
+
     def set_available(self, available):
         """update available property"""
         self._available = available

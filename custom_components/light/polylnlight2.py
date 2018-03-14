@@ -166,6 +166,14 @@ class PolyLight(Light):
     def heart_time_stamp(self):
         return self._heart_time_stamp
 
+    @property
+    def device_state_attributes(self):
+        """Return device specific state attributes.
+
+        Implemented by platform classes.
+        """
+        return {'platform': 'polylnlight2'}
+
     def set_state(self, state):
         self._state = state
         self.schedule_update_ha_state()

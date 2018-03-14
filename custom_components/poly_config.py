@@ -40,7 +40,7 @@ POLY_ZIGBEE_SERVICE = 'send_d'
 EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 
 # /dev/tty.usbserial
-UART_PATH = '/dev/ttyS0'
+UART_PATH = '/dev/tty.usbserial'
 
 CMD_EDIT_DONGLE = [0x80, 0x0, 0x0, 0x0, 0x19, 0x44, 0x0, 0x0, 0xf, 0x0, 0x0, \
                     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, \
@@ -417,13 +417,15 @@ def setup(hass, config):
             elif pack_list[5] == '0x43':
                 # 0xa0', '0xc6', '0x4', '0xa0', '0x4', '0x43', '0x4', '0xa0', '0x7a', '0x5b
                 friendly_name = '4键情景面板'
+                component = 'binary_sensor'
+                platform = 'polypanel4'
                 mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
-                data = {'devices': {mac: {'name': 'panel4' + mac.replace('#', '')}}, 'platform': 'polypanel4'}
-                pack = {'plugin_type': 'binary_sensor', 'entity_id': 'binary_sensor.panel4' + mac.replace('#', ''), 'plugin_info': data}
+                data = {'devices': {mac: {'name': 'panel4' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': 'binary_sensor.panel4' + mac.replace('#', ''), 'plugin_info': data}
                 mgr = DevicePluginManager(hass, config)
                 name_mgr = FriendlyNameManager(hass, config)
                 if mgr.add_plugin(pack):
-                    discovery.load_platform(hass, 'binary_sensor', data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                    discovery.load_platform(hass, component, platform, {'name': data['devices'][mac]['name'], 'mac': mac})
                 name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
                 data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name, 'device_type': 'polypanel4'}
                 data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
@@ -431,14 +433,15 @@ def setup(hass, config):
             elif pack_list[5] == '0x40':
                 # 0xa0', '0xc6', '0x4', '0xa0', '0x4', '0x43', '0x4', '0xa0', '0x7a', '0x5b
                 friendly_name = '门磁'
+                component = 'binary_sensor'
                 platform = 'polydoorsensor'
                 mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
                 data = {'devices': {mac: {'name': 'door' + mac.replace('#', '')}}, 'platform': platform}
-                pack = {'plugin_type': 'binary_sensor', 'entity_id': 'binary_sensor.door' + mac.replace('#', ''), 'plugin_info': data}
+                pack = {'plugin_type': component, 'entity_id': 'binary_sensor.door' + mac.replace('#', ''), 'plugin_info': data}
                 mgr = DevicePluginManager(hass, config)
                 name_mgr = FriendlyNameManager(hass, config)
                 if mgr.add_plugin(pack):
-                    discovery.load_platform(hass, 'binary_sensor', data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
                 name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
                 data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name, 'device_type': platform}
                 data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}

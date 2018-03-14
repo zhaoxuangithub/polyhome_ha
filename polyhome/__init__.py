@@ -145,7 +145,7 @@ class DeviceManager(object):
                 del dev_obj['attributes']['icon']
             dev_obj['platform'] = self._has_device(json_data, id_name)
             dev_obj['group'] = self.get_group(entity_id)
-            # print(dev_obj)
+            print(dev_obj)
             all_states.append(dev_obj)
             
         return all_states

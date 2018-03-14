@@ -219,6 +219,14 @@ class THLSensor(Entity):
     def heart_time_stamp(self):
         return self._heart_timestamp
 
+    @property
+    def device_state_attributes(self):
+        """Return device specific state attributes.
+
+        Implemented by platform classes.
+        """
+        return {'platform': 'polythl'}
+
     def set_value(self, value):
         self._state = value
 

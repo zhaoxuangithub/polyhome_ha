@@ -132,6 +132,14 @@ class PolyLight(Light):
         """Flag Light features that are supported."""
         return 0
 
+    @property
+    def device_state_attributes(self):
+        """Return device specific state attributes.
+
+        Implemented by platform classes.
+        """
+        return {'platform': 'polylight'}
+
     def set_state(self, state):
         self._state = state
         self.schedule_update_ha_state()

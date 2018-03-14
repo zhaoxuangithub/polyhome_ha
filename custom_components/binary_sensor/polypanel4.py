@@ -4,7 +4,7 @@ import voluptuous as vol
 import time
 
 # Import the device class from the component that you want to support
-from homeassistant.components.switch import SwitchDevice, PLATFORM_SCHEMA
+from homeassistant.components.switch import PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity import Entity
 
@@ -17,7 +17,7 @@ EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Optional('name'): cv.string,
+    vol.Optional('name'): cv.string
 })
 
 
@@ -110,6 +110,14 @@ class PolyPanel(Entity):
     def heart_time_stamp(self):
         """heart beat time stamp"""
         return self._heart_timestamp
+
+    @property
+    def device_state_attributes(self):
+        """Return device specific state attributes.
+
+        Implemented by platform classes.
+        """
+        return {'platform': 'polypanel4'}
     
     def set_available(self, available):
         self._available = available

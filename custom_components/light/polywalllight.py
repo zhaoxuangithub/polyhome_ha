@@ -121,6 +121,14 @@ class PolyLight(Light):
         """heart timestamp"""
         return self._heart_timestamp
 
+    @property
+    def device_state_attributes(self):
+        """Return device specific state attributes.
+
+        Implemented by platform classes.
+        """
+        return {'platform': 'polywalllight'}
+
     def set_availible(self, availible):
         self._availible = availible
 
