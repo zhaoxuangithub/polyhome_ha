@@ -39,21 +39,21 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Setup the Polyhome CoverDevice platform."""
 
-     = []
+    curtains = []
     if discovery_info is not None:
         # Not using hostname, as it seems to vary.
         device = {'name': discovery_info['name'] + '1', 'mac': discovery_info['mac'], 'way': '1'}
         device1 = {'name': discovery_info['name'] + '2', 'mac': discovery_info['mac'], 'way': '2'}
-        .append(RMCover(hass, device, None))
-        .append(RMCover(hass, device1, None))
+        curtains.append(RMCover(hass, device, None))
+        curtains.append(RMCover(hass, device1, None))
     else:
         for mac, device_config in config['devices'].items():
             device = {'name': device_config['name'] + '1', 'mac': mac, 'way': '1'}
             device1 = {'name': device_config['name'] + '2', 'mac': mac, 'way': '2'}
-            .append(RMCover(hass, device, device_config))
-            .append(RMCover(hass, device1, device_config))
+            curtains.append(RMCover(hass, device, device_config))
+            curtains.append(RMCover(hass, device1, device_config))
 
-    add_devices(, True)
+    add_devices(curtains, True)
 
     def handle_event(event):
         """Listener to handle fired events."""
@@ -61,7 +61,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         if pack_list[0] == '0xa0' and pack_list[5] == '0x1':
             mac_1, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_1 + "#" + mac_h
-            for dev in :
+            for dev in curtains:
                 if mac_str in dev.mac:
                     if pack_list[9] == '0x0':
                         if dev.way == '1':
@@ -85,7 +85,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         if pack_list[0] == '0xc0':
             mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
-            for dev in :
+            for dev in curtains:
                 if mac_str in dev.mac:
                     if pack_list[6] == '0x41':
                         dev.set_available(False)
@@ -95,7 +95,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
             # device heart_beat
             mac_1, mac_h= pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_1 + "#" + mac_h
-            for dev in :
+            for dev in curtains:
                 if mac_str in dev.mac:
                     dev.set_available(True)
                     dev.heart_beat()
@@ -121,7 +121,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
             # device status
             mac_1, mac_h= pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_1 + "#" + mac_h
-            for dev in :
+            for dev in curtains:
                 if mac_str in dev.mac:
                     if pack_list[9] == '0x0':
                         if dev.way == '1':
