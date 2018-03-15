@@ -26,3 +26,7 @@
     fe#c5:
       name: lightfec5
   platform: polylight3
+- devices:
+    5b#cb:
+      name: light5bcb
+  platform: polynightlight

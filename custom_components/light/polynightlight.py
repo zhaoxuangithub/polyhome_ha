@@ -149,7 +149,7 @@ class PolyLight(Light):
         self._state = state
         self.schedule_update_ha_state()
 
-    def set_availible(self, availible):
+    def set_available(self, availible):
         self._availible = availible
 
     def set_close_time(self, time):
