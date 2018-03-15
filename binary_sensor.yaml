@@ -18,3 +18,7 @@
     11#a9:
       name: door11a9
   platform: polydoorsensor
+- devices:
+    21#c8:
+      name: pir21c8
+  platform: polypirsensor

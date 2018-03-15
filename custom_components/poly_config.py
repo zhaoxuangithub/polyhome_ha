@@ -40,7 +40,7 @@ POLY_ZIGBEE_SERVICE = 'send_d'
 EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 
 # /dev/tty.usbserial
-UART_PATH = '/dev/ttyS0'
+UART_PATH = '/dev/tty.usbserial'
 
 CMD_EDIT_DONGLE = [0x80, 0x0, 0x0, 0x0, 0x19, 0x44, 0x0, 0x0, 0xf, 0x0, 0x0, \
                     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, \
@@ -538,6 +538,22 @@ def setup(hass, config):
                 mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
                 data = {'devices': {mac: {'name': 'curtain' + mac.replace('#', '')}}, 'platform': platform}
                 pack = {'plugin_type': component, 'entity_id': 'cover.curtain' + mac.replace('#', ''), 'plugin_info': data}
+                mgr = DevicePluginManager(hass, config)
+                if mgr.add_plugin(pack):
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                name_mgr = FriendlyNameManager(hass, config)
+                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+                data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
+                notity_client_device_into_net(data_obj) 
+            elif pack_list[5] == '0x14':
+                # '0xa0', '0xd5', '0x52', '0x77', '0x4', '0x14', '0x52', '0x77', '0x7a', '0x1f'
+                friendly_name = '耶鲁门锁'
+                component = 'lock'
+                platform = 'polyyale'
+                mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
+                data = {'devices': {mac: {'name': 'lock' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': 'lock.lock' + mac.replace('#', ''), 'plugin_info': data}
                 mgr = DevicePluginManager(hass, config)
                 if mgr.add_plugin(pack):
                     discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})

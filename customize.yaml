@@ -130,3 +130,9 @@ automation.1521008414:
   friendly_name: 单火灯开
 binary_sensor.door11a9:
   friendly_name: 门磁
+automation.1521078227:
+  friendly_name: 3.15--001
+automation.1521078541:
+  friendly_name: 3.15--02
+binary_sensor.pir21c8:
+  friendly_name: 人体探测器
