@@ -12,6 +12,7 @@ custom_components/sensor/__pycache__/*
 custom_components/switch/__pycache__/*
 polyhome/__pycache__/*
 polyhome/util/__pycache__/*
+polyhome/helper/__pycache__/*
 pyzigbee/__pycache__/*
 
 automations.yaml
