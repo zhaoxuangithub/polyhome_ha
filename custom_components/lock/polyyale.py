@@ -117,6 +117,14 @@ class YaleLock(LockDevice):
         """heart timestamp"""
         return self._heart_timestamp
 
+    @property
+    def device_state_attributes(self):
+        """Return device specific state attributes.
+
+        Implemented by platform classes.
+        """
+        return {'platform': 'polyyale'}
+
     def set_available(self, state):
         self._available = state
 

@@ -173,10 +173,23 @@ class PolyLight(Light):
     def available(self):
         """Return if bulb is available."""
         return self._available
+    
+    @property
+    def supported_features(self):
+        """Flag Light features that are supported."""
+        return 0
 
     @property
     def heart_time_stamp(self):
         return self._heart_time_stamp
+
+    @property
+    def device_state_attributes(self):
+        """Return device specific state attributes.
+
+        Implemented by platform classes.
+        """
+        return {'platform': 'polylnlight3'}
 
     def set_state(self, state):
         self._state = state

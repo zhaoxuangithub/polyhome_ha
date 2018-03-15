@@ -1,297 +1,5 @@
 - action:
   - data:
-      entity_id: switch.socket2b17
-    service: switch.turn_on
-  - data:
-      entity_id: light.lnlight8c11
-    service: light.turn_on
-  - data:
-      entity_id: light.lnlight8c12
-    service: light.turn_on
-  alias: '1520399374'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520399374'
-  trigger: []
-- action:
-  - data:
-      entity_id: media_player.yodar97f
-    service: media_player.media_play_pause
-  - data:
-      entity_id: switch.socket2b17
-    service: switch.turn_on
-  alias: '1520402220'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520402220'
-  trigger: []
-- action:
-  - data:
-      entity_id: light.lightd12
-    service: light.turn_off
-  - data:
-      entity_id: light.lightfec53
-    service: light.turn_on
-  - data:
-      entity_id: cover.cover32401
-    service: cover.close_cover
-  alias: '1520402261'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520402261'
-  trigger: []
-- action:
-  - data:
-      entity_id: switch.socket2b17
-    service: switch.turn_on
-  - data:
-      entity_id: media_player.yodar97f
-    service: media_player.media_previous_track
-  - data:
-      entity_id: light.lnlight19bf
-    service: light.turn_on
-  - data:
-      entity_id: cover.cover32402
-    service: cover.open_cover
-  - data:
-      entity_id: cover.cover32401
-    service: cover.close_cover
-  alias: '1520402306'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520402306'
-  trigger:
-  - at: '13:57'
-    platform: time
-- action:
-  - data:
-      entity_id: media_player.yodar97f
-    service: media_player.turn_off
-  - data:
-      entity_id: cover.cover32401
-    service: cover.close_cover
-  alias: '1520402334'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520402334'
-  trigger:
-  - event_type: binary_sensor.panel44a0_2_pressed
-    platform: event
-- action:
-  - data:
-      entity_id: switch.socket2b17
-    service: switch.turn_on
-  alias: '1520402863'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520402863'
-  trigger:
-  - at: '15:07'
-    platform: time
-- action:
-  - data:
-      entity_id: switch.socket2b17
-    service: switch.turn_on
-  - data:
-      entity_id: media_player.yodar97f
-    service: media_player.media_play_pause
-  alias: '1520403011'
-  condition:
-    condition: or
-    conditions:
-    - after: '15:07'
-      before: '15:07'
-      condition: time
-    - condition: state
-      entity_id: cover.cover32401
-      state: open
-  id: '1520403011'
-  trigger:
-  - at: '15:07'
-    platform: time
-  - entity_id: cover.cover32401
-    platform: state
-    to: 'on'
-- action:
-  - data:
-      entity_id: media_player.yodar97f
-    service: media_player.turn_off
-  alias: '1520404842'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520404842'
-  trigger:
-  - at: '14:42'
-    platform: time
-- action:
-  - data:
-      entity_id: cover.cover32402
-    service: cover.open_cover
-  alias: '1520406491'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520406491'
-  trigger: []
-- action:
-  - data:
-      entity_id: light.lightd12
-    service: light.turn_on
-  alias: '1520407032'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520407032'
-  trigger:
-  - at: '15:16'
-    platform: time
-- action:
-  - data:
-      entity_id: light.lightd12
-    service: light.turn_on
-  alias: '1520407665'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520407665'
-  trigger: []
-- action:
-  - data:
-      entity_id: light.lightd12
-    service: light.turn_on
-  alias: '1520407777'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520407777'
-  trigger: []
-- action:
-  - data:
-      entity_id: light.lightd12
-    service: light.turn_on
-  - data:
-      entity_id: media_player.yodar97f
-    service: media_player.turn_off
-  - data:
-      entity_id: cover.dooya1442
-    service: cover.open_cover
-  alias: '1520409749'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520409749'
-  trigger: []
-- action:
-  - data:
-      entity_id: media_player.yodar97f
-    service: media_player.media_play_pause
-  alias: '1520409782'
-  condition:
-    condition: or
-    conditions:
-    - after: '16:02'
-      before: '16:02'
-      condition: time
-    - condition: state
-      entity_id: media_player.yodar97f
-      state: 'off'
-    - condition: state
-      entity_id: switch.socket2b17
-      state: 'off'
-  id: '1520409782'
-  trigger:
-  - at: '16:02'
-    platform: time
-  - entity_id: media_player.yodar97f
-    platform: state
-    to: 'off'
-  - entity_id: switch.socket2b17
-    platform: state
-    to: 'off'
-- action:
-  - data:
-      entity_id: switch.socket2b17
-    service: switch.turn_on
-  - data:
-      entity_id: cover.dooya1442
-    service: cover.close_cover
-  - data:
-      entity_id: cover.cover32401
-    service: cover.open_cover
-  alias: '1520409832'
-  condition:
-    condition: and
-    conditions:
-    - condition: state
-      entity_id: binary_sensor.door115
-      state: 'off'
-    - condition: state
-      entity_id: media_player.yodar97f
-      state: playing
-  id: '1520409832'
-  trigger:
-  - entity_id: binary_sensor.door115
-    platform: state
-    to: 'off'
-  - entity_id: media_player.yodar97f
-    platform: state
-    to: playing
-- action:
-  - data:
-      entity_id: media_player.yodar97f
-    service: media_player.media_play_pause
-  - data:
-      entity_id: light.lnlight8c12
-    service: light.turn_off
-  - data:
-      entity_id: cover.cover32402
-    service: cover.open_cover
-  - data:
-      entity_id: switch.socket2b17
-    service: switch.turn_on
-  - data:
-      entity_id: cover.cover32401
-    service: cover.open_cover
-  - data:
-      entity_id: light.lightfec51
-    service: light.turn_on
-  alias: '1520409856'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520409856'
-  trigger: []
-- action:
-  - data:
-      entity_id: cover.dooya1442
-      position: 79
-    service: cover.set_cover_position
-  alias: '1520490697'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520490697'
-  trigger: []
-- action:
-  - data:
-      entity_id: cover.dooya1442
-      position: 13
-    service: cover.set_cover_position
-  alias: '1520491554'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520491554'
-  trigger: []
-- action:
-  - data:
       brightness: 163
       entity_id: light.dimlight53a
     service: light.turn_on
@@ -329,32 +37,51 @@
   trigger: []
 - action:
   - data:
-      brightness: 100
-      entity_id: light.dimlight53a
+      entity_id: light.lightfec51
     service: light.turn_on
-  - data:
-      entity_id: cover.dooya1442
-      position: 56
-    service: cover.set_cover_position
-  - data:
-      entity_id: light.lnlight1a622
-    service: light.turn_on
-  alias: '1520835212'
+  alias: '1521008414'
   condition:
     condition: and
     conditions: []
-  id: '1520835212'
+  id: '1521008414'
   trigger: []
 - action:
   - data:
-      entity_id: cover.dooya1442
-      position: 56
-    service: cover.set_cover_position
-  alias: '1520847676'
+      entity_id: light.lnlight19bf
+    service: light.turn_on
+  - data:
+      entity_id: light.lnlight1a622
+    service: light.turn_on
+  - data:
+      entity_id: light.lightfec52
+    service: light.turn_on
+  alias: '1521078541'
   condition:
-    condition: and
-    conditions: []
-  id: '1520847676'
+    condition: or
+    conditions:
+    - condition: state
+      entity_id: cover.cover32402
+      state: closed
+    - condition: state
+      entity_id: media_player.yodar97f
+      state: playing
+    - condition: state
+      entity_id: cover.dooya1442
+      state: open
+    - condition: state
+      entity_id: cover.cover32401
+      state: open
+  id: '1521078541'
   trigger:
-  - at: '17:40'
-    platform: time
+  - entity_id: cover.cover32402
+    platform: state
+    to: closed
+  - entity_id: media_player.yodar97f
+    platform: state
+    to: playing
+  - entity_id: cover.dooya1442
+    platform: state
+    to: open
+  - entity_id: cover.cover32401
+    platform: state
+    to: open

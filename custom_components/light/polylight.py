@@ -27,7 +27,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     lights = []
     if discovery_info is not None:
-        # Not using hostname, as it seems to vary.
         device = {'name': discovery_info['name'], 'mac': discovery_info['mac']}
         lights.append(PolyLight(hass, device, None))
     else:
@@ -122,11 +121,24 @@ class PolyLight(Light):
     def is_on(self):
         """Return true if light is on."""
         return self._state
-
+    
     @property
     def available(self):
         """Return if bulb is available."""
         return self._available
+    
+    @property
+    def supported_features(self):
+        """Flag Light features that are supported."""
+        return 0
+
+    @property
+    def device_state_attributes(self):
+        """Return device specific state attributes.
+
+        Implemented by platform classes.
+        """
+        return {'platform': 'polylight'}
 
     def set_state(self, state):
         self._state = state

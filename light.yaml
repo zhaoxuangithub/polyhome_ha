@@ -3,6 +3,10 @@
       name: dimlight53a
   platform: polydimlight
 - devices:
+    19#bf:
+      name: lnlight19bf
+  platform: polylnlight
+- devices:
     1a#62:
       name: lnlight1a62
   platform: polylnlight2
@@ -10,10 +14,6 @@
     8#c1:
       name: lnlight8c1
   platform: polylnlight3
-- devices:
-    19#bf:
-      name: lnlight19bf
-  platform: polylnlight
 - devices:
     d#61:
       name: lightd61

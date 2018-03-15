@@ -1,6 +1,5 @@
 '1519632235522':
-  entities:
-  - binary_sensor.panel44a0
+  entities: []
   name: 主卧
   view: true
 '1519632243838':

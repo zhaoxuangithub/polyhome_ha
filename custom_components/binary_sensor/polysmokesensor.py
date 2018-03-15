@@ -73,6 +73,14 @@ class PolySensorBinarySensor(BinarySensorDevice):
         """Return True if entity is available."""
         return True
 
+    @property
+    def device_state_attributes(self):
+        """Return device specific state attributes.
+
+        Implemented by platform classes.
+        """
+        return {'platform': 'polysmokesensor'}
+
     def set_available(self, available):
         self._available = available
         self.schedule_update_ha_state()
