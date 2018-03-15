@@ -1,0 +1,8 @@
+- devices:
+    52#77:
+      name: lock5277
+  platform: polyyale
+- devices:
+    13#a9:
+      name: lock13a9
+  platform: polyholishi

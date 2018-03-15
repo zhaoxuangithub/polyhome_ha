@@ -147,6 +147,8 @@ class HoLiShiLock(LockDevice):
         CMD_LOCK_CLOSE[6], CMD_LOCK_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
         key_mgr = LockKeyManager(self._hass, self._config)
         lock_key = key_mgr.get_friendly_name(self._mac)
+        if lock_key is None:
+            return
         CMD_LOCK_CLOSE[10] = int(lock_key[0].replace('0x', ''), 16)
         CMD_LOCK_CLOSE[11] = int(lock_key[1].replace('0x', ''), 16)
         CMD_LOCK_CLOSE[12] = int(lock_key[2].replace('0x', ''), 16)
@@ -162,6 +164,8 @@ class HoLiShiLock(LockDevice):
         CMD_LOCK_OPEN[6], CMD_LOCK_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
         key_mgr = LockKeyManager(self._hass, self._config)
         lock_key = key_mgr.get_friendly_name(self._mac)  
+        if lock_key is None:
+            return
         CMD_LOCK_OPEN[10] = int(lock_key[0].replace('0x', ''), 16)
         CMD_LOCK_OPEN[11] = int(lock_key[1].replace('0x', ''), 16)
         CMD_LOCK_OPEN[12] = int(lock_key[2].replace('0x', ''), 16)
