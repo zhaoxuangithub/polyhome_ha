@@ -152,6 +152,14 @@ class PolyLight(Light):
     def set_available(self, availible):
         self._availible = availible
 
+    def turn_on(self, **kwargs):
+        """turn on"""
+        self._state = True
+
+    def turn_off(self, **kwargs):
+        """turn off."""
+        self._state = False
+
     def set_close_time(self, time):
         mac = self._mac.split('#')
         CMD_SET_TIME[2], CMD_SET_TIME[3] = int(mac[0], 16), int(mac[1], 16)
