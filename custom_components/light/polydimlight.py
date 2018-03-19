@@ -45,7 +45,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     def event_zigbee_recv_handler(event):
         """Listener to handle fired events"""
         pack_list = event.data.get('data')
-        if pack_list[0] == '0xa0' and pack_list[5] == '0xb0':
+        if pack_list[0] == '0xa0' and pack_list[5] == '0xb0' and pack_list[8] == '0x70':
             mac_l, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in lights if dev.mac == mac_str), None)
@@ -158,6 +158,14 @@ class PolyDimLight(Light):
     @property
     def heart_time_stamp(self):
         return self._heart_timestamp
+
+    @property
+    def device_state_attributes(self):
+        """Return device specific state attributes.
+
+        Implemented by platform classes.
+        """
+        return {'platform': 'polydimlight'}
 
     def set_brightness(self, bright):
         """Set light brightness."""

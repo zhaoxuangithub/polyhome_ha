@@ -161,6 +161,14 @@ class RMCover(CoverDevice):
     def heart_time_stamp(self):
         return self._heart_timestamp
 
+    @property
+    def device_state_attributes(self):
+        """Return device specific state attributes.
+
+        Implemented by platform classes.
+        """
+        return {'platform': 'polycurtain'}
+
     def set_closed(self, value=True):
         self._closed = value
         self.schedule_update_ha_state()
@@ -191,7 +199,7 @@ class RMCover(CoverDevice):
 
     def open_cover(self, **kwargs):
         """Open the cover."""
-        #     0x80, 0x00, 0x1f, 0xa4, 0x10, 0x44, 0x1f, 0xa4, 0x60, 0x3, 0x0, 0x2, 0x0,
+        # 0x80, 0x00, 0x1f, 0xa4, 0x10, 0x44, 0x1f, 0xa4, 0x60, 0x3, 0x0, 0x2, 0x0,
         # 0x7, 0x0, 0x6, 0x1, 0x5, 0x0, 0x4, 0x0, 0xb4
         self._closed = False
         mac = self._mac.split('#')
@@ -200,18 +208,14 @@ class RMCover(CoverDevice):
         BYTES_OPEN[-5] = 0x1
         resu_crc = checkcrc.xorcrc_hex(BYTES_OPEN)
         BYTES_OPEN[-1] = resu_crc
-        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {
-            "data": BYTES_OPEN
-        })
+        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_OPEN})
         time.sleep(0.4)
         BYTES_OPEN[2], BYTES_OPEN[3] = int(mac[0], 16), int(mac[1], 16)
         BYTES_OPEN[6], BYTES_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
         BYTES_OPEN[-5] = 0x0
         resu_crc = checkcrc.xorcrc_hex(BYTES_OPEN)
         BYTES_OPEN[-1] = resu_crc
-        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {
-            "data": BYTES_OPEN
-        })
+        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_OPEN})
 
     def stop_cover(self, **kwargs):
         """stop the cover."""
@@ -224,18 +228,14 @@ class RMCover(CoverDevice):
         BYTES_STOP[-2] = 0x1
         resu_crc = checkcrc.xorcrc_hex(BYTES_STOP)
         BYTES_STOP[-1] = resu_crc
-        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {
-            "data": BYTES_STOP
-        })
+        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_STOP})
         time.sleep(0.4)
         BYTES_STOP[2], BYTES_STOP[3] = int(mac[0], 16), int(mac[1], 16)
         BYTES_STOP[6], BYTES_STOP[7] = int(mac[0], 16), int(mac[1], 16)
         BYTES_STOP[-2] = 0x0
         resu_crc = checkcrc.xorcrc_hex(BYTES_STOP)
         BYTES_STOP[-1] = resu_crc
-        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {
-            "data": BYTES_STOP
-        })
+        self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_STOP})
 
     def heart_beat(self):
         self._heart_timestamp = time.time()

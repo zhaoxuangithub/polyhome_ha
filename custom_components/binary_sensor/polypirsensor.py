@@ -53,7 +53,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
             if pack_list[0] == '0xa0' and pack_list[9] == '0x1':
                 # 0xa0 0xc6 0x11 0x5 0x5 0x40 0x11 0x5 0x79 0x1 0x5b
                 dev.set_available(True)
-                dev.set_state(False)
+                dev.set_state(True)
             if pack_list[0] == '0xa0' and pack_list[8] == '0xcc':
                 dev.set_available(True)
                 dev.heart_beat()
@@ -114,6 +114,14 @@ class PolyPirSensor(BinarySensorDevice):
     @property
     def heart_time_stamp(self):
         return self._heart_timestamp
+
+    @property
+    def device_state_attributes(self):
+        """Return device specific state attributes.
+
+        Implemented by platform classes.
+        """
+        return {'platform': 'polypirsensor'}
 
     def set_available(self, available):
         self._available = available

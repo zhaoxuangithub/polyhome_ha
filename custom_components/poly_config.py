@@ -100,12 +100,10 @@ def setup(hass, config):
         """return All entitys states"""
         try:
             json_data = device_mgr.get_devices()
-            # print(json.dumps(json_data))
             data_obj = {'status':'OK', 'data': json_data, 'type': 'all_states'}
             data_str = {'data': json.dumps(data_obj)}
             hass.services.call('poly_mqtt', 'pub_data', data_str)
         except Exception as e:
-            # print("Exception: " + e)
             data_obj = {'status':'OK', 'data': {'msg': 'Exception'}, 'type': 'all_states'}
             data_str = {'data': json.dumps(data_obj)}
             hass.services.call('poly_mqtt', 'pub_data', data_str)
@@ -345,12 +343,14 @@ def setup(hass, config):
                 friendly_name = '三路零火灯'
                 mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
                 data = {'devices': {mac: {'name': 'lnlight' + mac.replace('#', '')}}, 'platform': 'polylnlight3'}
-                pack = {'plugin_type': 'light', 'entity_id': 'light.polylnlight' + mac.replace('#', ''), 'plugin_info': data}
+                pack = {'plugin_type': 'light', 'entity_id': 'light.lnlight' + mac.replace('#', ''), 'plugin_info': data}
                 mgr = DevicePluginManager(hass, config)
                 name_mgr = FriendlyNameManager(hass, config)
                 if mgr.add_plugin(pack):
                     discovery.load_platform(hass, 'light', data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
-                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                name_mgr.edit_friendly_name(pack['entity_id'] + '1', friendly_name + '1')
+                name_mgr.edit_friendly_name(pack['entity_id'] + '2', friendly_name + '2')
+                name_mgr.edit_friendly_name(pack['entity_id'] + '3', friendly_name + '3')
                 data = {'entity_id': pack['entity_id'] + '1', 'friendly_name': friendly_name}
                 data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
                 notity_client_device_into_net(data_obj)
@@ -417,13 +417,15 @@ def setup(hass, config):
             elif pack_list[5] == '0x43':
                 # 0xa0', '0xc6', '0x4', '0xa0', '0x4', '0x43', '0x4', '0xa0', '0x7a', '0x5b
                 friendly_name = '4键情景面板'
+                component = 'binary_sensor'
+                platform = 'polypanel4'
                 mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
-                data = {'devices': {mac: {'name': 'panel4' + mac.replace('#', '')}}, 'platform': 'polypanel4'}
-                pack = {'plugin_type': 'binary_sensor', 'entity_id': 'binary_sensor.panel4' + mac.replace('#', ''), 'plugin_info': data}
+                data = {'devices': {mac: {'name': 'panel4' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': 'binary_sensor.panel4' + mac.replace('#', ''), 'plugin_info': data}
                 mgr = DevicePluginManager(hass, config)
                 name_mgr = FriendlyNameManager(hass, config)
                 if mgr.add_plugin(pack):
-                    discovery.load_platform(hass, 'binary_sensor', data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                    discovery.load_platform(hass, component, platform, {'name': data['devices'][mac]['name'], 'mac': mac})
                 name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
                 data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name, 'device_type': 'polypanel4'}
                 data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
@@ -431,14 +433,15 @@ def setup(hass, config):
             elif pack_list[5] == '0x40':
                 # 0xa0', '0xc6', '0x4', '0xa0', '0x4', '0x43', '0x4', '0xa0', '0x7a', '0x5b
                 friendly_name = '门磁'
+                component = 'binary_sensor'
                 platform = 'polydoorsensor'
                 mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
                 data = {'devices': {mac: {'name': 'door' + mac.replace('#', '')}}, 'platform': platform}
-                pack = {'plugin_type': 'binary_sensor', 'entity_id': 'binary_sensor.door' + mac.replace('#', ''), 'plugin_info': data}
+                pack = {'plugin_type': component, 'entity_id': 'binary_sensor.door' + mac.replace('#', ''), 'plugin_info': data}
                 mgr = DevicePluginManager(hass, config)
                 name_mgr = FriendlyNameManager(hass, config)
                 if mgr.add_plugin(pack):
-                    discovery.load_platform(hass, 'binary_sensor', data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
                 name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
                 data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name, 'device_type': platform}
                 data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
@@ -543,7 +546,105 @@ def setup(hass, config):
                 data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
                 data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
                 notity_client_device_into_net(data_obj) 
-
+            elif pack_list[5] == '0x14':
+                # '0xa0', '0xd5', '0x52', '0x77', '0x4', '0x14', '0x52', '0x77', '0x7a', '0x1f'
+                friendly_name = '耶鲁门锁'
+                component = 'lock'
+                platform = 'polyyale'
+                mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
+                data = {'devices': {mac: {'name': 'lock' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': 'lock.lock' + mac.replace('#', ''), 'plugin_info': data}
+                mgr = DevicePluginManager(hass, config)
+                if mgr.add_plugin(pack):
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                name_mgr = FriendlyNameManager(hass, config)
+                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+                data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
+                notity_client_device_into_net(data_obj) 
+            elif pack_list[5] == '0x12':
+                # '0xa0', '0xcd', '0x13', '0xa9', '0x4', '0x12', '0x13', '0xa9', '0x7a', '0x1'
+                friendly_name = '豪力士语音门锁'
+                component = 'lock'
+                platform = 'polyholishi'
+                mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
+                data = {'devices': {mac: {'name': 'lock' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': 'lock.lock' + mac.replace('#', ''), 'plugin_info': data}
+                mgr = DevicePluginManager(hass, config)
+                if mgr.add_plugin(pack):
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                name_mgr = FriendlyNameManager(hass, config)
+                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+                data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
+                notity_client_device_into_net(data_obj)                 
+            elif pack_list[5] == '0xf3':
+                # '0xa0', '0xcd', '0x13', '0xa9', '0x4', '0x12', '0x13', '0xa9', '0x7a', '0x1'
+                friendly_name = 'LCD情景面板'
+                component = 'binary_sensor'
+                platform = 'polylcdpanel'
+                mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
+                data = {'devices': {mac: {'name': 'panel' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': 'binary_sensor.panel' + mac.replace('#', ''), 'plugin_info': data}
+                mgr = DevicePluginManager(hass, config)
+                if mgr.add_plugin(pack):
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                name_mgr = FriendlyNameManager(hass, config)
+                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+                data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
+                notity_client_device_into_net(data_obj) 
+            elif pack_list[5] == '0xf0':
+                # '0xa0', '0xcd', '0x13', '0xa9', '0x4', '0x12', '0x13', '0xa9', '0x7a', '0x1'
+                friendly_name = '夜灯'
+                component = 'light'
+                platform = 'polynightlight'
+                mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
+                data = {'devices': {mac: {'name': 'light' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': 'light.light' + mac.replace('#', ''), 'plugin_info': data}
+                mgr = DevicePluginManager(hass, config)
+                if mgr.add_plugin(pack):
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                name_mgr = FriendlyNameManager(hass, config)
+                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+                data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
+                notity_client_device_into_net(data_obj) 
+            elif pack_list[5] == '0xf1':
+                # '0xa0', '0xcd', '0x13', '0xa9', '0x4', '0x12', '0x13', '0xa9', '0x7a', '0x1'
+                friendly_name = '壁灯'
+                component = 'light'
+                platform = 'polywalllight'
+                mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
+                data = {'devices': {mac: {'name': 'light' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': 'light.light' + mac.replace('#', ''), 'plugin_info': data}
+                mgr = DevicePluginManager(hass, config)
+                if mgr.add_plugin(pack):
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                name_mgr = FriendlyNameManager(hass, config)
+                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+                data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
+                notity_client_device_into_net(data_obj)
+            elif pack_list[5] == '0x53':
+                # '0xa0', '0xcf', '0x46', '0xb1', '0x4', '0x53', '0x46', '0xb1', '0x7a', '0x42'
+                friendly_name = '温湿度传感器'
+                component = 'sensor'
+                platform = 'polythl'
+                mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
+                data = {'devices': {mac: {'name': 'sensor' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': 'sensor.sensor' + mac.replace('#', ''), 'plugin_info': data}
+                mgr = DevicePluginManager(hass, config)
+                if mgr.add_plugin(pack):
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                name_mgr = FriendlyNameManager(hass, config)
+                name_mgr.edit_friendly_name(pack['entity_id'] + '1', '温度')
+                name_mgr.edit_friendly_name(pack['entity_id'] + '2', '湿度')
+                name_mgr.edit_friendly_name(pack['entity_id'] + '3', '亮度')
+                data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+                data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
+                notity_client_device_into_net(data_obj)
+                
             # reload core config and friendlyname is work 
             hass.services.call('homeassistant', 'reload_core_config')
 
@@ -710,7 +811,7 @@ def setup(hass, config):
 
     hass.bus.listen('event_mqtt_publish', event_publish_message_handler)
 
-    # API
+    # Services
     hass.services.register('gateway', 'get_all_automation', get_all_automation_service)
     hass.services.register('gateway', 'edit_automation', edit_automation_service)
     hass.services.register('gateway', 'delete_automation', delete_automation_service)
@@ -751,27 +852,6 @@ def setup(hass, config):
 
     return True
 
-@asyncio.coroutine
-def async_auto_reload(hass, data):
-    """Reload the automation from config.
-    Returns a coroutine object.
-    """
-    yield from hass.services.async_call('homeassistant', 'reload_core_config')
-    yield from hass.services.async_call('automation', 'reload')
-    hass.bus.fire('event_mqtt_publish', data)
-
-@asyncio.coroutine
-def async_reload(hass):
-    return hass.services.async_call('group', 'reload')
-
-@asyncio.coroutine
-def async_restart(hass):
-    return hass.services.async_call('homeassistant', 'restart')
-
-@asyncio.coroutine
-def async_reload_core_conf(hass):
-    return hass.services.async_call('homeassistant', 'reload_core_config')
-
 
 class JSONEncoder(json.JSONEncoder):
     """JSONEncoder that supports Home Assistant objects."""
@@ -797,3 +877,24 @@ class JSONEncoder(json.JSONEncoder):
             except TypeError:
                 # Ok, we're lost, cause the original error
                 return json.JSONEncoder.default(self, o)
+
+@asyncio.coroutine
+def async_auto_reload(hass, data):
+    """Reload the automation from config.
+    Returns a coroutine object.
+    """
+    yield from hass.services.async_call('homeassistant', 'reload_core_config')
+    yield from hass.services.async_call('automation', 'reload')
+    hass.bus.fire('event_mqtt_publish', data)
+
+@asyncio.coroutine
+def async_reload(hass):
+    return hass.services.async_call('group', 'reload')
+
+@asyncio.coroutine
+def async_restart(hass):
+    return hass.services.async_call('homeassistant', 'restart')
+
+@asyncio.coroutine
+def async_reload_core_conf(hass):
+    return hass.services.async_call('homeassistant', 'reload_core_config')

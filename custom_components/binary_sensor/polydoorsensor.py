@@ -43,10 +43,10 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         if dev is not None:
             if pack_list[0] == '0xa0' and pack_list[9] == '0xd':
                 # 0xa0 0xc4 0x11 0x5 0x5 0x40 0x11 0x5 0x79 0xd 0x55
-                dev.set_state(True)
+                dev.set_state(False)
             if pack_list[0] == '0xa0' and pack_list[9] == '0x1':
                 # 0xa0 0xc6 0x11 0x5 0x5 0x40 0x11 0x5 0x79 0x1 0x5b
-                dev.set_state(False)
+                dev.set_state(True)
             if pack_list[0] == '0xa0' and pack_list[5] == '0x40' and pack_list[8] == '0x78':
                 # '0xa0', '0xd8', '0x11', '0x5', '0x13', '0x40', '0x11', '0x5', '0x78', '0x0', '0x0', '0x0',
                 # '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x0', '0x6', '0xf5', '0xa0'
@@ -110,6 +110,14 @@ class PolySensorBinarySensor(BinarySensorDevice):
     def heart_time_stamp(self):
         """heart beat time stamp"""
         return self._heart_timestamp
+
+    @property
+    def device_state_attributes(self):
+        """Return device specific state attributes.
+
+        Implemented by platform classes.
+        """
+        return {'platform': 'polydoorsensor'}
 
     def set_available(self, available):
         """update available property"""

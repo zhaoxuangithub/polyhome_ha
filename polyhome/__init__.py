@@ -131,24 +131,17 @@ class DeviceManager(object):
             if id_domain not in CONTANT_SUPPORT:
                 continue
             
-            json_data = []
-            for item in self._config[id_domain]:
-                json_data.append({
-                    'devices': item['devices'],
-                    'platform': item['platform']
-                })
             dev_str = json.dumps(state, sort_keys=True, cls=JSONEncoder)
             dev_obj = json.loads(dev_str)
             del dev_obj['last_changed']
             del dev_obj['last_updated']
-            if dev_obj['attributes'].get('icon', None) is not None:
-                del dev_obj['attributes']['icon']
-            dev_obj['platform'] = self._has_device(json_data, id_name)
+            # if dev_obj['attributes'].get('icon', None) is not None:
+            #     del dev_obj['attributes']['icon']
             dev_obj['group'] = self.get_group(entity_id)
             all_states.append(dev_obj)
             
         return all_states
-  
+    
     def get_group(self, entity_id):
         """get group"""
         for state in self._hass.states.async_all():
@@ -326,24 +319,16 @@ class AutomationsManager(object):
         self._filepath = self._hass.config.path('automations.yaml')
 
     def get_automations(self):
-        current = self._read_config()
-        name_mgr = FriendlyNameManager(self._hass, self._config)
-        for automation in current:
-            auto_id = 'automation.' + automation['id']
-            auto_alias = name_mgr.get_friendly_name(auto_id)
-            if auto_alias is not None:
-                automation['alias'] = auto_alias['friendly_name']
-            for action in automation['action']:
-                if isinstance(action, dict):
-                    if 'data' in action.keys():
-                        if 'entity_id' in action['data'].keys():
-                            entity_id = action['data']['entity_id']
-                            name = name_mgr.get_friendly_name(entity_id)
-                            if name is not None:
-                                action['data']['friendly_name'] = name['friendly_name']
-                            else: 
-                                action['data']['friendly_name'] = entity_id
-        return current
+        all_auto = []
+        for state in self._hass.states.async_all():
+            entity_id = state.as_dict()['entity_id']
+            id_domain = entity_id.split('.')[0]
+            if id_domain not in 'automation':
+                continue
+            dev_str = json.dumps(state, sort_keys=True, cls=JSONEncoder)
+            dev_obj = json.loads(dev_str)
+            all_auto.append(dev_obj)
+        return all_auto
 
     def edit_automation(self, data):
         """edit automation by id.

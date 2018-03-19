@@ -124,6 +124,14 @@ class PolyPhone(SwitchDevice):
         """available"""
         return self._available
 
+    @property
+    def device_state_attributes(self):
+        """Return device specific state attributes.
+
+        Implemented by platform classes.
+        """
+        return {'platform': 'polyphone'}
+
     def set_available(self, available):
         self._available = available
 

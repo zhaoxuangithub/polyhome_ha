@@ -127,6 +127,14 @@ class HoLiShiLock(LockDevice):
         """heart timestamp"""
         return self._heart_timestamp
 
+    @property
+    def device_state_attributes(self):
+        """Return device specific state attributes.
+
+        Implemented by platform classes.
+        """
+        return {'platform': 'polyholishi'}
+
     def set_available(self, state):
         self._available = state
 
@@ -139,10 +147,12 @@ class HoLiShiLock(LockDevice):
         CMD_LOCK_CLOSE[6], CMD_LOCK_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
         key_mgr = LockKeyManager(self._hass, self._config)
         lock_key = key_mgr.get_friendly_name(self._mac)
+        if lock_key is None:
+            return
         CMD_LOCK_CLOSE[10] = int(lock_key[0].replace('0x', ''), 16)
         CMD_LOCK_CLOSE[11] = int(lock_key[1].replace('0x', ''), 16)
         CMD_LOCK_CLOSE[12] = int(lock_key[2].replace('0x', ''), 16)
-        CMD_LOCK_CLOSE[14] = checkcrc.sumup(CMD_LOCK_CLOSE[10:14])
+        CMD_LOCK_CLOSE[14] = self.sumup(CMD_LOCK_CLOSE[10:14])
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {'data': CMD_LOCK_CLOSE})
 
     def unlock(self, **kwargs):
@@ -154,16 +164,25 @@ class HoLiShiLock(LockDevice):
         CMD_LOCK_OPEN[6], CMD_LOCK_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
         key_mgr = LockKeyManager(self._hass, self._config)
         lock_key = key_mgr.get_friendly_name(self._mac)  
+        if lock_key is None:
+            return
         CMD_LOCK_OPEN[10] = int(lock_key[0].replace('0x', ''), 16)
         CMD_LOCK_OPEN[11] = int(lock_key[1].replace('0x', ''), 16)
         CMD_LOCK_OPEN[12] = int(lock_key[2].replace('0x', ''), 16)
-        CMD_LOCK_OPEN[14] = checkcrc.sumup(CMD_LOCK_OPEN[10:14])
+        CMD_LOCK_OPEN[14] = self.sumup(CMD_LOCK_OPEN[10:14])
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {'data': CMD_LOCK_OPEN})
 
     def heart_beat(self):
         self._heart_timestamp = time.time()
         entity_id = 'lock.' + self.name
         self._hass.services.call('gateway', 'publish_heart_beat', {'entity_id': entity_id})
+
+    def sumup(self, data):
+        ret = 0
+        for byte in data:
+            ret += byte
+        ret = hex(ret)[-2:]
+        return int(ret, 16)
 
 
 class LockKeyManager(object):
