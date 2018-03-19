@@ -626,7 +626,25 @@ def setup(hass, config):
                 data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
                 data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
                 notity_client_device_into_net(data_obj)
-
+            elif pack_list[5] == '0x53':
+                # '0xa0', '0xcf', '0x46', '0xb1', '0x4', '0x53', '0x46', '0xb1', '0x7a', '0x42'
+                friendly_name = '温湿度传感器'
+                component = 'sensor'
+                platform = 'polythl'
+                mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
+                data = {'devices': {mac: {'name': 'sensor' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': 'sensor.sensor' + mac.replace('#', ''), 'plugin_info': data}
+                mgr = DevicePluginManager(hass, config)
+                if mgr.add_plugin(pack):
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                name_mgr = FriendlyNameManager(hass, config)
+                name_mgr.edit_friendly_name(pack['entity_id'] + '1', '温度')
+                name_mgr.edit_friendly_name(pack['entity_id'] + '2', '湿度')
+                name_mgr.edit_friendly_name(pack['entity_id'] + '3', '亮度')
+                data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+                data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
+                notity_client_device_into_net(data_obj)
+                
             # reload core config and friendlyname is work 
             hass.services.call('homeassistant', 'reload_core_config')
 

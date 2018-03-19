@@ -39,3 +39,4 @@ mqtt:
   password: 123
   # client id
   client_id: fe:00:b1:08:d3:01
+

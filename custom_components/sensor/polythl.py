@@ -36,15 +36,19 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     sensors = []
     if discovery_info is not None:
         # Not using hostname, as it seems to vary.
-        device = {'name': discovery_info['name'], 'mac': discovery_info['mac']}
+        device = {'name': discovery_info['name'] + '1', 'mac': discovery_info['mac']}
         sensors.append(THLSensor(hass, device, None, 'temperature', '°C', 'mdi:water-percent'))
+        device = {'name': discovery_info['name'] + '2', 'mac': discovery_info['mac']}
         sensors.append(THLSensor(hass, device, None, 'humidity', '%', 'mdi:water-percent'))
+        device = {'name': discovery_info['name'] + '3', 'mac': discovery_info['mac']}
         sensors.append(THLSensor(hass, device, None, 'light', 'lux', 'mdi:water-percent'))
     else:
         for mac, device_config in config['devices'].items():
-            device = {'name': device_config['name'], 'mac': mac}
+            device = {'name': device_config['name'] + '1', 'mac': mac}
             sensors.append(THLSensor(hass, device, device_config, 'temperature', '°C', 'mdi:water-percent'))
+            device = {'name': device_config['name'] + '2', 'mac': mac}
             sensors.append(THLSensor(hass, device, device_config, 'humidity', '%', 'mdi:water-percent'))
+            device = {'name': device_config['name'] + '3', 'mac': mac}
             sensors.append(THLSensor(hass, device, device_config, 'light', 'lux', 'mdi:water-percent'))
 
     add_devices(sensors, True)

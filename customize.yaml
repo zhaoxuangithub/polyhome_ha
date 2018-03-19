@@ -37,11 +37,11 @@ automation.1519634303:
 light.lightd1:
   friendly_name: 二路单火灯
 light.lightfec51:
-  friendly_name: 三路单火灯
+  friendly_name: 三路单火灯1
 light.lightfec52:
-  friendly_name: 三路单火灯
+  friendly_name: 三路单火灯2
 light.lightfec53:
-  friendly_name: 三路单火灯
+  friendly_name: 三路单火灯3
 automation.1519694775:
   friendly_name: '11'
 automation.1519694838:
@@ -142,3 +142,29 @@ lock.lock13a9:
   friendly_name: 豪力士语音门锁
 light.light5bcb:
   friendly_name: 夜灯
+sensor.sensor1c451:
+  friendly_name: 温度
+sensor.sensor1c452:
+  friendly_name: 湿度
+sensor.sensor1c453:
+  friendly_name: 亮度
+light.light4b31:
+  friendly_name: 壁灯
+light.light255f:
+  friendly_name: 壁灯
+cover.cover32401:
+  friendly_name: 二路强电窗帘1
+cover.cover32402:
+  friendly_name: 二路强电窗帘2
+automation.1521191630:
+  friendly_name: menci on
+automation.1521191659:
+  friendly_name: menci off
+automation.1521192082:
+  friendly_name: tiaog chuabglian
+automation.1521192135:
+  friendly_name: sw dan
+automation.1521192188:
+  friendly_name: 1w
+automation.1520496526:
+  friendly_name: tiaog
