@@ -2,6 +2,7 @@ import logging
 import voluptuous as vol
 import time
 
+
 from homeassistant.components.light import Light, PLATFORM_SCHEMA
 import homeassistant.helpers.config_validation as cv
 
