@@ -448,12 +448,12 @@ def setup(hass, config):
                 notity_client_device_into_net(data_obj)
             elif pack_list[5] == '0x44':
                 # 0xa0', '0xc6', '0x4', '0xa0', '0x4', '0x43', '0x4', '0xa0', '0x7a', '0x5b
-                friendly_name = '人体探测器'
+                friendly_name = 'IO探测器'
                 component = 'binary_sensor'
-                platform = 'polypirsensor'
+                platform = 'polyiosensor'
                 mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
-                data = {'devices': {mac: {'name': 'pir' + mac.replace('#', '')}}, 'platform': 'polypirsensor'}
-                pack = {'plugin_type': component, 'entity_id': 'binary_sensor.pir' + mac.replace('#', ''), 'plugin_info': data}
+                data = {'devices': {mac: {'name': 'pir' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': 'binary_sensor.io' + mac.replace('#', ''), 'plugin_info': data}
                 mgr = DevicePluginManager(hass, config)
                 name_mgr = FriendlyNameManager(hass, config)
                 if mgr.add_plugin(pack):
