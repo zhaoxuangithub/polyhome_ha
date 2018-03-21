@@ -2,3 +2,7 @@
     32#40:
       name: cover3240
   platform: polysccurtain2
+- devices:
+    4b#20:
+      name: curtain4b20
+  platform: polycurtain2

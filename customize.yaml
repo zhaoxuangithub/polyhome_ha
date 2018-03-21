@@ -168,3 +168,27 @@ automation.1521192188:
   friendly_name: 1w
 automation.1520496526:
   friendly_name: tiaog
+cover.curtain4b201:
+  friendly_name: 二路干节点窗帘1
+cover.curtain4b202:
+  friendly_name: 二路干节点窗帘2
+switch.phone5d69:
+  friendly_name: 电话拨号器
+light.light4a01:
+  friendly_name: 三路零火情景面板1
+light.light4a02:
+  friendly_name: 三路零火情景面板2
+light.light4a03:
+  friendly_name: 三路零火情景面板3
+light.light5118:
+  friendly_name: 一路零火情景面板
+light.lnlight529e1:
+  friendly_name: 三路零火灯1
+light.lnlight529e2:
+  friendly_name: 三路零火灯2
+light.lnlight529e3:
+  friendly_name: 三路零火灯3
+light.light011:
+  friendly_name: 二路零火情景面板1
+light.light012:
+  friendly_name: 二路零火情景面板2
