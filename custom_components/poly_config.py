@@ -779,6 +779,38 @@ def setup(hass, config):
                 data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
                 data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
                 notity_client_device_into_net(data_obj)
+            elif pack_list[5] == '0x60':
+                # '0xa0', '0xc9', '0x4', '0xa0', '0x4', '0x3e', '0x4', '0xa0', '0x7a', '0x29'
+                friendly_name = '警号'
+                component = 'switch'
+                platform = 'polywarsignal'
+                mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
+                data = {'devices': {mac: {'name': 'warsignal' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': 'switch.warsignal' + mac.replace('#', ''), 'plugin_info': data}
+                mgr = DevicePluginManager(hass, config)
+                if mgr.add_plugin(pack):
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                name_mgr = FriendlyNameManager(hass, config)
+                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+                data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
+                notity_client_device_into_net(data_obj)
+            elif pack_list[5] == '0x40':
+                # '0xa0', '0xc9', '0x4', '0xa0', '0x4', '0x3e', '0x4', '0xa0', '0x7a', '0x29'
+                friendly_name = '烟雾报警器'
+                component = 'binary_sensor'
+                platform = 'polysmokesensor'
+                mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
+                data = {'devices': {mac: {'name': 'smokesensor' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': 'switch.smokesensor' + mac.replace('#', ''), 'plugin_info': data}
+                mgr = DevicePluginManager(hass, config)
+                if mgr.add_plugin(pack):
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                name_mgr = FriendlyNameManager(hass, config)
+                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+                data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
+                notity_client_device_into_net(data_obj)
 
             # reload core config and friendlyname is work 
             hass.services.call('homeassistant', 'reload_core_config')

@@ -1,4 +1,8 @@
 - devices:
+    45#f5:
+      name: socket45f5
+  platform: polysocket
+- devices:
     5d#69:
       name: phone5d69
   platform: polyphone
