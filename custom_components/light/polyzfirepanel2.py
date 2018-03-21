@@ -16,10 +16,8 @@ POLY_ZIGBEE_SERVICE = 'send_d'
 EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 
 # 0x80,0x0,0xb4,0x53,0x6,0x44,0xb4,0x53,0x60,0x1,0x1,0xa2
-CMD_OPEN = [0x80, 0x00, 0xb4, 0x53, 0x6,
-            0x44, 0xb4, 0x53, 0x60, 0x1, 0x1, 0xa2]
-CMD_CLOSE = [0x80, 0x00, 0xb4, 0x53, 0x6,
-             0x44, 0xb4, 0x53, 0x60, 0x1, 0x0, 0xa3]
+CMD_OPEN = [0x80, 0x00, 0xb4, 0x53, 0x6,0x44, 0xb4, 0x53, 0x60, 0x1, 0x1, 0xa2]
+CMD_CLOSE = [0x80, 0x00, 0xb4, 0x53, 0x6,0x44, 0xb4, 0x53, 0x60, 0x1, 0x0, 0xa3]
 
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
@@ -32,18 +30,14 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     panels = []
     if discovery_info is not None:
-        device = {'name': discovery_info['name'] +
-                  '1', 'mac': discovery_info['mac'], 'way': 1}
-        device1 = {'name': discovery_info['name'] +
-                   '2', 'mac': discovery_info['mac'], 'way': 2}
+        device = {'name': discovery_info['name'] + '1', 'mac': discovery_info['mac'], 'way': 1}
+        device1 = {'name': discovery_info['name'] + '2', 'mac': discovery_info['mac'], 'way': 2}
         panels.append(PolyZfirePanel2(hass, device, None))
         panels.append(PolyZfirePanel2(hass, device1, None))
     else:
         for mac, device_config in config['devices'].items():
-            device_1 = {
-                'name': device_config['name'] + '1', 'mac': mac, 'way': 1}
-            device_2 = {
-                'name': device_config['name'] + '2', 'mac': mac, 'way': 2}
+            device_1 = {'name': device_config['name'] + '1', 'mac': mac, 'way': 1}
+            device_2 = {'name': device_config['name'] + '2', 'mac': mac, 'way': 2}
             panels.append(PolyZfirePanel2(hass, device_1, device_config))
             panels.append(PolyZfirePanel2(hass, device_2, device_config))
 
@@ -54,8 +48,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         pack_list = event.data.get('data')
 
         if pack_list[0] == '0xa0' and pack_list[5] == '0x3D':
-            mac_l, mac_h = pack_list[6].replace(
-                '0x', ''), pack_list[7].replace('0x', '')
+            mac_l, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in panels if dev.mac == mac_str), None)
             if dev is not None:

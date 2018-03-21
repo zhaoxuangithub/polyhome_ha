@@ -10,3 +10,19 @@
     5b#cb:
       name: light5bcb
   platform: polynightlight
+- devices:
+    4#a0:
+      name: light4a0
+  platform: polyzfirepanel3
+- devices:
+    51#18:
+      name: light5118
+  platform: polyzfirepanel1
+- devices:
+    52#9e:
+      name: lnlight529e
+  platform: polylnlight3
+- devices:
+    0#1:
+      name: light01
+  platform: polyzfirepanel2

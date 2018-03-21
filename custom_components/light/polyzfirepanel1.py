@@ -16,10 +16,8 @@ POLY_ZIGBEE_SERVICE = 'send_d'
 EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 
 # 0x80,0x0,0xb4,0x53,0x6,0x44,0xb4,0x53,0x60,0x1,0x1,0xa2
-CMD_OPEN = [0x80, 0x00, 0xb4, 0x53, 0x6,
-            0x44, 0xb4, 0x53, 0x60, 0x1, 0x1, 0xa2]
-CMD_CLOSE = [0x80, 0x00, 0xb4, 0x53, 0x6,
-             0x44, 0xb4, 0x53, 0x60, 0x1, 0x0, 0xa3]
+CMD_OPEN = [0x80, 0x00, 0xb4, 0x53, 0x6,0x44, 0xb4, 0x53, 0x60, 0x1, 0x1, 0xa2]
+CMD_CLOSE = [0x80, 0x00, 0xb4, 0x53, 0x6,0x44, 0xb4, 0x53, 0x60, 0x1, 0x0, 0xa3]
 
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
@@ -178,7 +176,7 @@ class PolyZfirePanel1(Light):
         self._state = True
 
     def turn_off(self, **kwargs):
-        """Instruct the light to turn off."""
+        """turn off"""
         mac = self._mac.split('#')
         CMD_CLOSE[2], CMD_CLOSE[3] = int(mac[0], 16), int(mac[1], 16)
         CMD_CLOSE[6], CMD_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
@@ -210,5 +208,4 @@ class PolyZfirePanel1(Light):
     def heart_beat(self):
         self._heart_timestamp = time.time()
         entity_id = 'light.' + self.name
-        self._hass.services.call('gateway', 'publish_heart_beat', {
-                                 'entity_id': entity_id})
+        self._hass.services.call('gateway', 'publish_heart_beat', {'entity_id': entity_id})

@@ -18,8 +18,7 @@ CMD_OPEN = [0x80, 0x0, 0x9c, 0xa5, 0x6, 0x44, 0x9c, 0xa5, 0x60, 0x3, 0x1, 0xff]
 
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Optional('name'): cv.string,
-    # vol.Optional('type'): cv.string
+    vol.Optional('name'): cv.string
 })
 
 
@@ -28,7 +27,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     phones = []
     if discovery_info is not None:
-        # Not using hostname, as it seems to vary.
         device = {'name': discovery_info['name'], 'mac': discovery_info['mac']}
         phones.append(PolyPhone(hass, device, None))
     else:
@@ -149,7 +147,7 @@ class PolyPhone(SwitchDevice):
 
     def turn_off(self):
         """turn off"""
-        pass
+        self._state = False
 
     def update(self):
         """update status"""

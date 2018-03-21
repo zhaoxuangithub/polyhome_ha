@@ -6,7 +6,6 @@ from homeassistant.components.cover import (PLATFORM_SCHEMA, CoverDevice,
                                             SUPPORT_OPEN, SUPPORT_CLOSE)
 import homeassistant.helpers.config_validation as cv
 from homeassistant.core import callback
-import custom_components.util.algorithm as checkcrc
 from homeassistant.helpers.event import track_utc_time_change
 
 DOMAIN = 'polycurtain2'
@@ -15,24 +14,17 @@ POLY_ZIGBEE_DOMAIN = 'poly_zb_uart'
 POLY_ZIGBEE_SERVICE = 'send_d'
 EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 
-BYTES_OPEN = [
-    0x80, 0x00, 0x1f, 0xa4, 0x10, 0x44, 0x1f, 0xa4, 0x60, 0x3, 0x0, 0x2, 0x0,
-    0x7, 0x0, 0x6, 0x1, 0x5, 0x0, 0x4, 0x0, 0xb4
-]
-BYTES_CLOSE = [
-    0x80, 0x00, 0x1f, 0xa4, 0x10, 0x44, 0x1f, 0xa4, 0x60, 0x3, 0x0, 0x2, 0x0,
-    0x7, 0x0, 0x6, 0x0, 0x5, 0x1, 0x4, 0x0, 0xb4
-]
-BYTES_STOP = [
-    0x80, 0x00, 0x1f, 0xa4, 0x10, 0x44, 0x1f, 0xa4, 0x60, 0x3, 0x0, 0x2, 0x0,
-    0x7, 0x0, 0x6, 0x0, 0x5, 0x0, 0x4, 0x1, 0xb4
-]
+BYTES_OPEN = [0x80, 0x00, 0x1f, 0xa4, 0x10, 0x44, 0x1f, 0xa4, 0x60, 0x3, 0x0, 0x2, 0x0,
+    0x7, 0x0, 0x6, 0x1, 0x5, 0x0, 0x4, 0x0, 0xb4]
+BYTES_CLOSE = [0x80, 0x00, 0x1f, 0xa4, 0x10, 0x44, 0x1f, 0xa4, 0x60, 0x3, 0x0, 0x2, 0x0,
+    0x7, 0x0, 0x6, 0x0, 0x5, 0x1, 0x4, 0x0, 0xb4]
+BYTES_STOP = [0x80, 0x00, 0x1f, 0xa4, 0x10, 0x44, 0x1f, 0xa4, 0x60, 0x3, 0x0, 0x2, 0x0,
+    0x7, 0x0, 0x6, 0x0, 0x5, 0x0, 0x4, 0x1, 0xb4]
 
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Optional('name'): cv.string,
-    vol.Optional('type'): cv.string
+    vol.Optional('name'): cv.string
 })
 
 
@@ -41,7 +33,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     curtains = []
     if discovery_info is not None:
-        # Not using hostname, as it seems to vary.
         device = {'name': discovery_info['name'] + '1', 'mac': discovery_info['mac'], 'way': '1'}
         device1 = {'name': discovery_info['name'] + '2', 'mac': discovery_info['mac'], 'way': '2'}
         curtains.append(RMCover(hass, device, None))
@@ -58,7 +49,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     def handle_event(event):
         """Listener to handle fired events."""
         pack_list = event.data.get('data')
-        if pack_list[0] == '0xa0' and pack_list[5] == '0x1':
+        if pack_list[0] == '0xa0' and pack_list[5] == '0x1' and pack_list[8] == '0x70':
             mac_1, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
             mac_str = mac_1 + "#" + mac_h
             for dev in curtains:
@@ -227,20 +218,12 @@ class RMCover(CoverDevice):
             BYTES_CLOSE[2], BYTES_CLOSE[3] = int(mac[0], 16), int(mac[1], 16)
             BYTES_CLOSE[6], BYTES_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
             BYTES_CLOSE[-4] = 0x1
-            resu_crc = checkcrc.xorcrc_hex(BYTES_CLOSE)
-            BYTES_CLOSE[-1] = resu_crc
-            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {
-                "data": BYTES_CLOSE
-            })
+            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_CLOSE})
             time.sleep(0.4)
             BYTES_CLOSE[2], BYTES_CLOSE[3] = int(mac[0], 16), int(mac[1], 16)
             BYTES_CLOSE[6], BYTES_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
             BYTES_CLOSE[-4] = 0x0
-            resu_crc = checkcrc.xorcrc_hex(BYTES_CLOSE)
-            BYTES_CLOSE[-1] = resu_crc
-            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {
-                "data": BYTES_CLOSE
-            })
+            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_CLOSE})
         if self._way == '2':
             # 0x80, 0x00, 0x1f, 0xa4, 0x10, 0x44, 0x1f, 0xa4, 0x60, 0x3, 0x0, 0x2, 0x0,
             # 0x7, 0x0, 0x6, 0x0, 0x5, 0x1, 0x4, 0x0, 0xb4
@@ -250,21 +233,13 @@ class RMCover(CoverDevice):
             BYTES_CLOSE[6], BYTES_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
             BYTES_CLOSE[12] = 0x1
             BYTES_CLOSE[-4] = 0x0
-            resu_crc = checkcrc.xorcrc_hex(BYTES_CLOSE)
-            BYTES_CLOSE[-1] = resu_crc
-            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {
-                "data": BYTES_CLOSE
-            })
+            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_CLOSE})
             time.sleep(0.4)
             BYTES_CLOSE[2], BYTES_CLOSE[3] = int(mac[0], 16), int(mac[1], 16)
             BYTES_CLOSE[6], BYTES_CLOSE[7] = int(mac[0], 16), int(mac[1], 16)
             BYTES_CLOSE[12] = 0x0
             BYTES_CLOSE[-4] = 0x0
-            resu_crc = checkcrc.xorcrc_hex(BYTES_CLOSE)
-            BYTES_CLOSE[-1] = resu_crc
-            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {
-                "data": BYTES_CLOSE
-            })
+            self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_CLOSE})
 
     def open_cover(self, **kwargs):
         """Open the cover."""
@@ -276,15 +251,11 @@ class RMCover(CoverDevice):
             BYTES_OPEN[2], BYTES_OPEN[3] = int(mac[0], 16), int(mac[1], 16)
             BYTES_OPEN[6], BYTES_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
             BYTES_OPEN[-6] = 0x1
-            resu_crc = checkcrc.xorcrc_hex(BYTES_OPEN)
-            BYTES_OPEN[-1] = resu_crc
             self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_OPEN})
             time.sleep(0.4)
             BYTES_OPEN[2], BYTES_OPEN[3] = int(mac[0], 16), int(mac[1], 16)
             BYTES_OPEN[6], BYTES_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
             BYTES_OPEN[-6] = 0x0
-            resu_crc = checkcrc.xorcrc_hex(BYTES_OPEN)
-            BYTES_OPEN[-1] = resu_crc
             self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_OPEN})
         elif self._way == '2':
             # 0x80, 0x00, 0x1f, 0xa4, 0x10, 0x44, 0x1f, 0xa4, 0x60, 0x3, 0x0, 0x2, 0x0,
@@ -295,16 +266,12 @@ class RMCover(CoverDevice):
             BYTES_OPEN[6], BYTES_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
             BYTES_OPEN[10] = 0x1
             BYTES_OPEN[-6] = 0x0
-            resu_crc = checkcrc.xorcrc_hex(BYTES_OPEN)
-            BYTES_OPEN[-1] = resu_crc
             self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_OPEN})
             time.sleep(0.4)
             BYTES_OPEN[2], BYTES_OPEN[3] = int(mac[0], 16), int(mac[1], 16)
             BYTES_OPEN[6], BYTES_OPEN[7] = int(mac[0], 16), int(mac[1], 16)
             BYTES_OPEN[10] = 0x0
             BYTES_OPEN[-6] = 0x0
-            resu_crc = checkcrc.xorcrc_hex(BYTES_OPEN)
-            BYTES_OPEN[-1] = resu_crc
             self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_OPEN})
 
     def stop_cover(self, **kwargs):
@@ -317,15 +284,11 @@ class RMCover(CoverDevice):
             BYTES_STOP[2], BYTES_STOP[3] = int(mac[0], 16), int(mac[1], 16)
             BYTES_STOP[6], BYTES_STOP[7] = int(mac[0], 16), int(mac[1], 16)
             BYTES_STOP[-2] = 0x1
-            resu_crc = checkcrc.xorcrc_hex(BYTES_STOP)
-            BYTES_STOP[-1] = resu_crc
             self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_STOP})
             time.sleep(0.4)
             BYTES_STOP[2], BYTES_STOP[3] = int(mac[0], 16), int(mac[1], 16)
             BYTES_STOP[6], BYTES_STOP[7] = int(mac[0], 16), int(mac[1], 16)
             BYTES_STOP[-2] = 0x0
-            resu_crc = checkcrc.xorcrc_hex(BYTES_STOP)
-            BYTES_STOP[-1] = resu_crc
             self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_STOP})
         elif self._way == '2':
             self._closed = True
@@ -333,15 +296,11 @@ class RMCover(CoverDevice):
             BYTES_STOP[2], BYTES_STOP[3] = int(mac[0], 16), int(mac[1], 16)
             BYTES_STOP[6], BYTES_STOP[7] = int(mac[0], 16), int(mac[1], 16)
             BYTES_STOP[-8] = 0x1
-            resu_crc = checkcrc.xorcrc_hex(BYTES_STOP)
-            BYTES_STOP[-1] = resu_crc
             self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_STOP})
             time.sleep(0.4)
             BYTES_STOP[2], BYTES_STOP[3] = int(mac[0], 16), int(mac[1], 16)
             BYTES_STOP[6], BYTES_STOP[7] = int(mac[0], 16), int(mac[1], 16)
             BYTES_STOP[-8] = 0x0
-            resu_crc = checkcrc.xorcrc_hex(BYTES_STOP)
-            BYTES_STOP[-1] = resu_crc
             self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": BYTES_STOP})
 
     def heart_beat(self):
