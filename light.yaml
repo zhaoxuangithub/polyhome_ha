@@ -1,16 +1,4 @@
 - devices:
-    5b#cb:
-      name: light5bcb
-  platform: polynightlight
-- devices:
-    28#db:
-      name: light28db
-  platform: polyzfirepanel2
-- devices:
-    5#76:
-      name: dimlight576
-  platform: polydimlight
-- devices:
     2e#e8:
       name: lnlight2ee8
   platform: polylnlight2
@@ -22,6 +10,26 @@
     d#1:
       name: lightd1
   platform: polylight2
+- devices:
+    1a#62:
+      name: lnlight1a62
+  platform: polylnlight2
+- devices:
+    8#c1:
+      name: lnlight8c1
+  platform: polylnlight3
+- devices:
+    19#bf:
+      name: lnlight19bf
+  platform: polylnlight
+- devices:
+    5#3a:
+      name: dimlight53a
+  platform: polydimlight
+- devices:
+    5b#cb:
+      name: light5bcb
+  platform: polynightlight
 - devices:
     4b#31:
       name: light4b31

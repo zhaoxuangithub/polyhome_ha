@@ -6,3 +6,11 @@
     5d#69:
       name: phone5d69
   platform: polyphone
+- devices:
+    9c#a5:
+      name: warsignal9ca5
+  platform: polywarsignal
+- devices:
+    2b#17:
+      name: socket2b17
+  platform: polysocket

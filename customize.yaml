@@ -1,5 +1,5 @@
 light.lnlight19bf:
-  friendly_name: 一路零火灯
+  friendly_name: 主卧灯
 lock.lock13a9:
   friendly_name: lock13a9语音
 sensor.sensor1c451:
@@ -48,3 +48,25 @@ switch.phone5d69:
   friendly_name: 电话拨号器
 light.light4b31:
   friendly_name: 壁灯
+automation.1521647521806:
+  friendly_name: 回家情景
+switch.warsignal9ca5:
+  friendly_name: 警号
+switch.socket2b17:
+  friendly_name: 插座
+light.lnlight1a621:
+  friendly_name: 次卧灯
+light.lnlight1a622:
+  friendly_name: 厨房灯
+light.lnlight8c11:
+  friendly_name: 三路零火灯1
+light.lnlight8c12:
+  friendly_name: 客厅灯
+light.lnlight8c13:
+  friendly_name: 三路零火灯3
+automation.1521687250:
+  friendly_name: 回家情景
+automation.1521687327:
+  friendly_name: 离家情景
+light.dimlight53a:
+  friendly_name: 调光开关

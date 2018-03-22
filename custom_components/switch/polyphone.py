@@ -1,5 +1,6 @@
 import logging
 import json
+import time
 import voluptuous as vol
 
 from homeassistant.components.switch import SwitchDevice, PLATFORM_SCHEMA
@@ -152,4 +153,10 @@ class PolyPhone(SwitchDevice):
     def update(self):
         """update status"""
         self._state = self.is_on
+
+    def heart_beat(self):
+        self._heart_timestamp = time.time()
+        entity_id = 'switch.' + self.name
+        self._hass.services.call('gateway', 'publish_heart_beat', {'entity_id': entity_id})
+    
 

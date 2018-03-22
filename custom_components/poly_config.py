@@ -1017,6 +1017,33 @@ def setup(hass, config):
     Setup.setup_component(hass, 'poly_mqtt', config)
     Setup.setup_component(hass, 'poly_zeroconf')
 
+    def trigger_auto_by_name_service(call):
+        name = call.data.get('name')
+        for state in hass.states.async_all():
+            entity_id = state.as_dict()['entity_id']
+            id_domain = entity_id.split('.')[0]
+            if id_domain not in 'automation':
+                continue
+            if name in state.as_dict()['attributes']['friendly_name']:
+                data = {"entity_id": state.as_dict()['entity_id']}
+                hass.services.call('automation', 'trigger', data)
+
+    hass.services.register('gateway', 'trigger_auto_by_name', trigger_auto_by_name_service)    
+    
+    def trigger_light_by_name_service(call):
+        action = call.data.get('action')
+        name = call.data.get('name')
+        for state in hass.states.async_all():
+            entity_id = state.as_dict()['entity_id']
+            id_domain = entity_id.split('.')[0]
+            if id_domain not in 'light':
+                continue
+            if name in state.as_dict()['attributes']['friendly_name']:
+                data = {"entity_id": state.as_dict()['entity_id']}
+                hass.services.call('light', action, data)
+
+    hass.services.register('gateway', 'trigger_light_by_name', trigger_light_by_name_service)
+    
     return True
 
 

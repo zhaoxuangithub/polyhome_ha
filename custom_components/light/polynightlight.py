@@ -52,7 +52,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in lights if dev.mac == mac_str), None)
             if dev is not None:
-                dev.set_availible(False)
+                dev.set_available(False)
         if pack_list[0] == '0xa0' and pack_list[5] == '0xf0' and pack_list[8] == '0x77':
             # device status
             mac_l, mac_h = pack_list[6].replace('0x', ''), pack_list[7].replace('0x', '')
