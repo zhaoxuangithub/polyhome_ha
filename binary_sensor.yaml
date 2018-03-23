@@ -1,8 +1,16 @@
 - devices:
-    11#a9:
-      name: door11a9
+    51#46:
+      name: panel5146
+  platform: polylcdpanel
+- devices:
+    11#5:
+      name: door115
   platform: polydoorsensor
 - devices:
-    4#a0:
-      name: panel44a0
+    54#a0:
+      name: panel454a0
   platform: polypanel4
+- devices:
+    99#11:
+      name: smoke9911
+  platform: polysmokesensor
