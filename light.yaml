@@ -27,8 +27,8 @@
       name: dimlight53a
   platform: polydimlight
 - devices:
-    5b#cb:
-      name: light5bcb
+    11#20:
+      name: light1120
   platform: polynightlight
 - devices:
     4b#31:

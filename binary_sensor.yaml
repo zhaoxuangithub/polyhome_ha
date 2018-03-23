@@ -10,3 +10,7 @@
     54#a0:
       name: panel454a0
   platform: polypanel4
+- devices:
+    99#11:
+      name: smoke9911
+  platform: polysmokesensor
