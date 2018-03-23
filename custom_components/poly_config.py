@@ -835,10 +835,15 @@ def setup(hass, config):
         notity_client_data(data_obj)
 
     def add_plugin_service(call):
-        plug_type = call.data.get('type')
-        plug_info = call.data.get('data')
-        mgr_plug = DevicePluginManager(hass, config)
-        mgr_plug.add_plugin(plug_type, plug_info)
+        component = call.data.get('component')
+        platform = call.data.get('platform')
+        friendly_name = call.data.get('friendly_name')
+        mac = call.data.get('sn')
+        data = {'devices': {mac: mac}, 'platform': platform}
+        pack = {'plugin_type': component, 'entity_id': component + '.' + mac, 'plugin_info': data}
+        mgr = DevicePluginManager(hass, config)
+        if mgr.add_plugin(pack):
+            discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
 
     def del_plugin_service(call):
         plug_id = call.data.get('entity_id')
