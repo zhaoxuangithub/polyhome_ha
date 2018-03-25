@@ -40,7 +40,7 @@ POLY_ZIGBEE_SERVICE = 'send_d'
 EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 
 # /dev/tty.usbserial
-UART_PATH = '/dev/tty.usbserial'
+UART_PATH = '/dev/ttyUSB0'
 
 CMD_EDIT_DONGLE = [0x80, 0x0, 0x0, 0x0, 0x19, 0x44, 0x0, 0x0, 0xf, 0x0, 0x0, \
                     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, \
@@ -803,10 +803,24 @@ def setup(hass, config):
         notity_client_data(data_obj)
 
     def add_plugin_service(call):
-        plug_type = call.data.get('type')
-        plug_info = call.data.get('data')
-        mgr_plug = DevicePluginManager(hass, config)
-        mgr_plug.add_plugin(plug_type, plug_info)
+        component = call.data.get('plugin_type')
+        platform = call.data.get('platform')
+        mac = call.data.get('mac')
+        friendly_name = '威果'
+        data = {'devices': {mac: {'name': component + mac}}, 'platform': platform}
+        pack = {'plugin_type': component, 'entity_id': component + '.' + component + mac, 'plugin_info': data}
+        mgr = DevicePluginManager(hass, config)
+        if mgr.add_plugin(pack):
+            discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+        name_mgr = FriendlyNameManager(hass, config)
+        name_mgr.edit_friendly_name(pack['entity_id'] + '1', '温度')
+        name_mgr.edit_friendly_name(pack['entity_id'] + '2', '湿度')
+        name_mgr.edit_friendly_name(pack['entity_id'] + '3', 'pm25')
+        name_mgr.edit_friendly_name(pack['entity_id'] + '4', 'co2')
+        name_mgr.edit_friendly_name(pack['entity_id'] + '5', 'voc')
+        data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+        data_obj = {'status': 'OK', 'data': data, 'type': 'add_device'}
+        notity_client_device_into_net(data_obj)
 
     def del_plugin_service(call):
         plug_id = call.data.get('entity_id')
