@@ -69,7 +69,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         for device in dev:
             if device is not None:
                 if device._sensor_type == 'voc':
-                    request_data(mac)
+                    request_data(device.mac)
         hass.loop.call_later(60, handle_data_update_event, '')
 
     hass.loop.call_later(60, handle_data_update_event, '')
