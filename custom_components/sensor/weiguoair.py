@@ -15,8 +15,6 @@ _LOGGER = logging.getLogger(__name__)
 DOMAIN = 'weiguoair'
 WEIGUOURL = 'http://weiguo.airradio.cn/smart/hwmobile/smart/'
 KEY = 'ssdVBdpdshnefs'
-_Log=logging.getLogger(__name__)
-
 
 TYPES = {
     'temperature': ['temperature', '°C'],
@@ -28,13 +26,12 @@ TYPES = {
 
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Optional(CONF_NAME): cv.string,
+    vol.Optional(CONF_NAME): cv.string
 })
 
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Setup the sensor platform."""
-    sensor_name = config.get(CONF_NAME)
 
     dev = []
     if discovery_info is not None:
@@ -86,7 +83,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
         rst_json = resp.json()
         # print(rst_json)
-        # self._data = {}
         if rst_json is not None:
             if 'code' in rst_json and 'message' in rst_json:
                 code = rst_json['code']
@@ -99,11 +95,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                     co2 = sensor_data['co2']
                     voc = sensor_data['voc']
                     sensorId = sensor_data['sensorId']
-                    # self._data['temperature'] = temperature + TYPES['temperature'][1]
-                    # self._data['co2'] = temperature + TYPES['co2'][1]
-                    # self._data['voc'] = temperature
-                    # self._data['humidity'] = temperature + TYPES['humidity'][1]
-                    # self._data['pm25'] = temperature + TYPES['pm25'][1]
                     for device in dev:
                         if device._mac == sensorId:
                             if device.sensor_type == 'temperature':
