@@ -835,15 +835,24 @@ def setup(hass, config):
         notity_client_data(data_obj)
 
     def add_plugin_service(call):
-        component = call.data.get('component')
+        component = call.data.get('plugin_type')
         platform = call.data.get('platform')
-        friendly_name = call.data.get('friendly_name')
-        mac = call.data.get('sn')
-        data = {'devices': {mac: mac}, 'platform': platform}
-        pack = {'plugin_type': component, 'entity_id': component + '.' + mac, 'plugin_info': data}
+        mac = call.data.get('mac')
+        friendly_name = '威果'
+        data = {'devices': {mac: {'name': component + mac}}, 'platform': platform}
+        pack = {'plugin_type': component, 'entity_id': component + '.' + component + mac, 'plugin_info': data}
         mgr = DevicePluginManager(hass, config)
         if mgr.add_plugin(pack):
             discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+        name_mgr = FriendlyNameManager(hass, config)
+        name_mgr.edit_friendly_name(pack['entity_id'] + '1', '温度')
+        name_mgr.edit_friendly_name(pack['entity_id'] + '2', '湿度')
+        name_mgr.edit_friendly_name(pack['entity_id'] + '3', 'pm25')
+        name_mgr.edit_friendly_name(pack['entity_id'] + '4', 'co2')
+        name_mgr.edit_friendly_name(pack['entity_id'] + '5', 'voc')
+        data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+        data_obj = {'status': 'OK', 'data': data, 'type': 'add_device'}
+        notity_client_device_into_net(data_obj)
 
     def del_plugin_service(call):
         plug_id = call.data.get('entity_id')
