@@ -36,7 +36,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     add_devices(locks, True)
 
-    open(hass.config.config_dir + '/lock_key.yaml' , 'r')
+    open(hass.config.config_dir + '/lock_key.yaml' , 'a')
     
     def event_zigbee_msg_handle(event):
         """Listener to handle fired events"""
