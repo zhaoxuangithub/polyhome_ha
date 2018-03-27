@@ -1,6 +1,6 @@
 - devices:
-    32#40:
-      name: cover3240
+    30#26:
+      name: cover3026
   platform: polysccurtain2
 - devices:
     4b#20:

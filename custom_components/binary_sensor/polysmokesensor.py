@@ -19,7 +19,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     smoke = []
     if discovery_info is not None:
-        # Not using hostname, as it seems to vary.
         device = {'name': discovery_info['name'], 'mac': discovery_info['mac']}
         smoke.append(PolySensorBinarySensor(hass, device, None))
     else:
@@ -32,8 +31,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     def event_zigbee_recv_handler(call):
         """Listener to handle fired events."""
         pack_list = call.data.get('data')
-        mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace(
-            '0x', '')
+        mac_l, mac_h = pack_list[2].replace('0x', ''), pack_list[3].replace('0x', '')
         mac_str = mac_l + '#' + mac_h
         dev = next((dev for dev in smoke if dev.mac == mac_str), None)
         if dev is not None:
