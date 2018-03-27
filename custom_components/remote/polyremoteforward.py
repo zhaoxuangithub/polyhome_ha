@@ -120,13 +120,23 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         entity_id = service.data.get('entity_id')
         key = service.data.get('key')
         name = service.data.get('name', key)
-        mac = entity_id.replace('remote.remote','')
+        mac = entity_id.replace('remote.remote', '')
         dev = next((dev for dev in remote if dev.mac.replace('#', '') == mac), None)
         if dev is None:
             return
         dev.study_command(key, name)
 
+    def service_get_remote_keys_handler(service):
+        entity_id = service.data.get('entity_id')
+        mac = entity_id.replace('remote.remote', '')
+        dev = next((dev for dev in remote if dev.mac.replace('#', '') == mac), None)
+        if dev is None:
+            return
+        dev.get_keys()
+        
+
     hass.services.register('remote', SERVICE_LEARN, service_learn_handler)
+    hass.services.register('remote', 'get_remote_keys', service_get_remote_keys_handler)
 
     
 class PolyReForward(RemoteDevice):
@@ -238,6 +248,13 @@ class PolyReForward(RemoteDevice):
         CMD_STUDY16 = crc16.createarray(CMD_STUDY)
         result = CMD_REMOTE_STUDY_PRE + CMD_STUDY16 + [0xff]
         self._hass.services.call(POLY_ZIGBEE_DOMAIN, POLY_ZIGBEE_SERVICE, {"data": result})
+
+    def get_keys(self):
+        key_mgr = RemoteKeyManager(self._hass, self._config)
+        data_keys = key_mgr.get_friendly_name(self._mac)
+        data_obj = {'status':'OK', 'data': {"entity_id": self.entity_id, 'list': data_keys}, 'type': 'get_remote_keys'}
+        data_str = {'data': json.dumps(data_obj)}
+        self._hass.services.call('poly_mqtt', 'pub_data', data_str)
 
     def _listen_study(self):
         if self._unsub_listener_study is None:
