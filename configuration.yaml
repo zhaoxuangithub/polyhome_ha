@@ -29,6 +29,7 @@ binary_sensor: !include binary_sensor.yaml
 lock: !include lock.yaml
 media_player: !include media_player.yaml
 remote: !include remote.yaml
+climate: !include climate.yaml
 mqtt:
   # broker server
   broker: 123.57.139.200

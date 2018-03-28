@@ -1,0 +1,4 @@
+- devices:
+    22#3d:
+      name: climate9911
+  platform: polydakin
