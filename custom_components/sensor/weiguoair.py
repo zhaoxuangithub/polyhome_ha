@@ -74,8 +74,10 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     hass.loop.call_later(60, handle_data_update_event, '')
 
-    def request_data(mac):
+    def request_data(macl):
         """Get data from cloud"""
+
+        mac = macl.upper()
         url = WEIGUOURL + 'd002!retrieveRealData?SENSORID={0}&KEY={1}'.format(mac, KEY)
         resp = None
         try:
@@ -98,7 +100,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                     pm25 = sensor_data['pm25']
                     co2 = sensor_data['co2']
                     voc = sensor_data['voc']
-                    sensorId = sensor_data['sensorId']
+                    sensorId = sensor_data['sensorId'].lower()
                     # self._data['temperature'] = temperature + TYPES['temperature'][1]
                     # self._data['co2'] = temperature + TYPES['co2'][1]
                     # self._data['voc'] = temperature
