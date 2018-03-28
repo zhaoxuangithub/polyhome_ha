@@ -1,20 +1,21 @@
-.vscode/
-.idea/*
+.vscode
+.idea
 .DS_Store
-deps/*
+deps
 
-custom_components/__pycache__/*
-custom_components/binary_sensor/__pycache__/*
-custom_components/cover/__pycache__/*
-custom_components/light/__pycache__/*
-custom_components/lock/__pycache__/*
-custom_components/media_player/__pycache__/*
-custom_components/sensor/__pycache__/*
-custom_components/switch/__pycache__/*
-polyhome/__pycache__/*
-polyhome/util/__pycache__/*
-polyhome/helper/__pycache__/*
-pyzigbee/__pycache__/*
+custom_components/__pycache__
+custom_components/binary_sensor/__pycache__
+custom_components/cover/__pycache__
+custom_components/light/__pycache__
+custom_components/lock/__pycache__
+custom_components/media_player/__pycache__
+custom_components/sensor/__pycache__
+custom_components/switch/__pycache__
+custom_components/remote/__pycache__
+polyhome/__pycache__
+polyhome/util/__pycache__
+polyhome/helper/__pycache__
+pyzigbee/__pycache__
 
 automations.yaml
 customize.yaml
