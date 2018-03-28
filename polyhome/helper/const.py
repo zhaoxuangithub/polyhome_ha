@@ -1,6 +1,6 @@
 """defined some const var"""
 
-CUR_VERSION = '0.0.11_beta'
+CUR_VERSION = '0.0.12_beta'
 
 DEFAULT_TOPIC_SUB = '/v1/polyhome-ha/host/house/1/family/unkown'
 DEFAULT_TOPIC_PUB = '/v1/polyhome-ha/client/house/1/family/unkown'
@@ -20,4 +20,4 @@ MQTT_TOPIC_UPDATE = '/v1/polyhome-ha/host/update/'
 MQTT_TOPIC_CALL_SERVICE = '/v1/polyhome-ha/host/{}/user_id/{}/call_service/'
 
 CONTANT_SUPPORT = ['sensor', 'binary_sensor', 'light', 'switch', 'lock', 'zwave', \
-                    'cover', 'media_player', 'climate']
+                    'cover', 'media_player', 'climate', 'remote', 'camera']

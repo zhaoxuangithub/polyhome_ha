@@ -1,173 +1,32 @@
 - action:
   - data:
-      brightness: 163
-      entity_id: light.dimlight53a
-    service: light.turn_on
-  alias: '1520496526'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520496526'
-  trigger: []
-- action:
-  - data:
-      entity_id: cover.dooya1442
-      position: 0
-    service: cover.set_cover_position
-  - data:
-      brightness: 255
-      entity_id: light.dimlight53a
-    service: light.turn_on
-  alias: '1520498668'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520498668'
-  trigger: []
-- action:
-  - data:
-      entity_id: cover.dooya1442
-      position: 64
-    service: cover.set_cover_position
-  alias: '1520499863'
-  condition:
-    condition: and
-    conditions: []
-  id: '1520499863'
-  trigger: []
-- action:
-  - data:
-      entity_id: light.lightfec51
-    service: light.turn_on
-  alias: '1521008414'
-  condition:
-    condition: and
-    conditions: []
-  id: '1521008414'
-  trigger: []
-- action:
-  - data:
-      entity_id: light.lnlight19bf
+      entity_id: light.lnlight8c12
     service: light.turn_on
   - data:
       entity_id: light.lnlight1a622
     service: light.turn_on
   - data:
-      entity_id: light.lightfec52
+      entity_id: light.lnlight1a621
     service: light.turn_on
-  alias: '1521078541'
+  alias: '1521687250'
   condition:
-    condition: or
-    conditions:
-    - condition: state
-      entity_id: cover.cover32402
-      state: closed
-    - condition: state
-      entity_id: media_player.yodar97f
-      state: playing
-    - condition: state
-      entity_id: cover.dooya1442
-      state: open
-    - condition: state
-      entity_id: cover.cover32401
-      state: open
-  id: '1521078541'
-  trigger:
-  - entity_id: cover.cover32402
-    platform: state
-    to: closed
-  - entity_id: media_player.yodar97f
-    platform: state
-    to: playing
-  - entity_id: cover.dooya1442
-    platform: state
-    to: open
-  - entity_id: cover.cover32401
-    platform: state
-    to: open
+    condition: and
+    conditions: []
+  id: '1521687250'
+  trigger: []
 - action:
   - data:
-      entity_id: light.dimlight53a
+      entity_id: light.lnlight1a621
     service: light.turn_off
   - data:
-      entity_id: light.light5bcb
-    service: light.turn_on
-  alias: '1521191630'
-  condition:
-    condition: and
-    conditions: []
-  id: '1521191630'
-  trigger:
-  - entity_id: binary_sensor.door11a9
-    platform: state
-    to: 'on'
-- action:
-  - data:
-      brightness: 100
-      entity_id: light.dimlight53a
-    service: light.turn_on
-  - data:
-      entity_id: light.light5bcb
+      entity_id: light.lnlight19bf
     service: light.turn_off
-  alias: '1521191659'
+  - data:
+      entity_id: light.lnlight8c12
+    service: light.turn_off
+  alias: '1521687327'
   condition:
     condition: and
     conditions: []
-  id: '1521191659'
-  trigger:
-  - entity_id: binary_sensor.door11a9
-    platform: state
-    to: 'off'
-- action:
-  - data:
-      entity_id: cover.cover32401
-    service: cover.open_cover
-  - data:
-      entity_id: cover.cover32402
-    service: cover.open_cover
-  alias: '1521192082'
-  condition:
-    condition: and
-    conditions: []
-  id: '1521192082'
-  trigger:
-  - entity_id: light.dimlight53a
-    platform: state
-    to: 'on'
-- action:
-  - data:
-      entity_id: cover.cover32401
-    service: cover.close_cover
-  - data:
-      entity_id: cover.cover32402
-    service: cover.close_cover
-  alias: '1521192135'
-  condition:
-    condition: and
-    conditions:
-    - condition: state
-      entity_id: light.dimlight53a
-      state: 'off'
-    - condition: state
-      entity_id: light.lightfec51
-      state: 'on'
-  id: '1521192135'
-  trigger:
-  - entity_id: light.dimlight53a
-    platform: state
-    to: 'off'
-  - entity_id: light.lightfec51
-    platform: state
-    to: 'on'
-- action:
-  - data:
-      entity_id: light.lightfec52
-    service: light.turn_on
-  alias: '1521192188'
-  condition:
-    condition: and
-    conditions: []
-  id: '1521192188'
-  trigger:
-  - event_type: binary_sensor.panel44a0_1_pressed
-    platform: event
+  id: '1521687327'
+  trigger: []

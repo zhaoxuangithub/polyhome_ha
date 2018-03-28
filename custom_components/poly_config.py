@@ -40,7 +40,7 @@ POLY_ZIGBEE_SERVICE = 'send_d'
 EVENT_ZIGBEE_RECV = 'zigbee_data_event'
 
 # /dev/tty.usbserial
-UART_PATH = '/dev/ttyUSB0'
+UART_PATH = '/dev/tty.usbserial'
 
 CMD_EDIT_DONGLE = [0x80, 0x0, 0x0, 0x0, 0x19, 0x44, 0x0, 0x0, 0xf, 0x0, 0x0, \
                     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, \
@@ -779,6 +779,53 @@ def setup(hass, config):
                 data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
                 data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
                 notity_client_device_into_net(data_obj)
+            elif pack_list[5] == '0x60':
+                # '0xa0', '0xc9', '0x4', '0xa0', '0x4', '0x3e', '0x4', '0xa0', '0x7a', '0x29'
+                friendly_name = '警号'
+                component = 'switch'
+                platform = 'polywarsignal'
+                mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
+                data = {'devices': {mac: {'name': 'warsignal' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': 'switch.warsignal' + mac.replace('#', ''), 'plugin_info': data}
+                mgr = DevicePluginManager(hass, config)
+                if mgr.add_plugin(pack):
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                name_mgr = FriendlyNameManager(hass, config)
+                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+                data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
+                notity_client_device_into_net(data_obj)
+            elif pack_list[5] == '0x40':
+                # '0xa0', '0xc9', '0x4', '0xa0', '0x4', '0x3e', '0x4', '0xa0', '0x7a', '0x29'
+                friendly_name = '烟雾报警器'
+                component = 'binary_sensor'
+                platform = 'polysmokesensor'
+                mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
+                data = {'devices': {mac: {'name': 'smokesensor' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': 'switch.smokesensor' + mac.replace('#', ''), 'plugin_info': data}
+                mgr = DevicePluginManager(hass, config)
+                if mgr.add_plugin(pack):
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                name_mgr = FriendlyNameManager(hass, config)
+                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+                data_obj = {'status':'OK', 'data': data, 'type': 'add_device'}
+                notity_client_device_into_net(data_obj)
+            elif pack_list[5] == '0x2':
+                friendly_name = '红外转发器'
+                component = 'remote'
+                platform = 'polyremoteforward'
+                mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
+                data = {'devices': {mac: {'name': 'remote' + mac.replace('#', '')}}, 'platform': 'polyremoteforward'}
+                pack = {'plugin_type': component, 'entity_id': 'remote.remote' + mac.replace('#', ''), 'plugin_info': data}
+                mgr = DevicePluginManager(hass, config)
+                name_mgr = FriendlyNameManager(hass, config)
+                if mgr.add_plugin(pack):
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
+                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+                data_obj = {'status':'OK', 'data': data, 'type': 'add_device', 'device_type': platform}
+                notity_client_device_into_net(data_obj)
 
             # reload core config and friendlyname is work 
             hass.services.call('homeassistant', 'reload_core_config')
@@ -805,22 +852,40 @@ def setup(hass, config):
     def add_plugin_service(call):
         component = call.data.get('plugin_type')
         platform = call.data.get('platform')
-        mac = call.data.get('mac')
-        friendly_name = '威果'
-        data = {'devices': {mac: {'name': component + mac}}, 'platform': platform}
-        pack = {'plugin_type': component, 'entity_id': component + '.' + component + mac, 'plugin_info': data}
-        mgr = DevicePluginManager(hass, config)
-        if mgr.add_plugin(pack):
-            discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], 'mac': mac})
-        name_mgr = FriendlyNameManager(hass, config)
-        name_mgr.edit_friendly_name(pack['entity_id'] + '1', '温度')
-        name_mgr.edit_friendly_name(pack['entity_id'] + '2', '湿度')
-        name_mgr.edit_friendly_name(pack['entity_id'] + '3', 'pm25')
-        name_mgr.edit_friendly_name(pack['entity_id'] + '4', 'co2')
-        name_mgr.edit_friendly_name(pack['entity_id'] + '5', 'voc')
-        data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
-        data_obj = {'status': 'OK', 'data': data, 'type': 'add_device'}
-        notity_client_device_into_net(data_obj)
+        if component == 'sensor' and platform == 'weiguoair':
+            mac = call.data.get('mac')
+            friendly_name = '威果'
+            data = {'devices': {mac: {'name': component + mac}}, 'platform': platform}
+            pack = {'plugin_type': component, 'entity_id': component + '.' + component + mac, 'plugin_info': data}
+            mgr = DevicePluginManager(hass, config)
+            if mgr.add_plugin(pack):
+                discovery.load_platform(hass, component, data['platform'], \
+										{'name': data['devices'][mac]['name'], 'mac': mac})
+            name_mgr = FriendlyNameManager(hass, config)
+            name_mgr.edit_friendly_name(pack['entity_id'] + '1', '温度')
+            name_mgr.edit_friendly_name(pack['entity_id'] + '2', '湿度')
+            name_mgr.edit_friendly_name(pack['entity_id'] + '3', 'pm25')
+            name_mgr.edit_friendly_name(pack['entity_id'] + '4', 'co2')
+            name_mgr.edit_friendly_name(pack['entity_id'] + '5', 'voc')
+            data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+            data_obj = {'status': 'OK', 'data': data, 'type': 'add_device'}
+            notity_client_device_into_net(data_obj)
+        elif component == 'camera' and platform == 'lecamera':
+            devid = call.data.get('devid')
+            phone = call.data.get('phone')
+            channelid = call.data.get('channelid')
+            friendly_name = '乐橙'
+            data = {'devices': {devid: {'name': component + devid, 'phone': phone, 'channelid': channelid}}, 'platform': platform}
+            pack = {'plugin_type': component, 'entity_id': component + '.' + component + devid, 'plugin_info': data}
+            mgr = DevicePluginManager(hass, config)
+            if mgr.add_plugin(pack):
+                discovery.load_platform(hass, component, data['platform'], \
+										{'name': data['devices'][devid]['name'], 'devid': devid, 'phone': phone, 'channelid': channelid})
+            name_mgr = FriendlyNameManager(hass, config)
+            name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+            data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+            data_obj = {'status': 'OK', 'data': data, 'type': 'add_device'}
+            notity_client_device_into_net(data_obj)
 
     def del_plugin_service(call):
         plug_id = call.data.get('entity_id')
@@ -999,6 +1064,33 @@ def setup(hass, config):
     Setup.setup_component(hass, 'poly_mqtt', config)
     Setup.setup_component(hass, 'poly_zeroconf')
 
+    def trigger_auto_by_name_service(call):
+        name = call.data.get('name')
+        for state in hass.states.async_all():
+            entity_id = state.as_dict()['entity_id']
+            id_domain = entity_id.split('.')[0]
+            if id_domain not in 'automation':
+                continue
+            if name in state.as_dict()['attributes']['friendly_name']:
+                data = {"entity_id": state.as_dict()['entity_id']}
+                hass.services.call('automation', 'trigger', data)
+
+    hass.services.register('gateway', 'trigger_auto_by_name', trigger_auto_by_name_service)    
+    
+    def trigger_light_by_name_service(call):
+        action = call.data.get('action')
+        name = call.data.get('name')
+        for state in hass.states.async_all():
+            entity_id = state.as_dict()['entity_id']
+            id_domain = entity_id.split('.')[0]
+            if id_domain not in 'light':
+                continue
+            if name in state.as_dict()['attributes']['friendly_name']:
+                data = {"entity_id": state.as_dict()['entity_id']}
+                hass.services.call('light', action, data)
+
+    hass.services.register('gateway', 'trigger_light_by_name', trigger_light_by_name_service)
+    
     return True
 
 
