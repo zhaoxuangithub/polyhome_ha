@@ -1,10 +1,18 @@
-sensor.sensor50001FCEF3974:
+sensor.sensor50001fcef3974:
   friendly_name: co2
-sensor.sensor50001FCEF3975:
+sensor.sensor50001fcef3975:
   friendly_name: voc
-sensor.sensor50001FCEF3971:
+sensor.sensor50001fcef3971:
   friendly_name: 温度
-sensor.sensor50001FCEF3972:
+sensor.sensor50001fcef3972:
   friendly_name: 湿度
-sensor.sensor50001FCEF3973:
+sensor.sensor50001fcef3973:
   friendly_name: pm25
+camera.camera2f04169pak00169:
+  friendly_name: 乐橙
+sensor.sensor46b11:
+  friendly_name: 温度
+sensor.sensor46b12:
+  friendly_name: 湿度
+sensor.sensor46b13:
+  friendly_name: 亮度
