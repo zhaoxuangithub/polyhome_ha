@@ -20,4 +20,4 @@ MQTT_TOPIC_UPDATE = '/v1/polyhome-ha/host/update/'
 MQTT_TOPIC_CALL_SERVICE = '/v1/polyhome-ha/host/{}/user_id/{}/call_service/'
 
 CONTANT_SUPPORT = ['sensor', 'binary_sensor', 'light', 'switch', 'lock', 'zwave', \
-                    'cover', 'media_player', 'climate']
+                    'cover', 'media_player', 'climate', 'remote', 'camera']
