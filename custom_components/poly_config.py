@@ -854,7 +854,8 @@ def setup(hass, config):
         component = call.data.get('plugin_type')
         platform = call.data.get('platform')
         if component == 'sensor' and platform == 'weiguoair':
-            mac = call.data.get('mac')
+            macU = call.data.get('mac')
+            mac = macU.lower()
             friendly_name = '威果'
             data = {'devices': {mac: {'name': component + mac}}, 'platform': platform}
             pack = {'plugin_type': component, 'entity_id': component + '.' + component + mac, 'plugin_info': data}
@@ -872,7 +873,8 @@ def setup(hass, config):
             data_obj = {'status': 'OK', 'data': data, 'type': 'add_device'}
             notity_client_device_into_net(data_obj)
         elif component == 'camera' and platform == 'lecamera':
-            devid = call.data.get('devid')
+            devidU = call.data.get('devid')
+            devid = devidU.lower()
             phone = call.data.get('phone')
             channelid = call.data.get('channelid')
             friendly_name = '乐橙'
