@@ -31,6 +31,7 @@ from polyhome.helper.contant import DEFAULT_CONF_CONTENT, DEFAULT_EXISTS_FILE, P
 from polyhome.misc import DongleAttr
 from polyhome.util.zipfile import ZFile
 from polyhome.helper.const import CUR_VERSION
+from polyhome.helper.const import CONTANT_SUPPORT
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -917,7 +918,7 @@ def setup(hass, config):
     # System Event Manager Service.
     def event_state_change_handler(call):
         entity_id = call.data.get('entity_id')
-        if entity_id.split('.')[0] in ['switch', 'light', 'cover', 'binary_sensor', 'lock', 'media_player', 'cliamte']:
+        if entity_id.split('.')[0] in CONTANT_SUPPORT:
             # state_json = {'entity_id': entity_id, 'state': new_state['state']}
             # data_obj = {'status':'OK', 'data': state_json, 'type': 'state_change'}
             # notity_client_data(data_obj)

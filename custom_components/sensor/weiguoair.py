@@ -15,8 +15,6 @@ _LOGGER = logging.getLogger(__name__)
 DOMAIN = 'weiguoair'
 WEIGUOURL = 'http://weiguo.airradio.cn/smart/hwmobile/smart/'
 KEY = 'ssdVBdpdshnefs'
-_Log=logging.getLogger(__name__)
-
 
 TYPES = {
     'temperature': ['temperature', '°C'],
@@ -28,13 +26,12 @@ TYPES = {
 
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Optional(CONF_NAME): cv.string,
+    vol.Optional(CONF_NAME): cv.string
 })
 
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Setup the sensor platform."""
-    sensor_name = config.get(CONF_NAME)
 
     dev = []
     if discovery_info is not None:
@@ -70,9 +67,9 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
             if device is not None:
                 if device._sensor_type == 'voc':
                     request_data(device.mac)
-        hass.loop.call_later(60, handle_data_update_event, '')
+        hass.loop.call_later(5, handle_data_update_event, '')
 
-    hass.loop.call_later(60, handle_data_update_event, '')
+    hass.loop.call_later(5, handle_data_update_event, '')
 
     def request_data(macl):
         """Get data from cloud"""
@@ -88,7 +85,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
         rst_json = resp.json()
         # print(rst_json)
-        # self._data = {}
         if rst_json is not None:
             if 'code' in rst_json and 'message' in rst_json:
                 code = rst_json['code']
@@ -121,6 +117,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
 
     return True
+
 
 class weiguoairSensor(Entity):
     """Representation of a Sensor."""
@@ -180,6 +177,7 @@ class weiguoairSensor(Entity):
 
     def set_value(self, value):
         self._state = value
+        self.schedule_update_ha_state()
 
     def update(self):
         """Fetch new state data for the sensor.
