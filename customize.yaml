@@ -16,3 +16,15 @@ sensor.sensor46b12:
   friendly_name: 湿度
 sensor.sensor46b13:
   friendly_name: 亮度
+light.light4a01:
+  friendly_name: 三路零火情景面板1
+light.light4a02:
+  friendly_name: 三路零火情景面板2
+light.light4a03:
+  friendly_name: 三路零火情景面板3
+binary_sensor.door115:
+  friendly_name: 门磁
+remote.remote13ba:
+  friendly_name: 红外转发器
+binary_sensor.io46b:
+  friendly_name: IO探测器

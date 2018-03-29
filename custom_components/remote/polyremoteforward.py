@@ -298,16 +298,27 @@ class PolyReForward(RemoteDevice):
 
             
 class RemoteKeyManager(object):
-    """All FriendlyName Manager."""
+    """All RemoteKey Manager."""
     
     def __init__(self, hass, config):
         self._hass = hass
         self._config = config
         self._path = hass.config.path('remote_key.yaml')
-        
+
+    def get_friendly_name(self, entity_id):
+        current = self._read_config('remote_key.yaml')
+        print(current)
+        if current == []:
+            return []
+        for remote in current:
+            for key, value in remote.items():
+                if key == entity_id:
+                    return value
+
     def edit_friendly_name(self, dev_mac, value):
         """Edit id friendlyname"""
         current = self._read_config('remote_key.yaml')
+        print(current)
         self._write_friendly_name(current, dev_mac, value)
         self._write(self._path, current)
 
@@ -317,16 +328,11 @@ class RemoteKeyManager(object):
         self._delete_value(current, name_id)
         self._write(self._path, current)
 
-    def get_friendly_name(self, name_id):
-        current = self._read_config('remote_key.yaml')
-        name = current.get(name_id, None)
-        return name
-
     def _read_config(self, filename):
         """Read the config."""
         current = self._read(self._hass.config.path(filename))
         if not current:
-            current = {}
+            current = []
         return current
 
     def _read(self, path):
@@ -335,12 +341,14 @@ class RemoteKeyManager(object):
             return None
         return load_yaml(path)
     
-    def _write_friendly_name(self, current, key, value):
+    def _write_friendly_name(self, current, dev_mac, value):
         """Set value."""
-        print(current)
-        data = self._get_value(current, key)  
+        data = self._get_value(current, dev_mac)  
         if data is not None:
-            data.append(value)   
+            data.append(value)
+        else: 
+            remote_value = {dev_mac: [{'key': value['key'], 'name': value['name']}]}
+            current.append(remote_value)   
     
     def _write(self, path, data):
         """Write YAML helper."""
@@ -354,9 +362,11 @@ class RemoteKeyManager(object):
         if value is not None:
             del data[key]
 
-    def _get_value(self, data, config_key):
+    def _get_value(self, current, config_key):
         """Get value."""
-        for k, v in data.items():
-            if k == config_key:
-                return v    
+        print(current)
+        for remote in current:
+            for k, v in remote.items():
+                if k == config_key:
+                    return v    
         return None
