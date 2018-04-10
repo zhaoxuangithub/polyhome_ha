@@ -1,1 +1,8 @@
-[]
+- devices:
+    32#40:
+      name: cover3240
+  platform: polysccurtain2
+- devices:
+    14#42:
+      name: dooya1442
+  platform: polydooya

@@ -1,4 +1,12 @@
 - devices:
+    19#bf:
+      name: lnlight19bf
+  platform: polylnlight
+- devices:
+    1a#62:
+      name: lnlight1a62
+  platform: polylnlight2
+- devices:
     4#a0:
       name: light4a0
   platform: polyzfirepanel3

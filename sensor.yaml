@@ -2,7 +2,3 @@
     50001fcef397:
       name: sensor50001fcef397
   platform: weiguoair
-- devices:
-    46#b1:
-      name: sensor46b1
-  platform: polythl

@@ -1,1 +1,50 @@
-[]
+- action:
+  - data:
+      entity_id: light.lnlight19bf
+    service: light.turn_on
+  - data:
+      entity_id: light.lnlight1a621
+    service: light.turn_on
+  - data:
+      entity_id: light.lnlight1a622
+    service: light.turn_on
+  - data:
+      entity_id: light.light4a01
+    service: light.turn_on
+  - data:
+      entity_id: light.light4a03
+    service: light.turn_on
+  - data:
+      entity_id: light.light4a02
+    service: light.turn_on
+  alias: '1522820290'
+  condition:
+    condition: and
+    conditions: []
+  id: '1522820290'
+  trigger: []
+- action:
+  - data:
+      entity_id: light.lnlight19bf
+    service: light.turn_off
+  - data:
+      entity_id: light.light4a01
+    service: light.turn_off
+  - data:
+      entity_id: light.lnlight1a621
+    service: light.turn_off
+  - data:
+      entity_id: light.light4a03
+    service: light.turn_off
+  - data:
+      entity_id: light.light4a02
+    service: light.turn_off
+  - data:
+      entity_id: light.lnlight1a622
+    service: light.turn_off
+  alias: '1523262848'
+  condition:
+    condition: and
+    conditions: []
+  id: '1523262848'
+  trigger: []

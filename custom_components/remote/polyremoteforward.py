@@ -356,15 +356,14 @@ class RemoteKeyManager(object):
         with open(path, 'w', encoding='utf-8') as outfile:
             outfile.write(data)
 
-    def _delete_value(self, data, key):
+    def _delete_value(self, current, key):
         """Delete value."""
-        value = self._get_value(data, key)
+        value = self._get_value(current, key)
         if value is not None:
-            del data[key]
+            del current[key]
 
     def _get_value(self, current, config_key):
         """Get value."""
-        print(current)
         for remote in current:
             for k, v in remote.items():
                 if k == config_key:

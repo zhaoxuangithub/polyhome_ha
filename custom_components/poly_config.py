@@ -872,7 +872,7 @@ def setup(hass, config):
             data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
             data_obj = {'status': 'OK', 'data': data, 'type': 'add_device'}
             notity_client_device_into_net(data_obj)
-        elif component == 'camera' and platform == 'lecamera':
+        elif component == 'camera' and platform == 'polylecheng':
             devidU = call.data.get('devid')
             devid = devidU.lower()
             phone = call.data.get('phone')

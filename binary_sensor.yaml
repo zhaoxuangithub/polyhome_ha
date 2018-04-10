@@ -2,7 +2,3 @@
     11#5:
       name: door115
   platform: polydoorsensor
-- devices:
-    46#b:
-      name: pir46b
-  platform: polyiosensor

@@ -1,13 +1,13 @@
 sensor.sensor50001fcef3974:
-  friendly_name: co2
+  friendly_name: 新风机
 sensor.sensor50001fcef3975:
   friendly_name: voc
 sensor.sensor50001fcef3971:
-  friendly_name: 温度
+  friendly_name: 温度检测器
 sensor.sensor50001fcef3972:
-  friendly_name: 湿度
+  friendly_name: 湿度检测器
 sensor.sensor50001fcef3973:
-  friendly_name: pm25
+  friendly_name: pm检测器
 camera.camera2f04169pak00169:
   friendly_name: 乐橙
 sensor.sensor46b11:
@@ -17,14 +17,34 @@ sensor.sensor46b12:
 sensor.sensor46b13:
   friendly_name: 亮度
 light.light4a01:
-  friendly_name: 三路零火情景面板1
+  friendly_name: 客厅灯
 light.light4a02:
-  friendly_name: 三路零火情景面板2
+  friendly_name: 阳台灯
 light.light4a03:
-  friendly_name: 三路零火情景面板3
+  friendly_name: 厨房灯
 binary_sensor.door115:
   friendly_name: 门磁
 remote.remote13ba:
-  friendly_name: 红外转发器
+  friendly_name: 空调
 binary_sensor.io46b:
   friendly_name: IO探测器
+light.light1120:
+  friendly_name: 夜灯
+light.lnlight19bf:
+  friendly_name: 主卧灯
+light.lnlight1a621:
+  friendly_name: 次卧灯
+light.lnlight1a622:
+  friendly_name: 儿童房灯
+switch.socket2b17:
+  friendly_name: 电视插座
+automation.1522820290:
+  friendly_name: 回家模式
+cover.cover32401:
+  friendly_name: 客厅窗帘
+cover.cover32402:
+  friendly_name: 主卧窗帘
+automation.1523262848:
+  friendly_name: 离家模式
+cover.dooya1442:
+  friendly_name: 阳台窗帘
