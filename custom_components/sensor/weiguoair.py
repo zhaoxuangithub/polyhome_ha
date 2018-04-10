@@ -66,7 +66,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         for device in dev:
             if device is not None:
                 if device._sensor_type == 'voc':
-                    request_data(device.mac)
+                    hass.add_job(request_data, device.mac)
         hass.loop.call_later(5, handle_data_update_event, '')
 
     hass.loop.call_later(5, handle_data_update_event, '')
@@ -97,11 +97,6 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                     co2 = sensor_data['co2']
                     voc = sensor_data['voc']
                     sensorId = sensor_data['sensorId'].lower()
-                    # self._data['temperature'] = temperature + TYPES['temperature'][1]
-                    # self._data['co2'] = temperature + TYPES['co2'][1]
-                    # self._data['voc'] = temperature
-                    # self._data['humidity'] = temperature + TYPES['humidity'][1]
-                    # self._data['pm25'] = temperature + TYPES['pm25'][1]
                     for device in dev:
                         if device._mac == sensorId:
                             if device.sensor_type == 'temperature':
