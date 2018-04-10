@@ -890,6 +890,9 @@ def setup(hass, config):
             data_obj = {'status': 'OK', 'data': data, 'type': 'add_device'}
             notity_client_device_into_net(data_obj)
 
+        # reload core config and friendlyname is work 
+        hass.services.call('homeassistant', 'reload_core_config')
+        
     def del_plugin_service(call):
         plug_id = call.data.get('entity_id')
         if isinstance(plug_id, list):

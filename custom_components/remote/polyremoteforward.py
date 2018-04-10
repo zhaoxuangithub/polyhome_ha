@@ -195,6 +195,7 @@ class PolyReForward(RemoteDevice):
 
     def set_available(self, state):
         self._available = state
+        self.schedule_update_ha_state()
 
     def heart_beat(self):
         self._heart_timestamp = time.time()
@@ -203,7 +204,6 @@ class PolyReForward(RemoteDevice):
 
     def send_command(self, command, **kwargs):
         """Send a command to a device."""
-        print(command)
         for com in command:
             self._last_command_sent = com
             mac = self._mac.split('#')
@@ -224,7 +224,6 @@ class PolyReForward(RemoteDevice):
 
     def study_command(self, key, name):
         if self._requested_studing == True:
-            print('正在学习中')
             return 
         self._requested_studing = True
         self._listen_study()
@@ -261,7 +260,6 @@ class PolyReForward(RemoteDevice):
         """Track time changes."""
         if self._requested_studing:
             self._time += 1
-            print(self._time)
             if self._time == 12:
                 self.time = 0
                 self._requested_studing = False
@@ -307,7 +305,6 @@ class RemoteKeyManager(object):
 
     def get_friendly_name(self, entity_id):
         current = self._read_config('remote_key.yaml')
-        print(current)
         if current == []:
             return []
         for remote in current:
@@ -318,7 +315,6 @@ class RemoteKeyManager(object):
     def edit_friendly_name(self, dev_mac, value):
         """Edit id friendlyname"""
         current = self._read_config('remote_key.yaml')
-        print(current)
         self._write_friendly_name(current, dev_mac, value)
         self._write(self._path, current)
 
