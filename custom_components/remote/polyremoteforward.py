@@ -93,13 +93,11 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in remote if dev.mac == mac_str), None)
             if dev is None:
-                return    
+                return 
             if pack_list[6] == '0x41':
                 dev.set_available(False)
             if pack_list[6] == '0x40':
                 dev.set_available(True)
-            now = time.time()
-            hass.loop.call_later(12, handle_time_changed_event, '')
             
     hass.bus.listen(ENENT_ZIGBEE_RECV, event_zigbee_msg_handle)
 
@@ -169,6 +167,11 @@ class PolyReForward(RemoteDevice):
         return self._name
 
     @property
+    def available(self):
+        """Return if bulb is available."""
+        return self._available
+
+    @property
     def is_on(self):
         """Return true if remote is on."""
         return self._state
@@ -193,8 +196,8 @@ class PolyReForward(RemoteDevice):
         """
         return {'platform': 'polyremoteforward'}
 
-    def set_available(self, state):
-        self._available = state
+    def set_available(self, available):
+        self._available = available
         self.schedule_update_ha_state()
 
     def heart_beat(self):
