@@ -25,7 +25,7 @@ light.light4a03:
 binary_sensor.door115:
   friendly_name: 门磁
 remote.remote13ba:
-  friendly_name: 空调
+  friendly_name: 红外转发器
 binary_sensor.io46b:
   friendly_name: IO探测器
 light.light1120:
@@ -37,7 +37,7 @@ light.lnlight1a621:
 light.lnlight1a622:
   friendly_name: 儿童房灯
 switch.socket2b17:
-  friendly_name: 电视插座
+  friendly_name: 插座
 automation.1522820290:
   friendly_name: 回家模式
 cover.cover32401:
@@ -50,3 +50,43 @@ cover.dooya1442:
   friendly_name: 阳台窗帘
 camera.camera3f01a69pag01125:
   friendly_name: 乐橙
+automation.1524125002:
+  friendly_name: ddd
+automation.1524125130:
+  friendly_name: rr
+automation.1524125377:
+  friendly_name: wee
+automation.1524125772:
+  friendly_name: ss
+automation.1524125925:
+  friendly_name: fr
+automation.1524126999:
+  friendly_name: ii
+automation.1524127006:
+  friendly_name: 添加
+automation.1524127049:
+  friendly_name: pp
+automation.1524127347:
+  friendly_name: ll
+automation.1524127504:
+  friendly_name: ll
+automation.1524127914:
+  friendly_name: ll
+automation.1524128346:
+  friendly_name: 哈哈
+automation.1524132323:
+  friendly_name: 回家
+automation.1524132344:
+  friendly_name: 离家
+automation.1524133871:
+  friendly_name: 到店
+automation.1524133931:
+  friendly_name: 呃呃
+automation.1524201677:
+  friendly_name: 定时情景
+automation.1524201716:
+  friendly_name: 设备情景
+automation.1524201741:
+  friendly_name: 点击执行
+automation.1524216535:
+  friendly_name: '1'

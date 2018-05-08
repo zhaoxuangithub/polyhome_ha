@@ -2,49 +2,33 @@
   - data:
       entity_id: light.lnlight19bf
     service: light.turn_on
-  - data:
-      entity_id: light.lnlight1a621
-    service: light.turn_on
-  - data:
-      entity_id: light.lnlight1a622
-    service: light.turn_on
-  - data:
-      entity_id: light.light4a01
-    service: light.turn_on
-  - data:
-      entity_id: light.light4a03
-    service: light.turn_on
-  - data:
-      entity_id: light.light4a02
-    service: light.turn_on
-  alias: '1522820290'
+  alias: '1524201677'
   condition:
     condition: and
     conditions: []
-  id: '1522820290'
-  trigger: []
+  id: '1524201677'
+  trigger:
+  - at: '13:30'
+    platform: time
 - action:
   - data:
-      entity_id: light.lnlight19bf
-    service: light.turn_off
-  - data:
-      entity_id: light.light4a01
-    service: light.turn_off
-  - data:
-      entity_id: light.lnlight1a621
-    service: light.turn_off
-  - data:
-      entity_id: light.light4a03
-    service: light.turn_off
-  - data:
-      entity_id: light.light4a02
-    service: light.turn_off
-  - data:
       entity_id: light.lnlight1a622
-    service: light.turn_off
-  alias: '1523262848'
+    service: light.turn_on
+  alias: '1524201716'
   condition:
     condition: and
     conditions: []
-  id: '1523262848'
-  trigger: []
+  id: '1524201716'
+  trigger:
+  - entity_id: light.lnlight1a621
+    platform: state
+    to: 'on'
+- action:
+  - data:
+      entity_id: light.lnlight1a621
+    service: light.turn_on
+  alias: '1524216535'
+  id: '1524216535'
+  trigger: 
+  - platform: event
+    event_type: event_sys_1_fire

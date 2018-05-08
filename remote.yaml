@@ -2,3 +2,7 @@
     13#ba:
       name: remote13ba
   platform: polyremoteforward
+- devices:
+    13#ba:
+      name: remote13ba
+  platform: polyremoteforward

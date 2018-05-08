@@ -9,6 +9,8 @@ import socket
 
 import voluptuous as vol
 
+from zeroconf import ServiceBrowser, ServiceStateChange
+
 import polyhome.util.macaddr as uuid_util
 from polyhome.helper.const import CUR_VERSION
 
@@ -62,4 +64,14 @@ def setup(hass, config):
 
     hass.bus.listen_once(EVENT_HOMEASSISTANT_STOP, stop_zeroconf)
 
+    # def on_service_state_change(zeroconf, service_type, name, state_change):
+    #     info = zeroconf.get_service_info(service_type, name)
+    #     if info:
+    #         print("Address: %s:%d" % (socket.inet_ntoa(info.address), info.port))
+    #         if info.properties:
+    #             for key, value in info.properties.items():
+    #                 print("%s:  %s" % (key, value))
+
+    # ServiceBrowser(zeroconf, '_polyhome._tcp.local.', handlers=[on_service_state_change])
+    
     return True

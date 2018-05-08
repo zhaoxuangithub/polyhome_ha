@@ -7,6 +7,6 @@
       name: lnlight1a62
   platform: polylnlight2
 - devices:
-    4#a0:
+    55#df:
       name: light4a0
-  platform: polyzfirepanel3
+  platform: polydimlight

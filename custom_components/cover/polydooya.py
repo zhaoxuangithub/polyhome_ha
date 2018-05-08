@@ -224,8 +224,8 @@ class DooYaCover(CoverDevice):
 
     def open_cover(self, **kwargs):
         """Open the cover."""
-        if self._position == 100:
-            return
+        if self._position > 100:
+            return 
         elif self._position is None:
             self._closed = False
             self.schedule_update_ha_state()
@@ -244,15 +244,23 @@ class DooYaCover(CoverDevice):
 
     def set_cover_position(self, position, **kwargs):
         """Move the cover to a specific position."""
+        print(position)
         if self._position == position:
             return
+        if self._position - position > 0:
+            self._closed = True
+        else:
+            self._closed = False
         self._position = position
         self.schedule_update_ha_state()
 
         mac = self._mac.split('#')
         CMD_COVER_POS[2], CMD_COVER_POS[3] = int(mac[0], 16), int(mac[1], 16)
         CMD_COVER_POS[6], CMD_COVER_POS[7] = int(mac[0], 16), int(mac[1], 16)
-        CMD_COVER_POS[14] = position
+        if position >= 100:
+            CMD_COVER_POS[14] = 99  
+        else:
+            CMD_COVER_POS[14] = position
         crc16 = checkcrc.calculateCRC(CMD_COVER_POS[9:15])
         crc16_h = eval(hex(crc16)[0:4])
         crc16_l = '0x{}'.format(hex(crc16)[4:6])

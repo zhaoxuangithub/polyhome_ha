@@ -31,7 +31,7 @@ class GroupsManager(object):
                 del dev_obj['state']
                 del dev_obj['last_updated']
                 del dev_obj['last_changed']
-                del dev_obj['attributes']['assumed_state']
+                # del dev_obj['attributes']['assumed_state']
                 del dev_obj['attributes']['hidden']
                 del dev_obj['attributes']['order']
                 del dev_obj['attributes']['view']
