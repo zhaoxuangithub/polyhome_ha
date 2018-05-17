@@ -66,10 +66,10 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         for device in dev:
             if device is not None:
                 if device._sensor_type == 'voc':
-                    request_data(device.mac)
-        hass.loop.call_later(5, handle_data_update_event, '')
+                    hass.add_job(request_data, device.mac)
+        hass.loop.call_later(30, handle_data_update_event, '')
 
-    hass.loop.call_later(5, handle_data_update_event, '')
+    hass.loop.call_later(30, handle_data_update_event, '')
 
     def request_data(macl):
         """Get data from cloud"""
@@ -114,9 +114,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                                 device.set_value(co2)
                             if device.sensor_type == 'voc':
                                 device.set_value(voc)
-
-
-    return True
+    # return True
 
 
 class weiguoairSensor(Entity):

@@ -827,6 +827,40 @@ def setup(hass, config):
                 data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
                 data_obj = {'status':'OK', 'data': data, 'type': 'add_device', 'device_type': platform}
                 notity_client_device_into_net(data_obj)
+            elif pack_list[5] == '0x15':
+                friendly_name = '艾瑞柯'
+                component = 'climate'
+                platform = 'polyconadapter'
+                mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
+                data = {'devices': {mac: {'name': 'climate' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': component + '.' + component + mac.replace('#', ''), \
+                        'plugin_info': data}
+                mgr = DevicePluginManager(hass, config)
+                name_mgr = FriendlyNameManager(hass, config)
+                if mgr.add_plugin(pack):
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], \
+                                                                                'mac': mac})
+                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+                data_obj = {'status': 'OK', 'data': data, 'type': 'add_device', 'device_type': platform}
+                notity_client_device_into_net(data_obj)
+            elif pack_list[5] == '0xc':
+                friendly_name = '大金空调'
+                component = 'climate'
+                platform = 'polydaikinadapter'
+                mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
+                data = {'devices': {mac: {'name': 'climate' + mac.replace('#', '')}}, 'platform': platform}
+                pack = {'plugin_type': component, 'entity_id': component + '.' + component + mac.replace('#', ''), \
+                        'plugin_info': data}
+                mgr = DevicePluginManager(hass, config)
+                name_mgr = FriendlyNameManager(hass, config)
+                if mgr.add_plugin(pack):
+                    discovery.load_platform(hass, component, data['platform'], {'name': data['devices'][mac]['name'], \
+                                                                                'mac': mac})
+                name_mgr.edit_friendly_name(pack['entity_id'], friendly_name)
+                data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
+                data_obj = {'status': 'OK', 'data': data, 'type': 'add_device', 'device_type': platform}
+                notity_client_device_into_net(data_obj)
 
             # reload core config and friendlyname is work 
             hass.services.call('homeassistant', 'reload_core_config')
@@ -872,7 +906,7 @@ def setup(hass, config):
             data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
             data_obj = {'status': 'OK', 'data': data, 'type': 'add_device'}
             notity_client_device_into_net(data_obj)
-        elif component == 'camera' and platform == 'lecamera':
+        elif component == 'camera' and platform == 'polylecheng':
             devidU = call.data.get('devid')
             devid = devidU.lower()
             phone = call.data.get('phone')
@@ -940,7 +974,10 @@ def setup(hass, config):
 
     def publish_heart_beat_services(call):
         entity_id = call.data.get('entity_id')
-        state = hass.states.get(entity_id).as_dict()
+        enjs = hass.states.get(entity_id)
+        if enjs == None:
+            return
+        state = enjs.as_dict()
         # publish new state for MQTT Server
         msg = json.dumps(state, sort_keys=True, cls=JSONEncoder)
         pub_obj = {'status':'OK', 'data': json.loads(msg), 'type': 'heart_beat'}

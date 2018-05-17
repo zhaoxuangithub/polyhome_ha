@@ -1,10 +1,22 @@
-sensor.sensor50001FCEF3974:
-  friendly_name: co2
-sensor.sensor50001FCEF3975:
-  friendly_name: voc
-sensor.sensor50001FCEF3971:
-  friendly_name: 温度
-sensor.sensor50001FCEF3972:
-  friendly_name: 湿度
-sensor.sensor50001FCEF3973:
-  friendly_name: pm25
+climate.climate9cc:
+  friendly_name: 艾瑞柯
+camera.camera3f01a69pag01125:
+  friendly_name: 乐橙
+camera.camera3g00a43pak02342:
+  friendly_name: 乐橙
+automation.1523498148:
+  friendly_name: 哦哦
+automation.1523498153:
+  friendly_name: 哦哦
+climate.climate9cc20:
+  friendly_name: 艾瑞柯0
+climate.climate9cc21:
+  friendly_name: 艾瑞柯1
+climate.climate9cc22:
+  friendly_name: 艾瑞柯2
+climate.climate9cc150:
+  friendly_name: 艾瑞柯0
+climate.climate9cc151:
+  friendly_name: 艾瑞柯1
+climate.climate9cc152:
+  friendly_name: 艾瑞柯2

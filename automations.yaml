@@ -30,3 +30,29 @@
     conditions: []
   id: '1521687327'
   trigger: []
+- action:
+  - data:
+      entity_id: sensor.sensor50001fcef3975
+    service: sensor.turn_off
+  alias: '1523498148'
+  condition:
+    condition: and
+    conditions: []
+  id: '1523498148'
+  trigger:
+  - entity_id: sensor.sensor50001fcef3973
+    platform: state
+    to: 'on'
+- action:
+  - data:
+      entity_id: sensor.sensor50001fcef3975
+    service: sensor.turn_off
+  alias: '1523498153'
+  condition:
+    condition: and
+    conditions: []
+  id: '1523498153'
+  trigger:
+  - entity_id: sensor.sensor50001fcef3973
+    platform: state
+    to: 'on'

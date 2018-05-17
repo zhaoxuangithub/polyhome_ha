@@ -61,9 +61,16 @@ def createcrc(array):
         crclo = auchCRCLo[crcIndex]
     return (crchi << 8 | crclo)
 
-
+#remote crc16自动补出后两个字节的校验list
 def createarray(array):
     crcvalue = createcrc(array)
     array.append(crcvalue & 0xff)
     array.append(crcvalue >> 8)
+    return array
+
+#modbus crc16自动补出后两个字节的校验list
+def createarraymodbus(array):
+    crcvalue = createcrc(array)
+    array.append(crcvalue >> 8)
+    array.append(crcvalue & 0xff)
     return array

@@ -12,7 +12,7 @@ import requests
 
 _LOGGER = logging.getLogger(__name__)
 
-DOMAIN = 'lecamera'
+DOMAIN = 'polylecheng'
 LECAMERAURL = 'https://openapi.lechange.cn/'
 LEAPPID = 'lc8ede5a420c914be6'
 LEAPPSECRET = '337cb9f908644ca78c09dc1f0d5292'

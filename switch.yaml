@@ -3,10 +3,6 @@
       name: socket45f5
   platform: polysocket
 - devices:
-    5d#69:
-      name: phone5d69
-  platform: polyphone
-- devices:
     9c#a5:
       name: warsignal9ca5
   platform: polywarsignal
