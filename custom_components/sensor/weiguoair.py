@@ -66,13 +66,15 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
         for device in dev:
             if device is not None:
                 if device._sensor_type == 'voc':
-                    request_data(device.mac)
-        hass.loop.call_later(60, handle_data_update_event, '')
+                    hass.add_job(request_data, device.mac)
+        hass.loop.call_later(30, handle_data_update_event, '')
 
-    hass.loop.call_later(60, handle_data_update_event, '')
+    hass.loop.call_later(30, handle_data_update_event, '')
 
-    def request_data(mac):
+    def request_data(macl):
         """Get data from cloud"""
+
+        mac = macl.upper()
         url = WEIGUOURL + 'd002!retrieveRealData?SENSORID={0}&KEY={1}'.format(mac, KEY)
         resp = None
         try:
@@ -94,7 +96,7 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                     pm25 = sensor_data['pm25']
                     co2 = sensor_data['co2']
                     voc = sensor_data['voc']
-                    sensorId = sensor_data['sensorId']
+                    sensorId = sensor_data['sensorId'].lower()
                     for device in dev:
                         if device._mac == sensorId:
                             if device.sensor_type == 'temperature':
@@ -108,8 +110,10 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
                             if device.sensor_type == 'voc':
                                 device.set_value(voc)
 
-
+    handle_data_update_event(None)
+    
     return True
+
 
 class weiguoairSensor(Entity):
     """Representation of a Sensor."""
@@ -169,6 +173,7 @@ class weiguoairSensor(Entity):
 
     def set_value(self, value):
         self._state = value
+        self.schedule_update_ha_state()
 
     def update(self):
         """Fetch new state data for the sensor.

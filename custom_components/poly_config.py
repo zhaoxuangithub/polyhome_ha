@@ -31,6 +31,7 @@ from polyhome.helper.contant import DEFAULT_CONF_CONTENT, DEFAULT_EXISTS_FILE, P
 from polyhome.misc import DongleAttr
 from polyhome.util.zipfile import ZFile
 from polyhome.helper.const import CUR_VERSION
+from polyhome.helper.const import CONTANT_SUPPORT
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -75,7 +76,8 @@ def setup(hass, config):
         msg = {'type': 'get_host_sn', 'status': 'OK', 'data': {'sn': mac}}
         data_str = json.dumps(msg)
         pub_dict = {'data': data_str}
-        hass.services.call('poly_mqtt', 'pub_data', pub_dict)
+        hass.services.call('polyremotemqtt', 'pub_data', data_str)
+        hass.services.call('polylocalmqtt', 'pub_data', data_str)
 
     hass.services.register(DOMAIN, 'get_host_sn', get_host_sn_service)
 
@@ -102,11 +104,13 @@ def setup(hass, config):
             json_data = device_mgr.get_devices()
             data_obj = {'status':'OK', 'data': json_data, 'type': 'all_states'}
             data_str = {'data': json.dumps(data_obj)}
-            hass.services.call('poly_mqtt', 'pub_data', data_str)
+            hass.services.call('polyremotemqtt', 'pub_data', data_str)
+            hass.services.call('polylocalmqtt', 'pub_data', data_str)
         except Exception as e:
             data_obj = {'status':'OK', 'data': {'msg': 'Exception'}, 'type': 'all_states'}
             data_str = {'data': json.dumps(data_obj)}
-            hass.services.call('poly_mqtt', 'pub_data', data_str)
+            hass.services.call('polyremotemqtt', 'pub_data', data_str)
+            hass.services.call('polylocalmqtt', 'pub_data', data_str)
     
     hass.services.register(DOMAIN, 'get_states', get_states_service)
 
@@ -121,11 +125,13 @@ def setup(hass, config):
             hass.add_job(async_reload_core_conf(hass))
             data_obj = {'status':'OK', 'data': {}, 'type': 'edit_friendlyname'}
             data_str = {'data': json.dumps(data_obj)}
-            hass.services.call('poly_mqtt', 'pub_data', data_str)
+            hass.services.call('polyremotemqtt', 'pub_data', data_str)
+            hass.services.call('polylocalmqtt', 'pub_data', data_str)
         except Exception as e:
             data_obj = {'status':'ERROR', 'data': {'msg': 'Exception'}, 'type': 'edit_friendlyname'}
             data_str = {'data': json.dumps(data_obj)}
-            hass.services.call('poly_mqtt', 'pub_data', data_str)
+            hass.services.call('polyremotemqtt', 'pub_data', data_str)
+            hass.services.call('polylocalmqtt', 'pub_data', data_str)
 
     hass.services.register(DOMAIN, 'edit_friendlyname', edit_friendlyname_service)
 
@@ -187,11 +193,13 @@ def setup(hass, config):
             hass.services.call('group', 'reload')
             data_obj = {'status':'OK', 'data': {}, 'type': 'device_edit_groups'}
             data_str = {'data': json.dumps(data_obj)}
-            hass.services.call('poly_mqtt', 'pub_data', data_str)
+            hass.services.call('polyremotemqtt', 'pub_data', data_str)
+            hass.services.call('polylocalmqtt', 'pub_data', data_str)
         except Exception as e:
             data_obj = {'status':'ERROR', 'data': {'msg': e}, 'type': 'device_edit_groups'}
             data_str = {'data': json.dumps(data_obj)}
-            hass.services.call('poly_mqtt', 'pub_data', data_str)
+            hass.services.call('polyremotemqtt', 'pub_data', data_str)
+            hass.services.call('polylocalmqtt', 'pub_data', data_str)
 
     hass.services.register(DOMAIN, 'get_groups', get_groups_service)
     hass.services.register(DOMAIN, 'edit_group', edit_group_service)
@@ -243,12 +251,14 @@ def setup(hass, config):
     # Broadcast Client some msg 
     def notity_client_data(data_obj):
         data_str = {'data': json.dumps(data_obj)}
-        hass.services.call('poly_mqtt', 'pub_data', data_str)
+        hass.services.call('polyremotemqtt', 'pub_data', data_str)
+        hass.services.call('polylocalmqtt', 'pub_data', data_str)
 
     # Broadcast Client some msg 
     def notity_client_device_into_net(data_obj):
         data_str = {'data': json.dumps(data_obj)}
-        hass.services.call('poly_mqtt', 'mqtt_pub_device_into_net', data_str)
+        hass.services.call('polyremotemqtt', 'mqtt_pub_device_into_net', data_str)
+        hass.services.call('polylocalmqtt', 'mqtt_pub_device_into_net', data_str)
 
     """Handler Zigbee Return Data
     """
@@ -263,7 +273,8 @@ def setup(hass, config):
                 else:
                     data_obj = {'status':'OK', 'data': "disable", 'type': 'zigbee_network'}
                     data_str = {'data': json.dumps(data_obj)}
-                hass.services.call('poly_mqtt', 'pub_data', data_str)       
+                hass.services.call('polyremotemqtt', 'pub_data', data_str)
+                hass.services.call('polylocalmqtt', 'pub_data', data_str)       
             elif pack_list[5] == '0xa3':
                 # '0xc0', '0x0', '0x0', '0x0', '0x2', '0xa3', '0xf', '0x6e'
                 if dongleattr.get_mode() == 'channel':
@@ -280,12 +291,14 @@ def setup(hass, config):
                     dongleattr.set_mode('channel')
                     data_obj = {'status':'OK', 'data': dongleattr.get_dongle_conf(), 'type': 'get_dongle_attr'}
                     data_str = {'data': json.dumps(data_obj)}
-                    hass.services.call('poly_mqtt', 'pub_data', data_str)
+                    hass.services.call('polyremotemqtt', 'pub_data', data_str)
+                    hass.services.call('polylocalmqtt', 'pub_data', data_str)
             elif pack_list[4] == '0x1' and pack_list[5] == '0x44':
                 # '0xc0', '0x0', '0x0', '0x0', '0x1', '0x44', '0x85' 
                 data_obj = {'status':'OK', 'data': "", 'type': 'edit_dongle'}
                 data_str = {'data': json.dumps(data_obj)}
-                hass.services.call('poly_mqtt', 'pub_data', data_str)
+                hass.services.call('polyremotemqtt', 'pub_data', data_str)
+                hass.services.call('polylocalmqtt', 'pub_data', data_str)
                 
         if pack_list[0] == '0xa0' and len(pack_list) > 8 and pack_list[8] == '0x7a':
             """Smart Device Into Net"""
@@ -452,7 +465,7 @@ def setup(hass, config):
                 component = 'binary_sensor'
                 platform = 'polyiosensor'
                 mac = pack_list[6].replace('0x', '') + "#" + pack_list[7].replace('0x', '')
-                data = {'devices': {mac: {'name': 'pir' + mac.replace('#', '')}}, 'platform': platform}
+                data = {'devices': {mac: {'name': 'io' + mac.replace('#', '')}}, 'platform': platform}
                 pack = {'plugin_type': component, 'entity_id': 'binary_sensor.io' + mac.replace('#', ''), 'plugin_info': data}
                 mgr = DevicePluginManager(hass, config)
                 name_mgr = FriendlyNameManager(hass, config)
@@ -849,11 +862,16 @@ def setup(hass, config):
         data_obj = {'status':'OK', 'data': {'version': CUR_VERSION}, 'type': 'cur_host_version'}
         notity_client_data(data_obj)
 
+    def host_online_service(call):
+        data_obj = {'status':'OK', 'data': {'online': True}, 'type': 'host_online'}
+        notity_client_data(data_obj)
+
     def add_plugin_service(call):
         component = call.data.get('plugin_type')
         platform = call.data.get('platform')
         if component == 'sensor' and platform == 'weiguoair':
-            mac = call.data.get('mac')
+            macU = call.data.get('mac')
+            mac = macU.lower()
             friendly_name = '威果'
             data = {'devices': {mac: {'name': component + mac}}, 'platform': platform}
             pack = {'plugin_type': component, 'entity_id': component + '.' + component + mac, 'plugin_info': data}
@@ -870,8 +888,9 @@ def setup(hass, config):
             data = {'entity_id': pack['entity_id'], 'friendly_name': friendly_name}
             data_obj = {'status': 'OK', 'data': data, 'type': 'add_device'}
             notity_client_device_into_net(data_obj)
-        elif component == 'camera' and platform == 'lecamera':
-            devid = call.data.get('devid')
+        elif component == 'camera' and platform == 'polylecheng':
+            devidU = call.data.get('devid')
+            devid = devidU.lower()
             phone = call.data.get('phone')
             channelid = call.data.get('channelid')
             friendly_name = '乐橙'
@@ -887,6 +906,9 @@ def setup(hass, config):
             data_obj = {'status': 'OK', 'data': data, 'type': 'add_device'}
             notity_client_device_into_net(data_obj)
 
+        # reload core config and friendlyname is work 
+        hass.services.call('homeassistant', 'reload_core_config')
+        
     def del_plugin_service(call):
         plug_id = call.data.get('entity_id')
         if isinstance(plug_id, list):
@@ -915,17 +937,15 @@ def setup(hass, config):
     # System Event Manager Service.
     def event_state_change_handler(call):
         entity_id = call.data.get('entity_id')
-        if entity_id.split('.')[0] in ['switch', 'light', 'cover', 'binary_sensor', 'lock', 'media_player', 'cliamte']:
-            # state_json = {'entity_id': entity_id, 'state': new_state['state']}
-            # data_obj = {'status':'OK', 'data': state_json, 'type': 'state_change'}
-            # notity_client_data(data_obj)
+        if entity_id.split('.')[0] in CONTANT_SUPPORT:
             # publish new state for MQTT Server
             new_state = call.data.get('new_state').as_dict()
             msg = json.dumps(new_state, sort_keys=True, cls=JSONEncoder)
             json_msg = json.loads(msg)
             pub_obj = {'status':'OK', 'data': json_msg, 'type': 'state_change'}
             data_str = {'data': json.dumps(pub_obj)}
-            hass.services.call('poly_mqtt', 'mqtt_pub_state_change', data_str)
+            hass.services.call('polyremotemqtt', 'mqtt_pub_state_change', data_str)
+            hass.services.call('polylocalmqtt', 'mqtt_pub_state_change', data_str)
 
     def event_ha_start_handler(call):
         data_obj = {'status':'OK', 'data': {}, 'type': 'polyhome_start'}
@@ -942,7 +962,8 @@ def setup(hass, config):
         msg = json.dumps(state, sort_keys=True, cls=JSONEncoder)
         pub_obj = {'status':'OK', 'data': json.loads(msg), 'type': 'heart_beat'}
         data_str = {'data': json.dumps(pub_obj)}
-        hass.services.call('poly_mqtt', 'mqtt_pub_state_change', data_str)
+        hass.services.call('polyremotemqtt', 'mqtt_pub_state_change', data_str)
+        hass.services.call('polylocalmqtt', 'mqtt_pub_state_change', data_str)
 
     def gateway_register_service(call):
         friendly_name = '智能网关'
@@ -956,19 +977,20 @@ def setup(hass, config):
             data = auto_mgr.get_automations()
             data_obj = {'status':'OK', 'data': data, 'type': 'all_automations'}
             data_str = {'data': json.dumps(data_obj)}
-            hass.services.call('poly_mqtt', 'pub_data', data_str)
+            hass.services.call('polyremotemqtt', 'pub_data', data_str)
+            hass.services.call('polylocalmqtt', 'pub_data', data_str)
         except Exception as e:
             data_obj = {'status':'ERROR', 'data': {'msg': e}, 'type': 'all_automations'}
             data_str = {'data': json.dumps(data_obj)}
-            hass.services.call('poly_mqtt', 'pub_data', data_str)
-    
+
     def edit_automation_service(call):
         try:
             data = call.data
             if data is None:
                 data_obj = {'status':'ERROR', 'data': {'msg': 'data is Null'}, 'type': 'edit_automation'}
                 data_str = {'data': json.dumps(data_obj)}
-                hass.services.call('poly_mqtt', 'pub_data', data_str)
+                hass.services.call('polyremotemqtt', 'pub_data', data_str)
+                hass.services.call('polylocalmqtt', 'pub_data', data_str)
                 return
             auto_mgr = AutomationsManager(hass, config)
             auto_mgr.edit_automation(data)
@@ -994,7 +1016,8 @@ def setup(hass, config):
         auto_detail = auto_mgr.get_automation_by_id(auto_id)
         data_obj = {'status':'OK', 'data': auto_detail, 'type': 'automation_by_id'}
         data_str = {'data': json.dumps(data_obj)}
-        hass.services.call('poly_mqtt', 'pub_data', data_str)
+        hass.services.call('polyremotemqtt', 'pub_data', data_str)
+        hass.services.call('polylocalmqtt', 'pub_data', data_str)
 
     def trigger_automation_service(call):
         auto_id = call.data.get('id')
@@ -1003,7 +1026,8 @@ def setup(hass, config):
         auto_mgr.trigger_automation(auto_id)
         data_obj = {'status':'OK', 'data': '', 'type': 'trigger_automation'}
         data_str = {'data': json.dumps(data_obj)}
-        hass.services.call('poly_mqtt', 'pub_data', data_str)
+        hass.services.call('polyremotemqtt', 'pub_data', data_str)
+        hass.services.call('polylocalmqtt', 'pub_data', data_str)
     
     def edit_automation_name_service(call):
         try:
@@ -1021,7 +1045,8 @@ def setup(hass, config):
                    
     def event_publish_message_handler(call):
         data_str = call.data
-        hass.services.call('poly_mqtt', 'pub_data', data_str)
+        hass.services.call('polyremotemqtt', 'pub_data', data_str)
+        hass.services.call('polylocalmqtt', 'pub_data', data_str)
 
     hass.bus.listen('event_mqtt_publish', event_publish_message_handler)
 
@@ -1046,6 +1071,7 @@ def setup(hass, config):
     hass.services.register('gateway', 'get_dongle_conf', get_dongle_conf_service)
 
     hass.services.register('gateway', 'cur_host_version', cur_host_version_service)
+    hass.services.register('gateway', 'host_online', host_online_service)
     hass.services.register('gateway', 'add_plugin', add_plugin_service)
     hass.services.register('gateway', 'del_plugin', del_plugin_service)
 
@@ -1061,36 +1087,8 @@ def setup(hass, config):
     # setup zigbee dongle component /dev/tty.usbserial
     zigbee_conf = {'poly_zigbee': {'baudbrate': 57600, 'uartpath': UART_PATH}}
     Setup.setup_component(hass, 'poly_zigbee', zigbee_conf)
-    Setup.setup_component(hass, 'poly_mqtt', config)
     Setup.setup_component(hass, 'poly_zeroconf')
 
-    def trigger_auto_by_name_service(call):
-        name = call.data.get('name')
-        for state in hass.states.async_all():
-            entity_id = state.as_dict()['entity_id']
-            id_domain = entity_id.split('.')[0]
-            if id_domain not in 'automation':
-                continue
-            if name in state.as_dict()['attributes']['friendly_name']:
-                data = {"entity_id": state.as_dict()['entity_id']}
-                hass.services.call('automation', 'trigger', data)
-
-    hass.services.register('gateway', 'trigger_auto_by_name', trigger_auto_by_name_service)    
-    
-    def trigger_light_by_name_service(call):
-        action = call.data.get('action')
-        name = call.data.get('name')
-        for state in hass.states.async_all():
-            entity_id = state.as_dict()['entity_id']
-            id_domain = entity_id.split('.')[0]
-            if id_domain not in 'light':
-                continue
-            if name in state.as_dict()['attributes']['friendly_name']:
-                data = {"entity_id": state.as_dict()['entity_id']}
-                hass.services.call('light', action, data)
-
-    hass.services.register('gateway', 'trigger_light_by_name', trigger_light_by_name_service)
-    
     return True
 
 

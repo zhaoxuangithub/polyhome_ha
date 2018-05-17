@@ -61,9 +61,14 @@ def createcrc(array):
         crclo = auchCRCLo[crcIndex]
     return (crchi << 8 | crclo)
 
-
 def createarray(array):
     crcvalue = createcrc(array)
     array.append(crcvalue & 0xff)
     array.append(crcvalue >> 8)
+    return array
+
+def createarraymodbus(array):
+    crcvalue = createcrc(array)
+    array.append(crcvalue >> 8)
+    array.append(crcvalue & 0xff)
     return array

@@ -104,7 +104,7 @@ class PolySensorBinarySensor(BinarySensorDevice):
     @property
     def available(self):
         """Return True if entity is available."""
-        return True
+        return self._available
 
     @property
     def heart_time_stamp(self):

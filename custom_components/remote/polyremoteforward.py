@@ -93,13 +93,11 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
             mac_str = mac_l + '#' + mac_h
             dev = next((dev for dev in remote if dev.mac == mac_str), None)
             if dev is None:
-                return    
+                return 
             if pack_list[6] == '0x41':
                 dev.set_available(False)
             if pack_list[6] == '0x40':
                 dev.set_available(True)
-            now = time.time()
-            hass.loop.call_later(12, handle_time_changed_event, '')
             
     hass.bus.listen(ENENT_ZIGBEE_RECV, event_zigbee_msg_handle)
 
@@ -169,6 +167,11 @@ class PolyReForward(RemoteDevice):
         return self._name
 
     @property
+    def available(self):
+        """Return if bulb is available."""
+        return self._available
+
+    @property
     def is_on(self):
         """Return true if remote is on."""
         return self._state
@@ -193,8 +196,9 @@ class PolyReForward(RemoteDevice):
         """
         return {'platform': 'polyremoteforward'}
 
-    def set_available(self, state):
-        self._available = state
+    def set_available(self, available):
+        self._available = available
+        self.schedule_update_ha_state()
 
     def heart_beat(self):
         self._heart_timestamp = time.time()
@@ -203,7 +207,6 @@ class PolyReForward(RemoteDevice):
 
     def send_command(self, command, **kwargs):
         """Send a command to a device."""
-        print(command)
         for com in command:
             self._last_command_sent = com
             mac = self._mac.split('#')
@@ -224,7 +227,6 @@ class PolyReForward(RemoteDevice):
 
     def study_command(self, key, name):
         if self._requested_studing == True:
-            print('正在学习中')
             return 
         self._requested_studing = True
         self._listen_study()
@@ -261,7 +263,6 @@ class PolyReForward(RemoteDevice):
         """Track time changes."""
         if self._requested_studing:
             self._time += 1
-            print(self._time)
             if self._time == 12:
                 self.time = 0
                 self._requested_studing = False
@@ -298,13 +299,22 @@ class PolyReForward(RemoteDevice):
 
             
 class RemoteKeyManager(object):
-    """All FriendlyName Manager."""
+    """All RemoteKey Manager."""
     
     def __init__(self, hass, config):
         self._hass = hass
         self._config = config
         self._path = hass.config.path('remote_key.yaml')
-        
+
+    def get_friendly_name(self, entity_id):
+        current = self._read_config('remote_key.yaml')
+        if current == []:
+            return []
+        for remote in current:
+            for key, value in remote.items():
+                if key == entity_id:
+                    return value
+
     def edit_friendly_name(self, dev_mac, value):
         """Edit id friendlyname"""
         current = self._read_config('remote_key.yaml')
@@ -317,16 +327,11 @@ class RemoteKeyManager(object):
         self._delete_value(current, name_id)
         self._write(self._path, current)
 
-    def get_friendly_name(self, name_id):
-        current = self._read_config('remote_key.yaml')
-        name = current.get(name_id, None)
-        return name
-
     def _read_config(self, filename):
         """Read the config."""
         current = self._read(self._hass.config.path(filename))
         if not current:
-            current = {}
+            current = []
         return current
 
     def _read(self, path):
@@ -335,12 +340,14 @@ class RemoteKeyManager(object):
             return None
         return load_yaml(path)
     
-    def _write_friendly_name(self, current, key, value):
+    def _write_friendly_name(self, current, dev_mac, value):
         """Set value."""
-        print(current)
-        data = self._get_value(current, key)  
+        data = self._get_value(current, dev_mac)  
         if data is not None:
-            data.append(value)   
+            data.append(value)
+        else: 
+            remote_value = {dev_mac: [{'key': value['key'], 'name': value['name']}]}
+            current.append(remote_value)   
     
     def _write(self, path, data):
         """Write YAML helper."""
@@ -348,15 +355,16 @@ class RemoteKeyManager(object):
         with open(path, 'w', encoding='utf-8') as outfile:
             outfile.write(data)
 
-    def _delete_value(self, data, key):
+    def _delete_value(self, current, key):
         """Delete value."""
-        value = self._get_value(data, key)
+        value = self._get_value(current, key)
         if value is not None:
-            del data[key]
+            del current[key]
 
-    def _get_value(self, data, config_key):
+    def _get_value(self, current, config_key):
         """Get value."""
-        for k, v in data.items():
-            if k == config_key:
-                return v    
+        for remote in current:
+            for k, v in remote.items():
+                if k == config_key:
+                    return v    
         return None

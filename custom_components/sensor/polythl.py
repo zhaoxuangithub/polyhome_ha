@@ -233,6 +233,7 @@ class THLSensor(Entity):
 
     def set_value(self, value):
         self._state = value
+        self.async_schedule_update_ha_state()
 
     def set_available(self, available):
         self._available = available

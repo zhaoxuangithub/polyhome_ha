@@ -1,7 +1,7 @@
 """default create file"""
 DEFAULT_EXISTS_FILE = ['customize.yaml', 'groups.yaml', 'automations.yaml', 'scripts.yaml', \
                         'switch.yaml', 'light.yaml', 'binary_sensor.yaml', 'sensor.yaml', \
-                        'lock.yaml', 'cover.yaml', 'media_player.yaml']
+                        'lock.yaml', 'cover.yaml', 'media_player.yaml', 'camera.yaml']
 
 MQTT_TOPIC_BIND_HOST = '/v1/polyhome-ha/host/bind/'
 MQTT_TOPIC_BIND_CLIENT = '/v1/polyhome-ha/client/bind/'

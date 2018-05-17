@@ -1,4 +1,8 @@
 - devices:
-    2b#65:
-      name: remote2b65
+    13#ba:
+      name: remote13ba
+  platform: polyremoteforward
+- devices:
+    13#ba:
+      name: remote13ba
   platform: polyremoteforward

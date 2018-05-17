@@ -1,0 +1,4 @@
+- devices:
+    50001fcef397:
+      name: sensor50001fcef397
+  platform: weiguoair

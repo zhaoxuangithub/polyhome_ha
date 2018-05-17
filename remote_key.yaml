@@ -1,15 +1,25 @@
-2b#65:
-- key: '1'
-  name: "\u5F00\u673A"
-- key: '13'
-  name: "\u5173\u673A"
-- key: '15'
-  name: "\u524D\u8FDB"
-- key: '2'
-  name: DEFAULT
-- key: '3'
-  name: DEFAULT
-- key: '8'
-  name: DEFAULT
-- key: '4'
-  name: DEFAULT
+- 13#ba:
+  - key: '1'
+    name: DEFAULT
+  - key: '2'
+    name: DEFAULT
+  - key: '3'
+    name: DEFAULT
+  - key: '21'
+    name: DEFAULT
+  - key: '14'
+    name: DEFAULT
+  - key: '10'
+    name: DEFAULT
+  - key: '13'
+    name: DEFAULT
+  - key: '11'
+    name: DEFAULT
+  - key: '5'
+    name: DEFAULT
+  - key: '40'
+    name: DEFAULT
+  - key: '41'
+    name: DEFAULT
+  - key: '137'
+    name: ok

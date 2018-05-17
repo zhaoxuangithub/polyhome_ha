@@ -108,6 +108,11 @@ class YaleLock(LockDevice):
         return self._name
 
     @property
+    def available(self):
+        """Return if bulb is available."""
+        return self._available
+
+    @property
     def is_locked(self):
         """Return true if lock is locked."""
         return self._state == STATE_LOCKED

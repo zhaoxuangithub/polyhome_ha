@@ -31,7 +31,7 @@ class GroupsManager(object):
                 del dev_obj['state']
                 del dev_obj['last_updated']
                 del dev_obj['last_changed']
-                del dev_obj['attributes']['assumed_state']
+                # del dev_obj['attributes']['assumed_state']
                 del dev_obj['attributes']['hidden']
                 del dev_obj['attributes']['order']
                 del dev_obj['attributes']['view']
@@ -493,7 +493,7 @@ class DevicePluginManager(object):
         """Get value."""
         for state in self._hass.states.async_all():
             state_dict = state.as_dict()
-            if entity_id.lower() in state_dict['entity_id']:
+            if entity_id in state_dict['entity_id']:
                 return entity_id
         return None
 

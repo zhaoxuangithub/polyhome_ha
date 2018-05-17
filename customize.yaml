@@ -1,72 +1,92 @@
-light.lnlight19bf:
-  friendly_name: 主卧灯
-lock.lock13a9:
-  friendly_name: lock13a9语音
-sensor.sensor1c451:
+sensor.sensor50001fcef3974:
+  friendly_name: co2
+sensor.sensor50001fcef3975:
+  friendly_name: voc
+sensor.sensor50001fcef3971:
   friendly_name: 温度
-sensor.sensor1c452:
+sensor.sensor50001fcef3972:
   friendly_name: 湿度
-sensor.sensor1c453:
+sensor.sensor50001fcef3973:
+  friendly_name: pm25
+camera.camera2f04169pak00169:
+  friendly_name: 乐橙
+sensor.sensor46b11:
+  friendly_name: 温度
+sensor.sensor46b12:
+  friendly_name: 湿度
+sensor.sensor46b13:
   friendly_name: 亮度
-lock.lock9de:
-  friendly_name: 耶鲁门锁
-switch.socket45f5:
-  friendly_name: 插座
-light.light5bcb:
-  friendly_name: 夜灯
-light.light28db1:
-  friendly_name: 二路零火情景面板1
-light.light28db2:
-  friendly_name: 二路零火情景面板2
-binary_sensor.panel5146:
-  friendly_name: LCD情景面板
-light.dimlight576:
-  friendly_name: 调光开关
-cover.cover30261:
-  friendly_name: 二路强电窗帘1
-cover.cover30262:
-  friendly_name: 二路强电窗帘2
-light.lnlight2ee81:
-  friendly_name: 二路零火灯1
-light.lnlight2ee82:
-  friendly_name: 二路零火灯2
-light.lnlight1488:
-  friendly_name: 一路零火灯
+light.light4a01:
+  friendly_name: 客厅灯
+light.light4a02:
+  friendly_name: 阳台灯
+light.light4a03:
+  friendly_name: 厨房灯
 binary_sensor.door115:
   friendly_name: 门磁
-binary_sensor.panel454a0:
-  friendly_name: 4键情景面板
-light.lightd11:
-  friendly_name: 二路单火灯1
-light.lightd12:
-  friendly_name: 二路单火灯2
-cover.curtain4b201:
-  friendly_name: 二路干节点窗帘1
-cover.curtain4b202:
-  friendly_name: 二路干节点窗帘2
-switch.phone5d69:
-  friendly_name: 电话拨号器
-light.light4b31:
-  friendly_name: 壁灯
-automation.1521647521806:
-  friendly_name: 回家情景
-switch.warsignal9ca5:
-  friendly_name: 警号
-switch.socket2b17:
-  friendly_name: 插座
+remote.remote13ba:
+  friendly_name: 红外转发器
+binary_sensor.io46b:
+  friendly_name: IO探测器
+light.light1120:
+  friendly_name: 夜灯
+light.lnlight19bf:
+  friendly_name: 主卧灯
 light.lnlight1a621:
   friendly_name: 次卧灯
 light.lnlight1a622:
-  friendly_name: 厨房灯
-light.lnlight8c11:
-  friendly_name: 三路零火灯1
-light.lnlight8c12:
-  friendly_name: 客厅灯
-light.lnlight8c13:
-  friendly_name: 三路零火灯3
-automation.1521687250:
-  friendly_name: 回家情景
-automation.1521687327:
-  friendly_name: 离家情景
-light.dimlight53a:
-  friendly_name: 调光开关
+  friendly_name: 儿童房灯
+switch.socket2b17:
+  friendly_name: 插座
+automation.1522820290:
+  friendly_name: 回家模式
+cover.cover32401:
+  friendly_name: 客厅窗帘
+cover.cover32402:
+  friendly_name: 主卧窗帘
+automation.1523262848:
+  friendly_name: 离家模式
+cover.dooya1442:
+  friendly_name: 阳台窗帘
+camera.camera3f01a69pag01125:
+  friendly_name: 乐橙
+automation.1524125002:
+  friendly_name: ddd
+automation.1524125130:
+  friendly_name: rr
+automation.1524125377:
+  friendly_name: wee
+automation.1524125772:
+  friendly_name: ss
+automation.1524125925:
+  friendly_name: fr
+automation.1524126999:
+  friendly_name: ii
+automation.1524127006:
+  friendly_name: 添加
+automation.1524127049:
+  friendly_name: pp
+automation.1524127347:
+  friendly_name: ll
+automation.1524127504:
+  friendly_name: ll
+automation.1524127914:
+  friendly_name: ll
+automation.1524128346:
+  friendly_name: 哈哈
+automation.1524132323:
+  friendly_name: 回家
+automation.1524132344:
+  friendly_name: 离家
+automation.1524133871:
+  friendly_name: 到店
+automation.1524133931:
+  friendly_name: 呃呃
+automation.1524201677:
+  friendly_name: 定时情景
+automation.1524201716:
+  friendly_name: 设备情景
+automation.1524201741:
+  friendly_name: 点击执行
+automation.1524216535:
+  friendly_name: '1'
