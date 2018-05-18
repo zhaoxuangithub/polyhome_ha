@@ -343,7 +343,10 @@ class PolyIraccClimate(ClimateDevice):
         temperature = (data[4] * 256 + data[5]) // 10
         # 室内温度
         if data[8] >= 0x80:
-            current_temperature = -(((data[8] & 0x0f) * 256 + data[9]) // 10)
+            temint = data[8] * 256 + data[9]
+            temintf = ~temint
+            tem = (temintf & 0x0000ffff) + 1
+            current_temperature = -(tem // 10)
         else:
             current_temperature = (data[8] * 256 + data[9]) // 10
         # 传感器是否正常 '0' / '1'
